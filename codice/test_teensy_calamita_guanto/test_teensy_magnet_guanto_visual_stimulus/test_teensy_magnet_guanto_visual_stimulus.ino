@@ -1,15 +1,15 @@
-#define hand_sens 2
+#define hand_sens 11
 
-#define visual_stimulus_led 7
+#define visual_stimulus_led 29
 
-#define ready_button 8
-#define reset_button 9
+#define ready_button 24
+#define reset_button 25
 
-#define ready_led 10
-#define led_start 11
-#define led_stop 12
+#define ready_led 26
+#define led_start 27
+#define led_stop 28
 
-#define magnet 13
+#define magnet 31
 
 int program_execution_state = 0;
 bool show_results = HIGH;
@@ -44,7 +44,7 @@ volatile unsigned long test_time_end = 0;
 unsigned long test_elapsed_time = 0;
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
   pinMode(visual_stimulus_led, OUTPUT);
   
