@@ -54,7 +54,8 @@ input:focus {
 }
 
 /* reset of submit, deletes forms of username and psw when clicked submit */
-input[type = "reset"] {
+/* note: qua ho cambiato per matchare con il main */
+input[type = "submit"] {
     background: #f6e27d;
     font-family: "Noto Sans", sans-serif;
     font-weight: bolder;
