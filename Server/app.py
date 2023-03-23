@@ -1,15 +1,15 @@
 from flask import Flask, render_template
 from markupsafe import escape
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 app = Flask(__name__)
 
-GPIO.setmode(GPIO.BCM)  # Sets up the RPi lib to use the Broadcom pin mappings
+#GPIO.setmode(GPIO.BCM)  # Sets up the RPi lib to use the Broadcom pin mappings
                         #  for the pin names. This corresponds to the pin names
                         #  given in most documentation of the Pi header
 
-GPIO.setwarnings(False) # Turn off warnings in the CLI
+#GPIO.setwarnings(False) # Turn off warnings in the CLI
 
-GPIO.setup(2, GPIO.OUT) #GPIO2 ==> output
+#GPIO.setup(2, GPIO.OUT) #GPIO2 ==> output
 
 @app.route('/')
 def index():
