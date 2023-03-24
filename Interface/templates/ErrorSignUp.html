@@ -14,7 +14,9 @@
             <div class = "whiteBox">
                 <h1 id = "login">Sign Up</h1>
                 <br>
-                <form action="/Main" method = "POST">
+                <form action="/Start" method = "POST">
+                    <input type = "error" id = "error" value = "{{ err_msg }}" readonly /> 
+                    <br><br><br>
                     <input type = "text" id = "txtUsn" placeholder = "Username" name = "Username" />
                     <br><br><br>
                     <input type = "password" id = "txtPsw" placeholder = "Password" name = "Password" />
