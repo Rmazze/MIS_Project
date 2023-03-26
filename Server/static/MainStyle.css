@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); /* Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap'); /* Noto Sans font */
+
+/* background */
+body {
+    background-image: linear-gradient(to left bottom, #f6e27d, #eec065, #e39f54, #d57e49, #c35e42, #b6494d, #a13957, #872f5e, #623669, #3a3966, #173756, #093040);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+/* box white */
+.whiteBox {
+    background-color: #FFFFFF;
+    height: 500px;
+    width: 350px;
+    box-sizing: border-box;
+    border-radius: 25px;
+    border: 3.5px solid #DCD0CE;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+/* login */
+#login {
+    color: #000000;
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    font-size: xx-large;
+    font-weight: bolder;
+    padding-top: 70px;
+}
+
+/* input cell */
+input {
+    width: 200px;
+    border: 0;
+    outline: 0;
+    border-bottom: 2px solid #d9dcdc;
+    padding: 10px 10px;
+    font-family: "Noto Sans", sans-serif;
+}
+
+/* input behavior: changes color of bg from trasparent to grey*/
+input:focus {
+    border: 0;
+    outline: 0;
+    border-bottom: 2px solid #d9dcdc;
+    background: #ECEEEE;
+}
+
+/* reset of submit, deletes forms of username and psw when clicked submit */
+input[type = "reset"] {
+    background: #f6e27d;
+    font-family: "Noto Sans", sans-serif;
+    font-weight: bolder;
+    border-radius: 25px;
+}
+
+/* link of signup page, do not change color when clicked or not*/
+a:link, a:visited {
+    text-align: center;
+    font-family: "Poppins", sans-serif;
+    font-size: x-small;
+}
