@@ -32,7 +32,7 @@ body {
     font-family: "Poppins", sans-serif;
     font-size: xx-large;
     font-weight: bolder;
-    padding-top: 70px;
+    padding-top: 50px;
 }
 
 /* input cell */
@@ -68,3 +68,47 @@ a:link, a:visited {
     font-family: "Poppins", sans-serif;
     font-size: x-small;
 }
+
+
+/* error message */
+input[type = "error"] {
+    color: #b21414;
+    font-weight: bold;
+    background: #f1dede;
+    border-radius: 5px;
+    width: 200px;
+    border: 0;
+    outline: 0;
+    text-align: center;
+    font-family: "Noto Sans", sans-serif;
+}
+
+/* message */
+input[type = "message"] {
+    color: #300c8a;
+    font-weight: bold;
+    width: 200px;
+    border: 0;
+    outline: 0;
+    padding: 10px 10px;
+    text-align: center;
+    font-family: "Noto Sans", sans-serif;
+}
+
+
+/* box white */
+.whiteBoxBig {
+    background-color: #FFFFFF;
+    height: 80vh;;
+    width: 100vw;
+    box-sizing: border-box;
+    border-radius: 25px;
+    border: 3.5px solid #DCD0CE;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
