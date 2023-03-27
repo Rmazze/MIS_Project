@@ -2,7 +2,7 @@ import serial
 import time
 import sys
 
-ser = serial.Serial('COM3', 115200, timeout=1)
+ser = serial.Serial('COM5', 115200, timeout=1)
 time.sleep(2)
 
 try:

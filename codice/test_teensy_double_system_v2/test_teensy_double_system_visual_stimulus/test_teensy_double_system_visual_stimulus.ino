@@ -1,6 +1,9 @@
 #define hand_sens_sx 11
 #define hand_sens_dx 12
 
+#define hand_in_position_sx 36
+#define hand_in_position_dx 35
+
 #define ready_button 24
 #define reset_button 25
 
@@ -22,8 +25,11 @@ bool test_ready_state = HIGH;
 bool visual_stimulus_led_state_sx = LOW;
 bool visual_stimulus_led_state_dx = LOW;
 
-bool magnet_state_sx = HIGH;
-bool magnet_state_dx = HIGH;
+bool glove_state_sx = HIGH;
+bool glove_state_dx = HIGH;
+
+bool hand_in_position_state_sx = HIGH;
+bool hand_in_position_state_dx = HIGH; 
 
 bool ready_button_reading;
 bool ready_button_state;             // the current reading from the input pin
@@ -65,6 +71,9 @@ void setup() {
   pinMode(led_stop, OUTPUT);
   pinMode(hand_sens_sx, INPUT_PULLUP);
   pinMode(hand_sens_dx, INPUT_PULLUP);
+
+  pinMode(hand_in_position_sx, INPUT);
+  pinMode(hand_in_position_dx, INPUT);
   
   pinMode(ready_button, INPUT);
   pinMode(reset_button, INPUT);
@@ -74,8 +83,8 @@ void setup() {
   pinMode(magnet_dx, OUTPUT);
 
   digitalWrite(ready_led, test_ready_state);
-  digitalWrite(magnet_sx, magnet_state_sx);
-  digitalWrite(magnet_dx, magnet_state_dx);
+  digitalWrite(magnet_sx, glove_state_sx);
+  digitalWrite(magnet_dx, glove_state_dx);
   digitalWrite(led_start, led_start_state);
   digitalWrite(led_stop, led_stop_state); 
   digitalWrite(visual_stimulus_led_sx, visual_stimulus_led_state_sx);
@@ -87,61 +96,98 @@ void setup() {
 
 void loop() {
   switch(program_execution_state){
-    case(0):  Serial.println("Case 0: ");
-              ready_button_reading = digitalRead(ready_button);
-              if (ready_button_reading != last_ready_button_state){
-                // reset the debouncing timer
-                last_debounce_time_ready = millis();
-              }
+    case(0):  hand_in_position_state_sx = digitalRead(hand_in_position_sx);
+              hand_in_position_state_dx = digitalRead(hand_in_position_dx);
+              if ((hand_in_position_sx == LOW) && (hand_in_position_dx == LOW)){
+                ready_button_reading = digitalRead(ready_button);
+                if (ready_button_reading != last_ready_button_state){
+                  // reset the debouncing timer
+                  last_debounce_time_ready = millis();
+                }
 
-              if ((millis() - last_debounce_time_ready) > debounce_delay){
-                if (ready_button_reading != ready_button_state){
-                  ready_button_state = ready_button_reading;
+                if ((millis() - last_debounce_time_ready) > debounce_delay){
+                  if (ready_button_reading != ready_button_state){
+                    ready_button_state = ready_button_reading;
 
-                  // only toggle if the new button state is HIGH
-                  if (ready_button_state == HIGH){
-                    test_time_ready = millis();
-                    randomSeed(millis());
-                    rand_time = random(5000, 10000);
-                    test_type = random(0, 3);
-                    Serial.println("Test type: " + String(test_type));
-                    switch(test_type){
-                      case(0): ongoing_test_sx = HIGH; break;
-                      case(1): ongoing_test_dx = HIGH; break;
-                      case(2): ongoing_test_sx = HIGH; ongoing_test_dx = HIGH; break;
-                      default: ongoing_test_sx = LOW; ongoing_test_dx = LOW;
+                    // only toggle if the new button state is HIGH
+                    if (ready_button_state == HIGH){
+                      test_time_ready = millis();
+                      randomSeed(millis());
+                      rand_time = random(5000, 10000);
+                      test_type = random(0, 3);
+                      Serial.println("Test type: " + String(test_type));
+                      switch(test_type){
+                        case(0): ongoing_test_sx = HIGH; break;
+                        case(1): ongoing_test_dx = HIGH; break;
+                        case(2): ongoing_test_sx = HIGH; ongoing_test_dx = HIGH; break;
+                        default: ongoing_test_sx = LOW; ongoing_test_dx = LOW;
+                      }
+                      test_ready_state = LOW;
+                      program_execution_state = 1;
                     }
-                    test_ready_state = LOW;
-                    program_execution_state = 1;
                   }
                 }
+                last_ready_button_state = ready_button_reading;
+                // save the reading. Next time through the loop, it'll be the lastButtonState:
               }
-              // save the reading. Next time through the loop, it'll be the lastButtonState:
-              last_ready_button_state = ready_button_reading;
+              else{test_ready_state = HIGH;
+                  ongoing_test_sx = LOW;
+                  ongoing_test_dx = LOW;
+                  test_time_ready = 0;
+                  
+                  //turn on all leds as allarm signal
+                  //don't use variables but directly turn on leds
+                  digitalWrite(ready_led, HIGH);
+                  digitalWrite(led_start, HIGH);
+                  digitalWrite(led_stop, HIGH);
+                  digitalWrite(visual_stimulus_led_sx, HIGH);
+                  digitalWrite(visual_stimulus_led_dx, HIGH);
+              }
               break;
-    case(1): Serial.println("Case 1: "); 
-             if ((millis() - test_time_ready) >= rand_time){
+    case(1):  if ((millis() - test_time_ready) >= rand_time){
                 switch(test_type){
                   case(0): visual_stimulus_led_state_sx = HIGH; 
-                           magnet_state_sx = LOW;
+                           glove_state_sx = LOW;
                            break;
                   case(1): visual_stimulus_led_state_dx = HIGH; 
-                           magnet_state_dx = LOW;
+                           glove_state_dx = LOW;
                            break;
                   case(2): visual_stimulus_led_state_sx = HIGH;
                            visual_stimulus_led_state_dx = HIGH;  
-                           magnet_state_sx = LOW;
-                           magnet_state_dx = LOW;
+                           glove_state_sx = LOW;
+                           glove_state_dx = LOW;
                            break;
                   default: visual_stimulus_led_state_sx = LOW;
                            visual_stimulus_led_state_dx = LOW;  
-                           magnet_state_sx = HIGH;
-                           magnet_state_dx = HIGH;
+                           glove_state_sx = HIGH;
+                           glove_state_dx = HIGH;
                            break;
                 }
                 program_execution_state = 2;
                 test_time_start = millis();
                 led_start_state = HIGH;
+              }
+
+              hand_in_position_state_sx = digitalRead(hand_in_position_sx);
+              hand_in_position_state_dx = digitalRead(hand_in_position_dx);
+              if ((hand_in_position_sx == HIGH) && (hand_in_position_dx == HIGH)){
+                glove_state_sx = HIGH;
+                glove_state_dx = HIGH;
+                led_start_state = LOW;
+                led_stop_state = LOW;
+                show_results = HIGH;
+                test_ready_state = HIGH;
+                visual_stimulus_led_state_sx = LOW;
+                visual_stimulus_led_state_dx = LOW;
+                program_execution_state = 0;
+                ongoing_test_sx = LOW;
+                ongoing_test_dx = LOW;
+                test_time_ready = 0;
+                test_time_start = 0;
+                test_time_end_sx = 0;
+                test_time_end_dx = 0;
+                test_elapsed_time_sx = 0;
+                test_elapsed_time_dx = 0;
               }
     
               reset_button_reading = digitalRead(reset_button);
@@ -156,8 +202,8 @@ void loop() {
 
                   // only toggle if the new button state is HIGH
                   if (reset_button_state == HIGH){
-                    magnet_state_sx = HIGH;
-                    magnet_state_dx = HIGH;
+                    glove_state_sx = HIGH;
+                    glove_state_dx = HIGH;
                     led_start_state = LOW;
                     led_stop_state = LOW;
                     show_results = HIGH;
@@ -179,8 +225,7 @@ void loop() {
               // save the reading. Next time through the loop, it'll be the lastButtonState:
               last_reset_button_state = reset_button_reading;
               break;
-    case(2):  Serial.println("Case 2: ");
-              if ((millis() - test_time_start) >= stimuly_duration){
+    case(2):  if ((millis() - test_time_start) >= stimuly_duration){
                 switch(test_type){
                   case(0): visual_stimulus_led_state_sx = LOW; break;
                   case(1): visual_stimulus_led_state_dx = LOW; break;
@@ -216,8 +261,8 @@ void loop() {
 
                   // only toggle if the new button state is HIGH
                   if (reset_button_state == HIGH){
-                    magnet_state_sx = HIGH;
-                    magnet_state_dx = HIGH;
+                    glove_state_sx = HIGH;
+                    glove_state_dx = HIGH;
                     led_start_state = LOW;
                     led_stop_state = LOW;
                     show_results = HIGH;
@@ -239,8 +284,7 @@ void loop() {
               // save the reading. Next time through the loop, it'll be the lastButtonState:
               last_reset_button_state = reset_button_reading;
               break;
-    case(3):  Serial.println("Case 3: ");
-              reset_button_reading = digitalRead(reset_button);
+    case(3):  reset_button_reading = digitalRead(reset_button);
               if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
                 visual_stimulus_led_state_sx = LOW;
                 visual_stimulus_led_state_dx = LOW;
@@ -266,8 +310,8 @@ void loop() {
 
                   // only toggle if the new button state is HIGH
                   if (reset_button_state == HIGH){
-                    magnet_state_sx = HIGH;
-                    magnet_state_dx = HIGH;
+                    glove_state_sx = HIGH;
+                    glove_state_dx = HIGH;
                     led_start_state = LOW;
                     led_stop_state = LOW;
                     show_results = HIGH;
@@ -289,8 +333,7 @@ void loop() {
               // save the reading. Next time through the loop, it'll be the lastButtonState:
               last_reset_button_state = reset_button_reading;
               break;
-    case(4):  Serial.println("Case 4: ");
-              switch(test_type){
+    case(4):  switch(test_type){
                 case(0): test_elapsed_time_sx = test_time_end_sx - test_time_start; break;
                 case(1): test_elapsed_time_dx = test_time_end_dx - test_time_start; break;
                 case(2): test_elapsed_time_sx = test_time_end_sx - test_time_start; 
@@ -319,8 +362,8 @@ void loop() {
 
                   // only toggle if the new button state is HIGH
                   if (reset_button_state == HIGH){
-                    magnet_state_sx = HIGH;
-                    magnet_state_dx = HIGH;
+                    glove_state_sx = HIGH;
+                    glove_state_dx = HIGH;
                     led_start_state = LOW;
                     led_stop_state = LOW;
                     show_results = HIGH;
@@ -342,8 +385,7 @@ void loop() {
               // save the reading. Next time through the loop, it'll be the lastButtonState:
               last_reset_button_state = reset_button_reading;
               break;
-    default:  Serial.println("Case default: ");
-              test_ready_state = HIGH;
+    default:  test_ready_state = HIGH;
               led_start_state = HIGH;
               led_stop_state = HIGH;
 
@@ -359,8 +401,8 @@ void loop() {
 
                   // only toggle if the new button state is HIGH
                   if (reset_button_state == HIGH){
-                    magnet_state_sx = HIGH;
-                    magnet_state_dx = HIGH;
+                    glove_state_sx = HIGH;
+                    glove_state_dx = HIGH;
                     led_start_state = LOW;
                     led_stop_state = LOW;
                     show_results = HIGH;
@@ -383,8 +425,8 @@ void loop() {
               last_reset_button_state = reset_button_reading;
   }
   digitalWrite(ready_led, test_ready_state);
-  digitalWrite(magnet_sx, magnet_state_sx);
-  digitalWrite(magnet_dx, magnet_state_dx);
+  digitalWrite(magnet_sx, glove_state_sx);
+  digitalWrite(magnet_dx, glove_state_dx);
   digitalWrite(led_start, led_start_state);
   digitalWrite(led_stop, led_stop_state); 
   digitalWrite(visual_stimulus_led_sx, visual_stimulus_led_state_sx);
