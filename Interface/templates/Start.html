@@ -3,121 +3,37 @@
         <title>TTR - Training Tool Reaction</title>
         <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
         <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
-        <!-- <script type="text/javascript" src="processing.js"></script>-->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+        <script src = "https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
         <center>
-            <a id = "logout" href = "/" title = "Log out">Log Out </a>
-
-        
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Graphs" href = "{{ url_for('charts', usr=usr) }}">Charts</a>
+                        
+                        <a title = "Questionnaire" href = "/Questionnaire">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
 
             <div class = "whiteBoxBig">
-            <h1 id = "title">Training Tool for Reaction Time</h1>
-            <h1 id = "sent">Hello {{usr}}, It's nice to have you here! </h1>
+                <h1 id = "title">Training Tool for Reaction Time</h1>
+                <h1 id = "sent">Hello {{usr}}, It's nice to have you here! </h1>
 
-            <br><br><br>
-            <form action="/Trial" method = "POST">
-            <input type = "submit" id = "newTrial" value = "Start new Trial" /> 
-            </form>
-
-            <!-- TODO add processing! -->
-
-
-             <!-- Prove per il request form! -->
-            <form action="/StartOr" method = "POST" name = "mycars">
-                <label>Your Cars Name: </label>
-                <input list="cars">
-                <datalist id="cars">
-                    <option value="BMW" />
-                    <option value="Bentley" />
-                    <option value="Mercedes" />
-                    <option value="Audi" />
-                    <option value="Volkswagen" />
-                </datalist>
                 <br><br><br>
-                
-                <input type = "submit" id = "btnSmt" value = "submit" /> 
-            </form>
+
+                <form action = "/Trial" method = "POST">
+                    <input type = "submit" id = "newTrial" value = "Start new Trial" /> 
+                </form>
 
 
-            <!-- line chart -->
-            <div class="chartBox1">
-                <canvas id="mylineChart"></canvas>
-            </div>
-      
-            <!-- bar chart -->
-            <div class="chartBox2">
-                <canvas id="mybarChart"></canvas>
-            </div>
-    
-            <!-- charts script -->
-            <script>
-
-                // line chart
-                const labels = {{ labels | tojson}};
-         
-                const data = {
-                    labels: labels,
-                    datasets: [{
-                        label: {{ chart_label | tojson }},
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data: {{ data | tojson}},
-                    }]
-                };
-         
-                const config = {
-                    type: 'line',
-                    data: data,
-                    options: { maintainAspectRatio: false }
-                };
-         
-                const mylineChart = new Chart(
-                    document.getElementById('mylineChart'),
-                    config
-                );
-
-
-                // bar chart
-                const labels_bar = {{ labels | tojson}};
-         
-                const data_bar = {
-                    labels: labels,
-                    datasets: [{
-                        label: {{ chart_label | tojson }},
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data: {{ data_bar | tojson}},
-                    }]
-                };
-         
-                const config_bar = {
-                    type: 'bar',
-                    data: data_bar,
-                    options: { maintainAspectRatio: false,
-                        scales: { 
-                            x: { 
-                                labels: {{ labels | tojson}} },
-                            x2: { 
-                                labels: ["a", "b"]},
-                        }}
-                };
-         
-                const mybarChart = new Chart(
-                    document.getElementById('mybarChart'),
-                    config_bar
-                );
-         
-            </script>
-
-          
-  
-
-
+                <!-- TODO add processing! -->
+                <script usr = {{usr}} ></script>
             </div> 
         </center>
     </body>
 </html>
-
