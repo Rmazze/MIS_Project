@@ -12,27 +12,18 @@
                 <div class = "hoverMenu">
                     <img src = "/static/Menu.png" class = "sandwich">
                     <div class = "hoverMenu-content">
-                        <a title = "Graphs" href = "{{ url_for('charts', usr=usr) }}">Charts</a>
-                        <a title = "Questionnaire" href = "/Questionnaire">Questionnaire</a>
+                        <a title = "Trial" href = "{{ url_for('trialLogin', usr=usr) }}">Trial</a>
+                        <a title = "Charts" href = "{{ url_for('charts', usr=usr) }}">Charts</a>
                         <a title = "Log out" href = "/">Log Out</a>
                     </ul>
                 </div>
             </header>
 
-            <div class = "whiteBoxBig">
-                <h1 id = "title">Training Tool for Reaction Time</h1>
-                <h1 id = "sent">Hello {{usr}}, It's nice to have you here! </h1>
+    
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfy9vzmP-scXbue-v8g8G26fwXEV3rUmRnhqMv53aj4JNMOEA/viewform?embedded=true" width="800" height="10000" frameborder="0" marginheight="0" marginwidth="0">Caricamento…</iframe>
+       
 
-                <br><br><br>
-
-                <form action = "/Trial" method = "POST">
-                    <input type = "submit" id = "newTrial" value = "Start new Trial" /> 
-                </form>
-
-
-                <!-- TODO add processing! -->
-                <script usr = {{usr}} ></script>
-            </div> 
+            <script usr = {{usr}} ></script>
         </center>
     </body>
 </html>

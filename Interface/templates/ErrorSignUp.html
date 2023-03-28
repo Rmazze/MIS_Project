@@ -13,7 +13,7 @@
             <div class = "whiteBox">
                 <h1 id = "login">Sign Up</h1>
                 <br>
-                <form action="/Main" method = "POST">
+                <form action="/Login" method = "POST">
                     <input type = "error" id = "error" value = "{{ err_msg }}" readonly /> 
                     <br><br><br>
                     <input type = "text" id = "txtUsn" placeholder = "Username" name = "Username" />
@@ -21,6 +21,8 @@
                     <input type = "password" id = "txtPsw" placeholder = "Password" name = "Password" />
                     <br><br><br>
                     <input type = "submit" id = "btnSmt" value = "submit" /> 
+                    <br><br><br>
+                    <a href = "/" title = "Login">Login</a>
                 </form>
             </div>
         </center>
