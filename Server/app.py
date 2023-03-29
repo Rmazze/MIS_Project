@@ -2,6 +2,11 @@ from flask import Flask, render_template
 from markupsafe import escape
 #import RPi.GPIO as GPIO
 app = Flask(__name__)
+import argparse
+import random
+import time
+
+from pythonosc import udp_client
 
 #GPIO.setmode(GPIO.BCM)  # Sets up the RPi lib to use the Broadcom pin mappings
                         #  for the pin names. This corresponds to the pin names
@@ -10,6 +15,8 @@ app = Flask(__name__)
 #GPIO.setwarnings(False) # Turn off warnings in the CLI
 
 #GPIO.setup(2, GPIO.OUT) #GPIO2 ==> output
+
+client = ""
 
 @app.route('/')
 def index():
@@ -49,3 +56,19 @@ def about():
 def setPinLevel(id, level):
     GPIO.output(int(id), int(level)) # messo int solo per giocare coi pin
     return "OK"
+
+def ClientPD():
+  print('MyFlaskApp is starting up!')
+  client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+
+
+class PiApp(Flask):
+  def run(self, host=None, port=None, debug=None, load_dotenv=True, **options):
+    if not self.debug or os.getenv('WERKZEUG_RUN_MAIN') == 'true':
+      with self.app_context():
+        ClientPD()
+    super(PiApp, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
+
+
+app = PiApp(__name__)
+app.run()

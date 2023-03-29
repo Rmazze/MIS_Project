@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import csv
+import random
+import time
+
+from pythonosc import udp_client
 
 app = Flask(__name__)
 
@@ -64,5 +68,19 @@ def start():
 #@app.route('/mettinomecheserve/', methods = ["POST", "GET"])
 #def mettinomecheservecoerente()
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+def ClientPD():
+  print('MyFlaskApp is starting up!')
+  global client
+  client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+
+
+class PiApp(Flask):
+    def run(self, host=None, port=None, debug=None, load_dotenv=True, **options):
+        if not self.debug or os.getenv('WERKZEUG_RUN_MAIN') == 'true':
+            with self.app_context():
+                ClientPD()
+        super(PiApp, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
+
+
+app = PiApp(__name__)
+app.run()
