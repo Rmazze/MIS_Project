@@ -46,7 +46,6 @@ def questionnaire():
 @app.route('/Trial/', methods = ["POST", "GET"])
 def trialLogin():
     
-    print("fin qua siamo arrivati")
     # cannot be access directly
     if request.method == 'GET':
         # take usr
@@ -147,7 +146,7 @@ def charts():
 
     try:
         # read database
-        df = pd.read_csv('database/results2.csv', sep = ";")
+        df = pd.read_csv('database/results.csv', sep = ";")
 
         # check is usr has already done trials
         #if df[df["Username"] == usr].empty == False:
