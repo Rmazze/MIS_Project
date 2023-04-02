@@ -3,6 +3,8 @@
 
 #define hand_in_position_sx 36
 #define hand_in_position_dx 35
+#define hand_in_position_sx_led 38
+#define hand_in_position_dx_led 37
 
 #define ready_button 24
 #define reset_button 25
@@ -74,6 +76,8 @@ void setup() {
 
   pinMode(hand_in_position_sx, INPUT);
   pinMode(hand_in_position_dx, INPUT);
+  pinMode(hand_in_position_sx_led, OUTPUT);
+  pinMode(hand_in_position_dx_led, OUTPUT);
   
   pinMode(ready_button, INPUT);
   pinMode(reset_button, INPUT);
@@ -95,16 +99,15 @@ void setup() {
 }
 
 void loop() {
+  hand_in_position_state_sx = digitalRead(hand_in_position_sx);
+  hand_in_position_state_dx = digitalRead(hand_in_position_dx);
   switch(program_execution_state){
     case(0):  //Serial.println("Case 0: ");
-              hand_in_position_state_sx = digitalRead(hand_in_position_sx);
-              hand_in_position_state_dx = digitalRead(hand_in_position_dx);
               if ((hand_in_position_state_sx == LOW) && (hand_in_position_state_dx == LOW)){
                 led_start_state = LOW;
                 led_stop_state = LOW;
                 visual_stimulus_led_state_sx = LOW;
                 visual_stimulus_led_state_dx = LOW;
-                Serial.println("Inside this if: ");
                 program_execution_state = 1;
               }      
               break;    
@@ -140,10 +143,11 @@ void loop() {
               last_ready_button_state = ready_button_reading;
 
               //check hands in position
-              hand_in_position_state_sx = digitalRead(hand_in_position_sx);
-              hand_in_position_state_dx = digitalRead(hand_in_position_dx);
-              if ((hand_in_position_state_sx == HIGH) && (hand_in_position_state_dx == HIGH)){
+              //hand_in_position_state_sx = digitalRead(hand_in_position_sx);
+              //hand_in_position_state_dx = digitalRead(hand_in_position_dx);
+              if ((hand_in_position_state_sx == HIGH) || (hand_in_position_state_dx == HIGH)){
                 program_execution_state = -1;
+                Serial.println("Hands not in position: ");
               }
     
               //reset code
@@ -193,10 +197,9 @@ void loop() {
               }
 
               //check hands in position
-              hand_in_position_state_sx = digitalRead(hand_in_position_sx);
-              hand_in_position_state_dx = digitalRead(hand_in_position_dx);
-              if ((hand_in_position_sx == HIGH) && (hand_in_position_dx == HIGH)){
+              if ((hand_in_position_state_sx == HIGH) || (hand_in_position_state_dx == HIGH)){
                 program_execution_state = -1;
+                Serial.println("Hands not in position: ");
               }
     
               //reset code
@@ -365,4 +368,6 @@ void loop() {
   digitalWrite(led_stop, led_stop_state); 
   digitalWrite(visual_stimulus_led_sx, visual_stimulus_led_state_sx);
   digitalWrite(visual_stimulus_led_dx, visual_stimulus_led_state_dx);
+  digitalWrite(hand_in_position_sx_led, (1-hand_in_position_state_sx));
+  digitalWrite(hand_in_position_dx_led, (1-hand_in_position_state_dx));
 }
