@@ -8,7 +8,19 @@
     </head>
     <body>
         <center>
-            <a id = "logout" href = "/" title = "Log out">Log Out </a>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Trial" href = "{{ url_for('trialLogin', usr=usr) }}">Trial</a>
+                        <a title = "Questionnaire" href = "/Questionnaire">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+            <script usr = {{usr}} ></script>
 
             <div class = "whiteBoxBig">
             <h1 id = "title">Charts</h1>
@@ -45,8 +57,8 @@
                     labels: allTime_line_labels,
                     datasets: [{
                         label: "Reaction Time Chart",
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: '#b30c3b',
+                        borderColor: '#b30c3b',
                         data: {{ allTime_rt_data | tojson}},
                     }]
                 };
@@ -70,8 +82,8 @@
                     labels: allTime_bar_labels,
                     datasets: [{
                         label: "Catch Chart",
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: '#b30c3b',
+                        borderColor: '#b30c3b',
                         data: {{ allTime_c_data | tojson}},
                     }]
                 };
@@ -87,8 +99,12 @@
                     document.getElementById('allTimeBarChart'),
                     allTime_bar_config
                 );
+
+               
          
             </script>
+
+
 
         </center>
     </body>
