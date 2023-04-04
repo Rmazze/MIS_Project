@@ -1,62 +1,62 @@
-#N canvas -149 119 1920 1026 12;
-#X obj 1944 477 r decay;
-#X floatatom 1931 505 5 0 0 0 - - - 0;
-#X obj 510 1008 294;
-#N canvas -8 0 1920 966 SadMel 0;
+#N canvas 456 -24 1920 966 12;
+#X obj 510 948 294;
+#X obj 308 -5 cnv 15 500 500 empty empty empty 20 12 0 14 #fcfcc4 #404040 0;
+#X text 337 10 Receiver;
+#X obj 344 79 mrpeach/unpackOSC;
+#X floatatom 344 161 5 0 0 0 - - - 0;
+#X obj 560 199 print warning_message_not_routed;
+#X obj 508 189 tgl 30 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000 0 1;
+#X obj 344 53 netreceive -u -b 5005;
+#X obj 344 119 mrpeach/routeOSC /x_state;
+#X obj 325 197 print x_state;
+#X obj 465 238 s x_state;
+#X obj 17 -5 cnv 19 250 150 empty empty empty 20 12 0 12 #c6feff #404040 0;
+#X msg 33 87 \; pd dsp \$1;
+#X obj 33 15 tgl 30 0 empty empty empty 17 7 0 10 #9c9c9c #000000 #000000 0 1;
+#X obj 42 67 s global_volume_fade;
+#X text 73 20 <-Click to start/stop DSP;
+#X obj 859 -5 cnv 19 1000 400 empty empty empty 20 12 0 12 #ffe3c6 #404040 0;
+#N canvas 1916 0 1920 966 SadMel 0;
 #X text 21 220 Every 650 perform next sound;
-#X obj 20 246 cnv 19 600 500 empty empty empty 20 12 0 12 #ffe3c6 #404040
-0;
+#X obj 20 246 cnv 19 600 500 empty empty empty 20 12 0 12 #ffe3c6 #404040 0;
 #X obj 277 261 loadbang;
 #X floatatom 277 330 5 0 0 0 - - - 0;
-#X obj 184 315 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000
-#000000 0 1;
+#X obj 184 315 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 113 356 sel 0;
-#X obj 113 395 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 113 395 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 33 355 loadbang;
 #X msg 113 432 -1;
 #X obj 185 476 int 1;
 #X obj 256 505 + 1;
 #X obj 185 611 sel 1;
-#X obj 185 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 185 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 185 688 s One;
-#X obj 250 653 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 311 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 250 653 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 311 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 250 612 sel 2;
 #X obj 311 611 sel 3;
 #X obj 250 689 s Two;
 #X obj 311 688 s Three;
-#X obj 184 415 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 184 415 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 185 575 5 0 0 0 - - - 0;
 #X text 47 396 reset;
 #X text 342 357 counter;
 #X msg 277 291 650;
-#X obj 380 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 380 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 380 611 sel 4;
 #X obj 380 688 s Four;
-#X obj 438 650 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 438 650 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 438 609 sel 5;
 #X obj 1063 770 *~;
-#X obj 953 44 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040
-0;
+#X obj 953 44 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040 0;
 #X floatatom 1185 239 5 0 0 0 - - - 0;
-#X obj 1185 101 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1185 101 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 1478 241 5 0 0 0 - - - 0;
-#X obj 1478 104 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1478 104 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 1608 241 5 0 0 0 - - - 0;
-#X obj 1608 104 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1608 104 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 1743 240 5 0 0 0 - - - 0;
-#X obj 1743 102 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1743 102 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X msg 1185 78 300;
 #X msg 1478 78 100;
 #X msg 1608 78 150;
@@ -68,8 +68,7 @@
 #X obj 1419 78 loadbang;
 #X obj 1548 77 loadbang;
 #X obj 1687 77 loadbang;
-#X obj 1036 103 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1036 103 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 978 80 loadbang;
 #X obj 1185 289 s attack;
 #X obj 1478 285 s decay;
@@ -81,8 +80,7 @@
 #X obj 1239 318 r peak_level;
 #X obj 1335 353 *;
 #X obj 1329 318 t b f;
-#X obj 1330 101 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1330 101 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 1272 78 loadbang;
 #X floatatom 1330 261 5 0 0 0 - - - 0;
 #X obj 1330 238 / 100;
@@ -99,8 +97,7 @@
 #X obj 1202 516 r peak_level;
 #X obj 1040 720 vline~;
 #X msg 1041 664 \$2 \$3 \, \$4 \$5 \$3 \, 0 \$6 \$7;
-#X obj 1042 546 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#X obj 1042 546 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000;
 #X obj 1359 517 r sustain_level;
 #X floatatom 1359 546 5 0 0 0 - - - 0;
 #X floatatom 1472 545 4 0 0 0 - - - 0;
@@ -118,18 +115,13 @@
 #X floatatom 1760 444 5 0 0 0 - - - 0;
 #X floatatom 1630 571 5 0 0 0 - - - 0;
 #X obj 1630 544 +;
-#X text 1377 659 peak level \, attack sustain level \, decay \, delay
-(=attack time) release level (=0) release \, delay (=attack + decay
-+ sustain), f 62;
-#X text 1629 602 compute delay for the release \, i.e. sum of attack
-\, decay \, sustain, f 35;
+#X text 1377 659 peak level \, attack sustain level \, decay \, delay (=attack time) release level (=0) release \, delay (=attack + decay + sustain), f 62;
+#X text 1629 602 compute delay for the release \, i.e. sum of attack \, decay \, sustain, f 35;
 #X msg 1135 685 1 300 \, 0.7 100 300 \, 0 100 550;
 #X text 949 23 sound envelope;
-#X obj 636 345 cnv 19 300 400 empty empty empty 20 12 0 12 #c6feff
-#404040 0;
+#X obj 636 345 cnv 19 300 400 empty empty empty 20 12 0 12 #c6feff #404040 0;
 #X obj 653 353 r One;
-#X obj 653 389 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 653 389 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 655 444 5 0 0 0 - - - 0;
 #X obj 654 615 osc~;
 #X floatatom 792 583 5 0 0 0 - - - 0;
@@ -138,14 +130,11 @@
 #X floatatom 871 583 5 0 0 0 - - - 0;
 #X obj 871 621 osc~;
 #X obj 868 551 * 3;
-#X obj 714 390 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 714 390 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 740 440 5 0 0 0 - - - 0;
-#X obj 801 385 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 801 385 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 803 445 5 0 0 0 - - - 0;
-#X obj 881 388 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 881 388 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 883 441 5 0 0 0 - - - 0;
 #X obj 713 353 r Two;
 #X obj 801 349 r Three;
@@ -300,58 +289,43 @@
 #X connect 135 0 118 0;
 #X connect 136 0 116 0;
 #X connect 137 0 88 0;
-#X restore 1392 351 pd SadMel;
-#X obj 1392 316 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 1514 318 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#N canvas -223 61 1920 966 HappyMel 0;
+#X restore 1348 302 pd SadMel;
+#X obj 1348 267 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 1470 269 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#N canvas -102 6 1920 966 HappyMel 0;
 #X text 21 220 Every 650 perform next sound;
-#X obj 20 246 cnv 19 600 500 empty empty empty 20 12 0 12 #ffe3c6 #404040
-0;
+#X obj 20 246 cnv 19 600 500 empty empty empty 20 12 0 12 #ffe3c6 #404040 0;
 #X obj 277 261 loadbang;
 #X floatatom 277 330 5 0 0 0 - - - 0;
 #X obj 184 355 metro;
-#X obj 184 315 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000
-#000000 0 1;
+#X obj 184 315 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 113 356 sel 0;
-#X obj 113 395 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 113 395 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 33 355 loadbang;
 #X msg 113 432 -1;
 #X obj 185 476 int 1;
 #X obj 256 505 + 1;
 #X obj 185 611 sel 1;
-#X obj 185 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 250 653 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 311 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 185 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 250 653 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 311 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 250 612 sel 2;
 #X obj 311 611 sel 3;
-#X obj 184 415 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 184 415 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 185 575 5 0 0 0 - - - 0;
 #X text 47 396 reset;
 #X text 342 357 counter;
-#X obj 380 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 380 652 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 380 611 sel 4;
-#X obj 438 650 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 438 650 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 438 609 sel 5;
-#X obj 491 649 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 549 651 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 491 649 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 549 651 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 561 687 s Bell;
 #X obj 491 608 sel 6;
 #X obj 549 610 sel 7;
-#X obj 639 472 cnv 19 150 275 empty empty empty 20 12 0 12 #c6ffc7
-#404040 0;
-#X obj 648 522 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 639 472 cnv 19 150 275 empty empty empty 20 12 0 12 #c6ffc7 #404040 0;
+#X obj 648 522 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 648 651 *~ 0.5;
 #X obj 649 701 dac~;
 #X obj 648 606 readsf~;
@@ -359,20 +333,15 @@
 #X obj 648 478 r Bell;
 #X text 638 451 bell sound;
 #X obj 1234 771 *~;
-#X obj 1331 57 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff
-#404040 0;
+#X obj 1331 57 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040 0;
 #X floatatom 1563 252 5 0 0 0 - - - 0;
-#X obj 1563 114 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1563 114 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 1856 254 5 0 0 0 - - - 0;
-#X obj 1856 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1856 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 1986 254 5 0 0 0 - - - 0;
-#X obj 1986 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1986 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 2121 253 5 0 0 0 - - - 0;
-#X obj 2121 115 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 2121 115 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X msg 1856 91 100;
 #X text 1560 68 Attack;
 #X text 1852 67 Decay;
@@ -382,8 +351,7 @@
 #X obj 1797 91 loadbang;
 #X obj 1926 90 loadbang;
 #X obj 2065 90 loadbang;
-#X obj 1414 116 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1414 116 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 1356 93 loadbang;
 #X obj 1563 302 s attack;
 #X obj 1856 298 s decay;
@@ -395,8 +363,7 @@
 #X obj 1617 331 r peak_level;
 #X obj 1713 366 *;
 #X obj 1707 331 t b f;
-#X obj 1708 114 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1708 114 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 1650 91 loadbang;
 #X floatatom 1708 274 5 0 0 0 - - - 0;
 #X obj 1708 251 / 100;
@@ -413,8 +380,7 @@
 #X obj 1580 529 r peak_level;
 #X obj 1418 733 vline~;
 #X msg 1419 677 \$2 \$3 \, \$4 \$5 \$3 \, 0 \$6 \$7;
-#X obj 1420 559 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#X obj 1420 559 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000;
 #X obj 1737 530 r sustain_level;
 #X floatatom 1737 559 5 0 0 0 - - - 0;
 #X floatatom 1850 558 4 0 0 0 - - - 0;
@@ -432,17 +398,12 @@
 #X floatatom 2138 457 5 0 0 0 - - - 0;
 #X floatatom 2008 595 5 0 0 0 - - - 0;
 #X obj 2008 566 +, f 4;
-#X text 1755 672 peak level \, attack sustain level \, decay \, delay
-(=attack time) release level (=0) release \, delay (=attack + decay
-+ sustain), f 62;
-#X text 2007 615 compute delay for the release \, i.e. sum of attack
-\, decay \, sustain, f 35;
+#X text 1755 672 peak level \, attack sustain level \, decay \, delay (=attack time) release level (=0) release \, delay (=attack + decay + sustain), f 62;
+#X text 2007 615 compute delay for the release \, i.e. sum of attack \, decay \, sustain, f 35;
 #X msg 1513 698 1 300 \, 0.7 100 300 \, 0 100 550;
 #X text 1327 36 sound envelope;
-#X obj 807 346 cnv 19 500 400 empty empty empty 20 12 0 12 #c6feff
-#404040 0;
-#X obj 824 390 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 807 346 cnv 19 500 400 empty empty empty 20 12 0 12 #c6feff #404040 0;
+#X obj 824 390 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 826 445 5 0 0 0 - - - 0;
 #X obj 825 616 osc~;
 #X floatatom 963 584 5 0 0 0 - - - 0;
@@ -451,14 +412,11 @@
 #X floatatom 1042 584 5 0 0 0 - - - 0;
 #X obj 1042 622 osc~;
 #X obj 1039 552 * 3;
-#X obj 885 391 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 885 391 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 911 441 5 0 0 0 - - - 0;
-#X obj 972 386 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 972 386 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 974 446 5 0 0 0 - - - 0;
-#X obj 1052 389 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 1052 389 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 1054 442 5 0 0 0 - - - 0;
 #X text 811 325 make additive sound;
 #X obj 824 420 294;
@@ -480,11 +438,9 @@
 #X obj 43 706 s start_note_H;
 #X msg 1564 90 200;
 #X msg 277 291 500;
-#X obj 1133 389 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 1133 389 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 1125 440 5 0 0 0 - - - 0;
-#X obj 1203 387 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 1203 387 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X floatatom 1199 448 5 0 0 0 - - - 0;
 #X obj 902 414 330;
 #X obj 442 686 s FiveH;
@@ -496,8 +452,8 @@
 #X obj 1122 416 370;
 #X obj 1202 415 440;
 #X msg 1986 91 50;
-#X obj 1488 456 60;
-#X obj 1609 449 150;
+#X obj 1508 467 60;
+#X obj 1631 451 150;
 #X connect 2 0 144 0;
 #X connect 3 0 4 1;
 #X connect 4 0 18 0;
@@ -664,41 +620,27 @@
 #X connect 159 0 94 0;
 #X connect 160 0 95 0;
 #X connect 160 0 94 0;
-#X restore 1514 350 pd HappyMel;
-#X obj 919 99 unpack s f;
-#X obj 917 131 tgl 30 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
-#X text 919 44 Data from digital sensors;
-#X obj 1392 399 dac~ 1 2;
-#X obj 1515 399 dac~ 1 2;
-#X text 20 543 printando ci sono numeri a caso????? perchè non c'è
-1 o 0 come il led? numeri che si ripetono: print: 108 print: 101 print:
-100 print: 95 print: 115 print: 116 print: 97 print: 116 print: 101
-print: 44 print: 32 print: 48 print: 13 print: 10 ogni volta che cambia
-lo stato questa serie di numeri viene ripetuta (sia da led spento a
-led accceso che viceversa);
-#X obj 1098 280 print;
-#X text 905 339 se printo unpack invece mi dice 1 o 0 a seconda che
-il led sia acceso o spento;
-#X obj 919 65 r x_state;
-#X obj 1276 118 sel 1 2 3 4;
+#X restore 1470 301 pd HappyMel;
+#X obj 875 50 unpack s f;
+#X obj 873 82 tgl 30 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000 0 1;
+#X text 875 -5 Data from digital sensors;
+#X obj 1348 350 dac~ 1 2;
+#X obj 1471 350 dac~ 1 2;
+#X obj 1054 231 print;
+#X obj 875 16 r x_state;
+#X obj 1232 69 sel 1 2 3 4;
 #N canvas 1913 74 1920 966 CueOne 0;
 #X obj 266 827 outlet~;
 #X obj 271 765 *~;
-#X obj 187 31 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040
-0;
+#X obj 187 31 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040 0;
 #X floatatom 419 226 5 0 0 0 - - - 0;
-#X obj 419 88 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 419 88 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 712 228 5 0 0 0 - - - 0;
-#X obj 712 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 712 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 842 228 5 0 0 0 - - - 0;
-#X obj 842 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 842 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 977 227 5 0 0 0 - - - 0;
-#X obj 977 89 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 977 89 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X msg 712 65 100;
 #X text 416 42 Attack;
 #X text 708 41 Decay;
@@ -708,8 +650,7 @@ il led sia acceso o spento;
 #X obj 653 65 loadbang;
 #X obj 782 64 loadbang;
 #X obj 921 64 loadbang;
-#X obj 270 90 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 270 90 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 212 67 loadbang;
 #X obj 419 276 s attack;
 #X obj 712 272 s decay;
@@ -721,8 +662,7 @@ il led sia acceso o spento;
 #X obj 473 305 r peak_level;
 #X obj 569 340 *;
 #X obj 563 305 t b f;
-#X obj 564 88 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 564 88 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 506 65 loadbang;
 #X floatatom 564 248 5 0 0 0 - - - 0;
 #X obj 564 225 / 100;
@@ -739,8 +679,7 @@ il led sia acceso o spento;
 #X obj 419 504 r peak_level;
 #X obj 274 707 vline~;
 #X msg 275 651 \$2 \$3 \, \$4 \$5 \$3 \, 0 \$6 \$7;
-#X obj 276 533 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#X obj 276 533 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000;
 #X obj 593 504 r sustain_level;
 #X floatatom 593 533 5 0 0 0 - - - 0;
 #X floatatom 706 532 4 0 0 0 - - - 0;
@@ -758,22 +697,16 @@ il led sia acceso o spento;
 #X floatatom 994 431 5 0 0 0 - - - 0;
 #X floatatom 864 558 5 0 0 0 - - - 0;
 #X obj 864 531 +;
-#X text 611 646 peak level \, attack sustain level \, decay \, delay
-(=attack time) release level (=0) release \, delay (=attack + decay
-+ sustain), f 62;
-#X text 863 589 compute delay for the release \, i.e. sum of attack
-\, decay \, sustain, f 35;
+#X text 611 646 peak level \, attack sustain level \, decay \, delay (=attack time) release level (=0) release \, delay (=attack + decay + sustain), f 62;
+#X text 863 589 compute delay for the release \, i.e. sum of attack \, decay \, sustain, f 35;
 #X msg 369 672 1 300 \, 0.7 100 300 \, 0 100 550;
 #X text 183 10 sound envelope;
 #X msg 841 65 250;
 #X msg 975 64 200;
-#X obj 22 33 cnv 19 150 160 empty empty empty 20 12 0 12 #feffc6 #404040
-0;
+#X obj 22 33 cnv 19 150 160 empty empty empty 20 12 0 12 #feffc6 #404040 0;
 #X obj 32 55 inlet;
-#X obj 32 100 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 51 658 cnv 19 126 75 empty empty empty 20 12 0 12 #c6feff #404040
-0;
+#X obj 32 100 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 51 658 cnv 19 126 75 empty empty empty 20 12 0 12 #c6feff #404040 0;
 #X obj 72 679 osc~ 440;
 #X text 49 638 frequency;
 #X text 23 10 inlet;
@@ -843,14 +776,12 @@ il led sia acceso o spento;
 #X connect 77 0 1 0;
 #X connect 80 0 4 0;
 #X connect 82 0 49 0;
-#X restore 1676 349 pd CueOne;
+#X restore 1632 300 pd CueOne;
 #N canvas -55 104 1920 966 CueTwo 0;
 #X floatatom 1986 254 5 0 0 0 - - - 0;
-#X obj 1986 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 1986 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 2121 253 5 0 0 0 - - - 0;
-#X obj 2121 115 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 2121 115 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X text 1984 67 Sustain;
 #X text 2116 67 Release;
 #X obj 1926 90 loadbang;
@@ -870,26 +801,20 @@ il led sia acceso o spento;
 #X floatatom 2138 457 5 0 0 0 - - - 0;
 #X floatatom 2008 595 5 0 0 0 - - - 0;
 #X obj 2008 566 +, f 4;
-#X text 2007 615 compute delay for the release \, i.e. sum of attack
-\, decay \, sustain, f 35;
+#X text 2007 615 compute delay for the release \, i.e. sum of attack \, decay \, sustain, f 35;
 #X msg 2120 91 50;
 #X msg 1986 91 50;
 #X obj 266 827 outlet~;
 #X obj 271 765 *~;
-#X obj 187 31 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040
-0;
+#X obj 187 31 cnv 19 950 700 empty empty empty 20 12 0 12 #c7c6ff #404040 0;
 #X floatatom 419 226 5 0 0 0 - - - 0;
-#X obj 419 88 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 419 88 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 712 228 5 0 0 0 - - - 0;
-#X obj 712 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 712 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 842 228 5 0 0 0 - - - 0;
-#X obj 842 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 842 91 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X floatatom 977 227 5 0 0 0 - - - 0;
-#X obj 977 89 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 977 89 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X msg 712 65 100;
 #X text 416 42 Attack;
 #X text 708 41 Decay;
@@ -899,8 +824,7 @@ il led sia acceso o spento;
 #X obj 653 65 loadbang;
 #X obj 782 64 loadbang;
 #X obj 921 64 loadbang;
-#X obj 270 90 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 270 90 vsl 15 128 0 200 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 212 67 loadbang;
 #X obj 419 276 s attack;
 #X obj 712 272 s decay;
@@ -912,8 +836,7 @@ il led sia acceso o spento;
 #X obj 473 305 r peak_level;
 #X obj 569 340 *;
 #X obj 563 305 t b f;
-#X obj 564 88 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc
-#000000 #000000 0 1;
+#X obj 564 88 vsl 15 128 0 100 0 0 empty empty empty 0 -9 0 10 #fcfcfc #000000 #000000 0 1;
 #X obj 506 65 loadbang;
 #X floatatom 564 248 5 0 0 0 - - - 0;
 #X obj 564 225 / 100;
@@ -930,8 +853,7 @@ il led sia acceso o spento;
 #X obj 419 504 r peak_level;
 #X obj 274 707 vline~;
 #X msg 275 651 \$2 \$3 \, \$4 \$5 \$3 \, 0 \$6 \$7;
-#X obj 276 533 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
-#000000 #000000;
+#X obj 276 533 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000 #000000;
 #X obj 593 504 r sustain_level;
 #X floatatom 593 533 5 0 0 0 - - - 0;
 #X floatatom 706 532 4 0 0 0 - - - 0;
@@ -949,22 +871,16 @@ il led sia acceso o spento;
 #X floatatom 994 431 5 0 0 0 - - - 0;
 #X floatatom 864 558 5 0 0 0 - - - 0;
 #X obj 864 531 +;
-#X text 611 646 peak level \, attack sustain level \, decay \, delay
-(=attack time) release level (=0) release \, delay (=attack + decay
-+ sustain), f 62;
-#X text 863 589 compute delay for the release \, i.e. sum of attack
-\, decay \, sustain, f 35;
+#X text 611 646 peak level \, attack sustain level \, decay \, delay (=attack time) release level (=0) release \, delay (=attack + decay + sustain), f 62;
+#X text 863 589 compute delay for the release \, i.e. sum of attack \, decay \, sustain, f 35;
 #X msg 369 672 1 300 \, 0.7 100 300 \, 0 100 550;
 #X text 183 10 sound envelope;
 #X msg 841 65 250;
 #X msg 975 64 200;
-#X obj 22 33 cnv 19 150 160 empty empty empty 20 12 0 12 #feffc6 #404040
-0;
+#X obj 22 33 cnv 19 150 160 empty empty empty 20 12 0 12 #feffc6 #404040 0;
 #X obj 32 55 inlet;
-#X obj 32 100 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 51 658 cnv 19 126 75 empty empty empty 20 12 0 12 #c6feff #404040
-0;
+#X obj 32 100 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 51 658 cnv 19 126 75 empty empty empty 20 12 0 12 #c6feff #404040 0;
 #X obj 72 679 osc~ 440;
 #X text 49 638 frequency;
 #X text 23 10 inlet;
@@ -1055,56 +971,36 @@ il led sia acceso o spento;
 #X connect 103 0 27 0;
 #X connect 107 0 75 0;
 #X connect 108 0 30 0;
-#X restore 1787 352 pd CueTwo;
-#X obj 1674 314 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 1796 316 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
-#X obj 1674 396 dac~ 1 2;
-#X obj 1797 396 dac~ 1 2;
-#X obj 247 0 cnv 15 500 500 empty empty empty 20 12 0 14 #fcfcc4 #404040
-0;
-#X text 276 15 Receiver;
-#X obj 283 84 mrpeach/unpackOSC;
-#X floatatom 283 166 5 0 0 0 - - - 0;
-#X obj 499 204 print warning_message_not_routed;
-#X obj 447 194 tgl 30 0 empty empty empty 17 7 0 10 #fcfcfc #000000
-#000000 0 1;
-#X obj 283 58 netreceive -u -b 5005;
-#X msg 3 86 \; pd dsp \$1;
-#X obj 3 14 tgl 30 0 empty empty empty 17 7 0 10 #9c9c9c #000000 #000000
-0 1;
-#X obj 12 66 s global_volume_fade;
-#X text 43 19 <-Click to start/stop DSP;
-#X obj 283 124 mrpeach/routeOSC /x_state;
-#X obj 264 202 print x_state;
-#X obj 404 243 s x_state;
-#X connect 0 0 1 0;
-#X connect 3 0 10 0;
-#X connect 3 0 10 1;
-#X connect 4 0 3 0;
-#X connect 5 0 6 0;
-#X connect 6 0 11 0;
-#X connect 6 0 11 1;
-#X connect 7 1 8 0;
-#X connect 7 1 13 0;
-#X connect 7 1 16 0;
-#X connect 15 0 7 0;
-#X connect 16 0 4 0;
-#X connect 16 1 5 0;
-#X connect 16 2 19 0;
-#X connect 16 3 20 0;
-#X connect 17 0 21 0;
-#X connect 18 0 22 0;
-#X connect 19 0 17 0;
-#X connect 20 0 18 0;
-#X connect 25 0 34 0;
-#X connect 26 0 28 0;
-#X connect 26 0 35 0;
-#X connect 26 0 36 0;
-#X connect 29 0 25 0;
-#X connect 31 0 30 0;
-#X connect 31 0 32 0;
-#X connect 34 0 26 0;
-#X connect 34 1 27 0;
-#X coords 0 10260 10 10250 0 0 0;
+#X restore 1743 303 pd CueTwo;
+#X obj 1630 265 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 1752 267 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 1630 347 dac~ 1 2;
+#X obj 1753 347 dac~ 1 2;
+#X connect 3 0 8 0;
+#X connect 4 0 6 0;
+#X connect 4 0 9 0;
+#X connect 4 0 10 0;
+#X connect 7 0 3 0;
+#X connect 8 0 4 0;
+#X connect 8 1 5 0;
+#X connect 13 0 12 0;
+#X connect 13 0 14 0;
+#X connect 17 0 24 0;
+#X connect 17 0 24 1;
+#X connect 18 0 17 0;
+#X connect 19 0 20 0;
+#X connect 20 0 25 0;
+#X connect 20 0 25 1;
+#X connect 21 1 22 0;
+#X connect 21 1 26 0;
+#X connect 21 1 28 0;
+#X connect 27 0 21 0;
+#X connect 28 0 18 0;
+#X connect 28 1 19 0;
+#X connect 28 2 31 0;
+#X connect 28 3 32 0;
+#X connect 29 0 33 0;
+#X connect 30 0 34 0;
+#X connect 31 0 29 0;
+#X connect 32 0 30 0;
+#X coords 0 9660 10 9650 0 0 0;
