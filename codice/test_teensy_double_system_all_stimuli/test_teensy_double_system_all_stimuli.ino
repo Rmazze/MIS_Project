@@ -15,6 +15,8 @@
 
 #define visual_stimulus_led_sx 29
 #define visual_stimulus_led_dx 30
+#define tactile_stimulus_actuator_sx 13
+#define tactile_stimulus_actuator_dx 14
 
 #define magnet_sx 31
 #define magnet_dx 32
@@ -24,8 +26,13 @@ bool show_results = HIGH;
 
 bool test_ready_state = HIGH;
 
-bool visual_stimulus_led_state_sx = LOW;
-bool visual_stimulus_led_state_dx = LOW;
+bool stimulus_sx = LOW;
+bool stimulus_dx = LOW;
+
+int stimuli_type = 4; // arrive from python
+bool visual_stimuli = LOW;
+bool auditory_stimuli = LOW;
+bool tactile_stimuli = LOW;
 
 bool glove_state_sx = HIGH;
 bool glove_state_dx = HIGH;
@@ -68,6 +75,8 @@ void setup() {
 
   pinMode(visual_stimulus_led_sx, OUTPUT);
   pinMode(visual_stimulus_led_dx, OUTPUT);
+  pinMode(tactile_stimulus_actuator_sx, OUTPUT);
+  pinMode(tactile_stimulus_actuator_dx, OUTPUT);
   
   pinMode(led_start, OUTPUT);
   pinMode(led_stop, OUTPUT);
@@ -91,23 +100,26 @@ void setup() {
   digitalWrite(magnet_dx, glove_state_dx);
   digitalWrite(led_start, led_start_state);
   digitalWrite(led_stop, led_stop_state); 
-  digitalWrite(visual_stimulus_led_sx, visual_stimulus_led_state_sx);
-  digitalWrite(visual_stimulus_led_dx, visual_stimulus_led_state_dx);
+  digitalWrite(visual_stimulus_led_sx, stimulus_sx);
+  digitalWrite(visual_stimulus_led_dx, stimulus_dx);
 
   attachInterrupt(digitalPinToInterrupt(hand_sens_sx), stop_test_ISR_sx, RISING);
   attachInterrupt(digitalPinToInterrupt(hand_sens_dx), stop_test_ISR_dx, RISING);
+
+  Serial.println("Select stimuli");
+  select_stimuli(stimuli_type, visual_stimuli, auditory_stimuli, tactile_stimuli);
 }
 
 void loop() {
   hand_in_position_state_sx = digitalRead(hand_in_position_sx);
   hand_in_position_state_dx = digitalRead(hand_in_position_dx);
   switch(program_execution_state){
-    case(0):  //sSerial.println("Case 0: ");
+    case(0):  //Serial.println("Case 0: ");
               if ((hand_in_position_state_sx == LOW) && (hand_in_position_state_dx == LOW)){
                 led_start_state = LOW;
                 led_stop_state = LOW;
-                visual_stimulus_led_state_sx = LOW;
-                visual_stimulus_led_state_dx = LOW;
+                stimulus_sx = LOW;
+                stimulus_dx = LOW;
                 program_execution_state = 1;
               }      
               break;    
@@ -174,19 +186,19 @@ void loop() {
     case(2):  //Serial.println("Case 2: ");
               if ((millis() - test_time_ready) >= rand_time){
                 switch(test_type){
-                  case(0): visual_stimulus_led_state_sx = HIGH; 
+                  case(0): stimulus_sx = HIGH; 
                            glove_state_sx = LOW;
                            break;
-                  case(1): visual_stimulus_led_state_dx = HIGH; 
+                  case(1): stimulus_dx = HIGH; 
                            glove_state_dx = LOW;
                            break;
-                  case(2): visual_stimulus_led_state_sx = HIGH;
-                           visual_stimulus_led_state_dx = HIGH;  
+                  case(2): stimulus_sx = HIGH;
+                           stimulus_dx = HIGH;  
                            glove_state_sx = LOW;
                            glove_state_dx = LOW;
                            break;
-                  default: visual_stimulus_led_state_sx = LOW;
-                           visual_stimulus_led_state_dx = LOW;  
+                  default: stimulus_sx = LOW;
+                           stimulus_dx = LOW;  
                            glove_state_sx = HIGH;
                            glove_state_dx = HIGH;
                            break;
@@ -225,26 +237,26 @@ void loop() {
     case(3):  //Serial.println("Case 3: ");
               if ((millis() - test_time_start) >= stimuly_duration){
                 switch(test_type){
-                  case(0): visual_stimulus_led_state_sx = LOW; break;
-                  case(1): visual_stimulus_led_state_dx = LOW; break;
-                  case(2): visual_stimulus_led_state_sx = LOW; visual_stimulus_led_state_dx = LOW; break;
-                  default: visual_stimulus_led_state_sx = LOW; visual_stimulus_led_state_dx = LOW;
+                  case(0): stimulus_sx = LOW; break;
+                  case(1): stimulus_dx = LOW; break;
+                  case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
+                  default: stimulus_sx = LOW; stimulus_dx = LOW;
                 }
                 program_execution_state = 4;  
               }
 
               if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
-                visual_stimulus_led_state_sx = LOW;
-                visual_stimulus_led_state_dx = LOW;
+                stimulus_sx = LOW;
+                stimulus_dx = LOW;
                 led_start_state = LOW;
                 led_stop_state = HIGH;
                 program_execution_state = 5;
               }
               else if (ongoing_test_sx == LOW){
-                visual_stimulus_led_state_sx = LOW;
+                stimulus_sx = LOW;
               }
               else if (ongoing_test_dx == LOW){
-                visual_stimulus_led_state_dx = LOW;
+                stimulus_dx = LOW;
               }
 
               //reset code
@@ -270,17 +282,17 @@ void loop() {
     case(4):  //Serial.println("Case 4: ");
               reset_button_reading = digitalRead(reset_button);
               if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
-                visual_stimulus_led_state_sx = LOW;
-                visual_stimulus_led_state_dx = LOW;
+                stimulus_sx = LOW;
+                stimulus_dx = LOW;
                 led_start_state = LOW;
                 led_stop_state = HIGH;
                 program_execution_state = 5;
               }
               else if (ongoing_test_sx == LOW){
-                visual_stimulus_led_state_sx = LOW;
+                stimulus_sx = LOW;
               }
               else if (ongoing_test_dx == LOW){
-                visual_stimulus_led_state_dx = LOW;
+                stimulus_dx = LOW;
               }
 
               //reset code
@@ -347,8 +359,8 @@ void loop() {
               led_stop_state = HIGH; //LOW;
               show_results = HIGH;
               test_ready_state = HIGH;
-              visual_stimulus_led_state_sx = HIGH; //LOW;
-              visual_stimulus_led_state_dx = HIGH; //LOW;
+              stimulus_sx = HIGH; //LOW;
+              stimulus_dx = HIGH; //LOW;
               program_execution_state = 0;
               ongoing_test_sx = LOW;
               ongoing_test_dx = LOW;
@@ -361,13 +373,12 @@ void loop() {
 
               program_execution_state = 0;
   }
+  produce_stimuli(stimulus_sx, stimulus_dx, visual_stimuli, auditory_stimuli, tactile_stimuli);
   digitalWrite(ready_led, test_ready_state);
   digitalWrite(magnet_sx, glove_state_sx);
   digitalWrite(magnet_dx, glove_state_dx);
   digitalWrite(led_start, led_start_state);
   digitalWrite(led_stop, led_stop_state); 
-  digitalWrite(visual_stimulus_led_sx, visual_stimulus_led_state_sx);
-  digitalWrite(visual_stimulus_led_dx, visual_stimulus_led_state_dx);
   digitalWrite(hand_in_position_sx_led, (1-hand_in_position_state_sx));
   digitalWrite(hand_in_position_dx_led, (1-hand_in_position_state_dx));
 }
