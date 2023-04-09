@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import pandas as pd
+from celery import Celery, Task
 import csv
 
 app = Flask(__name__)
