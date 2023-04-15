@@ -1,3 +1,4 @@
+// produce the selected stimuli for this test
 void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bool auditory_stimuli, bool tactile_stimuli){
     if (visual_stimuli == HIGH){
         digitalWrite(visual_stimulus_led_sx, stimulus_sx);
@@ -5,9 +6,12 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
         //Serial.println("Produce visual stimuli");
     }
     if (auditory_stimuli == HIGH){
-        //send serial message to activate sound for sx
-        //send serial message to activate sound for dx
-        //Serial.println("Produce auditory stimuli");
+        if (stimulus_sx == HIGH){
+            Serial.println("Produce auditory sx stimulus");
+        }
+        if (stimulus_sx == HIGH){
+            Serial.println("Produce auditory dx stimulus");
+        }
     }
     if (tactile_stimuli == HIGH){
         digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);
