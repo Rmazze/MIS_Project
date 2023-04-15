@@ -197,21 +197,27 @@ void loop() {
               }
     
               //reset code
-              reset_button_reading = digitalRead(reset_button);
-              if (reset_button_reading != last_reset_button_state){
-                last_debounce_time_reset = millis();
-              }
-
-              if ((millis() - last_debounce_time_reset) > debounce_delay){
-                if (reset_button_reading != reset_button_state){
-                  reset_button_state = reset_button_reading;
-
-                  if (reset_button_state == HIGH){
-                    program_execution_state = -1; 
-                  }
-                }
-              }
-              last_reset_button_state = reset_button_reading;
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
 
               break;
     // wait a random time before releasing the balls
@@ -248,20 +254,27 @@ void loop() {
               }
     
               //reset code
-              reset_button_reading = digitalRead(reset_button);
-              if (reset_button_reading != last_reset_button_state){
-                last_debounce_time_reset = millis();
-              }
-
-              if ((millis() - last_debounce_time_reset) > debounce_delay){
-                if (reset_button_reading != reset_button_state){
-                  reset_button_state = reset_button_reading;
-                  if (reset_button_state == HIGH){
-                    program_execution_state = -1; 
-                  }
-                }
-              }
-              last_reset_button_state = reset_button_reading;
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
               break;
     // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
     case(3):  //Serial.println("Case 3: ");
@@ -293,21 +306,27 @@ void loop() {
               }
 
               //reset code
-              reset_button_reading = digitalRead(reset_button);
-              if (reset_button_reading != last_reset_button_state){
-                last_debounce_time_reset = millis();
-              }
-
-              if ((millis() - last_debounce_time_reset) > debounce_delay){
-                if (reset_button_reading != reset_button_state){
-                  reset_button_state = reset_button_reading;
-
-                  if (reset_button_state == HIGH){
-                    program_execution_state = -1;
-                  }
-                }
-              }
-              last_reset_button_state = reset_button_reading;
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
               break;
     // see if the user chatches all the balls
     case(4):  //Serial.println("Case 4: ");
@@ -327,20 +346,27 @@ void loop() {
               }
 
               //reset code
-              reset_button_reading = digitalRead(reset_button);
-              if (reset_button_reading != last_reset_button_state){
-                last_debounce_time_reset = millis();
-              }
-
-              if ((millis() - last_debounce_time_reset) > debounce_delay){
-                if (reset_button_reading != reset_button_state){
-                  reset_button_state = reset_button_reading;
-                  if (reset_button_state == HIGH){
-                    program_execution_state = -1;
-                  }
-                }
-              }
-              last_reset_button_state = reset_button_reading;
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
               break;
     // compute results of this execution
     case(5):  //Serial.println("Case 5: ");
@@ -362,20 +388,27 @@ void loop() {
               }
 
               //reset code
-              reset_button_reading = digitalRead(reset_button);
-              if (reset_button_reading != last_reset_button_state){
-                last_debounce_time_reset = millis();
-              }
-
-              if ((millis() - last_debounce_time_reset) > debounce_delay){
-                if (reset_button_reading != reset_button_state){
-                  reset_button_state = reset_button_reading;
-                  if (reset_button_state == HIGH){
-                    program_execution_state = -1;
-                  }
-                }
-              }
-              last_reset_button_state = reset_button_reading;
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
               break;
     // reset state
     default:  //Serial.println("Case default: ");
