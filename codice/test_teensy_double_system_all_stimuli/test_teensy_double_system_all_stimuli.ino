@@ -79,6 +79,8 @@ volatile byte led_stop_state = LOW;
 unsigned long rand_time = 0;
 // How long are the stimuli to produce
 unsigned long stimuly_duration = 3000; //decrese this value
+// Time after which we consider that the user was not able to catch the balls
+unsigned long to_much_time_elapsed = 10000; //decrese this value
 // Saves the timestamp in which the test starts
 unsigned long test_time_ready = 0;
 // Saves the timestamp in which the ball is released
@@ -296,6 +298,7 @@ void loop() {
                 stimulus_dx = LOW;
                 led_start_state = LOW;
                 led_stop_state = HIGH;
+                Serial.println("Produce happy sound");
                 program_execution_state = 5;
               }
               else if (ongoing_test_sx == LOW){
@@ -328,7 +331,7 @@ void loop() {
                                 debounce_delay,
                                 program_execution_state);
               break;
-    // see if the user chatches all the balls
+    // see if the user chatches all the balls, if too much time is elapesed consider as the user didn't chatch the balls
     case(4):  //Serial.println("Case 4: ");
               // when all released balls are cheched go to next state
               if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
@@ -336,6 +339,7 @@ void loop() {
                 stimulus_dx = LOW;
                 led_start_state = LOW;
                 led_stop_state = HIGH;
+                Serial.println("Produce happy sound");
                 program_execution_state = 5;
               }
               else if (ongoing_test_sx == LOW){
@@ -344,6 +348,14 @@ void loop() {
               else if (ongoing_test_dx == LOW){
                 stimulus_dx = LOW;
               }
+
+              // too much time is elapsed, consider as the user didn't chanch the balls
+              if ((millis() - test_time_start) >= to_much_time_elapsed){
+                Serial.println("Produce sad sound");
+                // may add something to communicate fake times?
+                program_execution_state = -1;  
+              }
+              
 
               //reset code
               //reset_button_reading = digitalRead(reset_button);
