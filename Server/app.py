@@ -1,10 +1,20 @@
 from flask import Flask, render_template, request, session, url_for, send_from_directory
 from flask_session import Session
+from flask import jsonify
+import serial
+import serial.tools.list_ports as ports
+from tasks import *
+import random
+import time
+from pythonosc import udp_client
 import pandas as pd
 import os
 import csv
 from celery import Celery, Task
 
+"""
+Configuration
+"""
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = True
@@ -12,17 +22,91 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'Favicon.ico', mimetype='image/MIME')
 
 celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
+#open only when using arduin0
+ports = list(serial.tools.list_ports.comports())
+for p in ports:
+    print(p)    
+print("####")
+#serialcom = serial.Serial('/dev/ttyACM0',9600)
+#serialcom = serial.Serial('COM5',9600)
+#serialcom.timeout = 1
+serialcom = serial.serial_for_url('rfc2217://localhost:4000', baudrate=115200)
+'''
+General methods for building the business logic
+'''
+def ledOn():
+    serialcom.write(str('on').encode())
+    
+def ledOff():
+	serialcom.write(str('off').encode())
+
+def disconnect():
+	serialcom.close()
+
+def dummyMex():
+    serialcom.write(str('<V,a,t>').encode())
+
+
+'''
+Celery part
+All the methods inside here are related to the asynchronous part.
+Possibly all channels and serials need to be invoked here in order to interfere
+with the overall process
+
+NOTE: seems like serial does not interfere with the overall process
+'''
+
 @celery.task()
 def add(x, y):
         return x + y
+
+@celery.task()
+def send_data():
+        client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+        for x in range(10):
+            to_send = random.random()
+            client.send_message("/filter", to_send)
+            print("to_send: ", to_send)
+            #ledOn()
+            time.sleep(1)
+            #ledOff()
+
+@celery.task()
+def send_datum():
+        client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+        to_send = random.random()
+        client.send_message("/filter", to_send)
+        print("to_send: ", to_send)
+        time.sleep(1)
+
+@celery.task()
+def add(x, y):
+        return x + y
+
+@celery.task(bind=True)
+def longtest(self):
+    """Background task that runs a long function with progress reports."""
+    message = ''
+    total = random.randint(10, 50)
+    while(message != '<R>' or message != '<E>'):
+         message = serialcom.readline()
+         
+    return {'current': 100, 'total': 100, 'status': 'Task completed!',
+            'result': 42}
+
+
+'''
+Routing of the pages
+'''
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'Favicon.ico', mimetype='image/MIME')
 
 # admin page
 @app.route('/Admin')
@@ -32,7 +116,7 @@ def admin():
 # login page
 @app.route('/')
 def main():
-    return render_template('Login.html')
+    return render_template('Test.html')
 
 # sign up page
 @app.route('/SignUp')
@@ -137,7 +221,7 @@ def trialSignUp():
                     new_user = pd.DataFrame.from_dict([form_data])
                     new_user.to_csv("database/usr.csv", sep = ';', mode = 'a', index = False, header = ["Username", "Password"])
 
-                    # go to login page
+                    # go to login page  
                     msg = "Account has been created"
                     return render_template('ErrorLogin.html', msg = msg, msg_type = "message")
             
@@ -189,6 +273,42 @@ def charts():
     # render Charts.html    
     return render_template('Charts.html', usr = usr, rt_avg = rt_avg, c_avg =c_avg, allTime_chart_label = allTime_chart_label, allTime_c_data = allTime_c_data, allTime_rt_data = allTime_rt_data)
 
+
+@app.route("/test", methods=["POST"])
+def run_task():
+    task = longtest.apply_async()
+    return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                  task_id=task.id)}
+
+#Introduced for debugging purposes
+@app.route('/status/<task_id>')
+def taskstatus(task_id):
+    task = longtest.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 1),
+            'status': task.info.get('status', '')
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # something went wrong in the background job
+        response = {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'status': str(task.info),  # this is the exception raised
+        }
+    return jsonify(response)
 
 #TODO: fare funzione che scrive nel file csv i risultati delle prove con gli stimoli. Un file per utente
 

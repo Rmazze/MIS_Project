@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+
+        <!-- p5.js code for timer and animations -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>
+        <!-- 
+            function createP5 (){
+                let canvasWidth = document.getElementById("widthInput").value;
+                let canvasHeight = document.getElementById("heightInput").value;
+                var canvas = new p5(function (p) {
+                    p.setup = function (){
+                        p.createCanvas(canvasWidth, canvasHeight);
+                    }
+                    p.draw = function(){
+                        p.background(55);
+                        p.stroke(0);
+                        p.rect(p.width/5, p.height/5, p.width/5 * 3, p.height/5 * 3);
+                    }
+                    }, "cont");
+                }
+		</script>
+        -->
+
+        <script>
+           
+        </script>
+    </head>
+    <body>
+        <center>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
+                        <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+            <div class = "whiteBoxBig">
+                <h1 id = "title">Training Tool for Reaction Time</h1>
+                <h1 id = "sent">Hello {{session.name}}, It's nice to have you here! </h1>
+
+                <div id = "animation">
+                </div>
+
+                <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />
+                <input type = "submit" id = "HStopBtn" value = "Happy stop" class = "btn" />
+                <input type = "submit"  id = "SStopBtn" value = "Sad stop" class = "btn" />
+                <button id="start-bg-job">Start Long Calculation</button>
+                <!-- 
+                <input type = "button" value = "create canvas" onclick = 'createP5()'/>
+                <textarea id = "widthInput"></textarea>
+                <textarea id = "heightInput"></textarea>
+                <br><br><br>
+                -->
+            </div> 
+            <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+            <script>
+                function start_long_task() {
+                    // add task status elements
+                    div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
+                    $('#progress').append(div);
+        
+                    // create a progress bar
+                    var nanobar = new Nanobar({
+                        bg: '#44f',
+                        target: div[0].childNodes[0]
+                    });
+        
+                    // send ajax POST request to start background job
+                    $.ajax({
+                        type: 'POST',
+                        url: '/test',
+                        success: function(data, status, request) {
+                            status_url = request.getResponseHeader('Location');
+                        },
+                        error: function() {
+                            alert('Unexpected error');
+                        }
+                    });
+                }
+                $(function() {
+                    $('#start-bg-job').click(start_long_task);
+                });
+            </script>
+        </center>
+    </body>
+</html>
