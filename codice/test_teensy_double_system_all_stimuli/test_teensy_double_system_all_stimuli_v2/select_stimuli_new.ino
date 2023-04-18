@@ -29,4 +29,8 @@ void select_stimuli_char(char receivedChars_test[], bool &visual_stimuli, bool &
     } else{
         tactile_stimuli = LOW;    
     } 
+
+    Serial.println("visual_stimuli: " + String(visual_stimuli));
+    Serial.println("auditory_stimuli: " + String(auditory_stimuli));
+    Serial.println("tactile_stimuli: " + String(tactile_stimuli));
 }
