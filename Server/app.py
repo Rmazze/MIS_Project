@@ -6,6 +6,7 @@ import serial.tools.list_ports as ports
 from tasks import *
 import random
 import time
+import threading
 from pythonosc import udp_client
 import pandas as pd
 import os
@@ -23,7 +24,7 @@ Session(app)
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
 
-celery = Celery(app.name, broker=app.config["CELERY_BROKER_URL"])
+celery = Celery(app.name,backend='redis://localhost:6379/0', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
 #open only when using arduin0
@@ -35,6 +36,19 @@ print("####")
 #serialcom = serial.Serial('COM5',9600)
 #serialcom.timeout = 1
 serialcom = serial.serial_for_url('rfc2217://localhost:4000', baudrate=115200)
+
+
+class NewThreadedTask(threading.Thread):
+     def __init__(self):
+         super(NewThreadedTask, self).__init__()
+ 
+     def run(self):
+         # run some code hereù
+         readStream()
+         print('Threaded task has been completed')
+
+
+
 '''
 General methods for building the business logic
 '''
@@ -48,8 +62,19 @@ def disconnect():
 	serialcom.close()
 
 def dummyMex():
+    print("sono dentro")
     serialcom.write(str('<V,a,t>').encode())
+    serialcom.write(b'<V,a,t>')
 
+def readStream():
+    #print("ciao")
+    ret = serialcom.readline()
+    print(ret)
+    if(ret == "b'N'"):
+         print("boh")
+
+#new_thread = NewThreadedTask()
+#new_thread.start()
 
 '''
 Celery part
@@ -71,7 +96,7 @@ def send_data():
             to_send = random.random()
             client.send_message("/filter", to_send)
             print("to_send: ", to_send)
-            #ledOn()
+            ledOn()
             time.sleep(1)
             #ledOff()
 
@@ -90,11 +115,10 @@ def add(x, y):
 @celery.task(bind=True)
 def longtest(self):
     """Background task that runs a long function with progress reports."""
-    message = ''
-    total = random.randint(10, 50)
-    while(message != '<R>' or message != '<E>'):
-         message = serialcom.readline()
-         
+    print("startmondo")
+    dummyMex()
+    readStream()
+    print("hola")
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'result': 42}
 
@@ -277,6 +301,8 @@ def charts():
 @app.route("/test", methods=["POST"])
 def run_task():
     task = longtest.apply_async()
+    if task.result == 42:
+         print()
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}
 
@@ -291,7 +317,7 @@ def taskstatus(task_id):
             'total': 1,
             'status': 'Pending...'
         }
-    elif task.state != 'FAILURE':
+    elif task.state != 'SUCCESS':
         response = {
             'state': task.state,
             'current': task.info.get('current', 0),
