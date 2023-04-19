@@ -134,6 +134,7 @@ def longtest(self):
     print("startmondo")
     dummyMex()
     readStream()
+    send_data()
     print("hola")
     #time.sleep(1000)
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
