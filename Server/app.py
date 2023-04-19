@@ -11,6 +11,7 @@ from pythonosc import udp_client
 import pandas as pd
 import os
 import csv
+import re
 from celery import Celery, Task
 
 """
@@ -66,13 +67,28 @@ def dummyMex():
     serialcom.write(str('<V,a,t>').encode())
     serialcom.write(b'<V,a,t>')
 
+def waitStream():
+    #print("ciao")
+    while True:
+        ret = serialcom.readline()
+        print(ret)
+        st = str(ret, 'ascii')
+        m = re.search('<(.+?)>', st)
+        print(m)
+        if m:
+            found = m.group(1)
+            print(found + " dalla com con arduino")
+            break
 def readStream():
     #print("ciao")
     ret = serialcom.readline()
     print(ret)
-    if(ret == "b'N'"):
-         print("boh")
-
+    st = str(ret, 'ascii')
+    m = re.search('<(.+?)>', st)
+    print(m)
+    if m:
+        found = m.group(1)
+        print(found + " dalla com con arduino")
 #new_thread = NewThreadedTask()
 #new_thread.start()
 
@@ -119,6 +135,7 @@ def longtest(self):
     dummyMex()
     readStream()
     print("hola")
+    #time.sleep(1000)
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'result': 42}
 
@@ -301,8 +318,8 @@ def charts():
 @app.route("/test", methods=["POST"])
 def run_task():
     task = longtest.apply_async()
-    if task.result == 42:
-         print()
+    print("ho finito il calcolo")
+    #time.sleep(1000)
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}
 
