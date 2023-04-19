@@ -161,7 +161,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(hand_sens_sx), stop_test_ISR_sx, RISING);
   attachInterrupt(digitalPinToInterrupt(hand_sens_dx), stop_test_ISR_dx, RISING);
 
-  Serial.println("Select stimuli");
+  //Serial.println("Select stimuli");
   // select which stimuli to use for this test
   //select_stimuli(stimuli_type, visual_stimuli, auditory_stimuli, tactile_stimuli);
 }
@@ -171,8 +171,9 @@ void loop() {
   hand_in_position_state_sx = digitalRead(hand_in_position_sx);
   hand_in_position_state_dx = digitalRead(hand_in_position_dx);
   //recvWithStartEndMarkers(receivedChars_reset, numChars_reset, newData_reset, startMarker_reset, endMarker_reset);
-  if (Serial.available()){
+  if (Serial.available() > 0){
     received_buffer = Serial.readStringUntil('\n');
+    Serial.flush();
   }
   int str_len = received_buffer.length() + 1; 
   char received_buffer_char[str_len];
@@ -181,14 +182,18 @@ void loop() {
   switch(program_execution_state){
     // wait for the test initialization
     case(0):  //recvWithStartEndMarkers(receivedChars_test, numChars_test, newData_test, startMarker_test, endMarker_test);
-              if (newData_test == true){
+              //if (newData_test == true){
                 //select_stimuli_char(receivedChars_test, visual_stimuli, auditory_stimuli, tactile_stimuli);
-                if (received_buffer_char[0] == '<'){
-                  select_stimuli_regex(received_buffer_char, visual_stimuli, auditory_stimuli, tactile_stimuli);
-                  test_ready_state = HIGH;
-                }
+              if (received_buffer_char[0] == '<'){
+                Serial.println("First char <");
+                select_stimuli_regex(received_buffer_char, visual_stimuli, auditory_stimuli, tactile_stimuli);
+                test_ready_state = HIGH;
                 program_execution_state = 1;
+              } else{
+                Serial.println("First char: " + received_buffer_char[0]);    
               }
+                
+              //}
               break;
     // wait the user to be ready
     case(1):  //Serial.println("Case 0: ");
@@ -530,6 +535,8 @@ void loop() {
 
               newData_test = false;
               newData_reset = false;
+
+              received_buffer = "";
 
               program_execution_state = 0;
   }
