@@ -35,7 +35,7 @@ int program_execution_state = 0;
 bool show_results = HIGH;
 
 // Indicate if all is ok and the test can start
-bool test_ready_state = HIGH;
+bool test_ready_state = LOW;
 
 // Indicate if the program have to activate the sx or rx stimuli
 bool stimulus_sx = LOW;
@@ -72,8 +72,8 @@ bool last_reset_button_state = LOW;
 unsigned long last_debounce_time_reset = 0; 
 
 // Variables for the state of the leds that show us the execution state of the program
-volatile byte led_start_state = LOW; //can remove volatile?
-volatile byte led_stop_state = LOW;
+volatile byte led_start_state = HIGH; //can remove volatile?
+volatile byte led_stop_state = HIGH;
 
 // Random time to wait before releasing the ball
 unsigned long rand_time = 0;
@@ -120,6 +120,8 @@ char endMarker_test = '>';
 //markers regarding reset signal
 char startMarker_reset = '"';
 char endMarker_reset = '"';
+
+String received_buffer;
 
 void setup() {
   //Serial.begin(115200);
@@ -168,12 +170,23 @@ void loop() {
   // read if hands are in the correct position
   hand_in_position_state_sx = digitalRead(hand_in_position_sx);
   hand_in_position_state_dx = digitalRead(hand_in_position_dx);
-  recvWithStartEndMarkers(receivedChars_reset, numChars_reset, newData_reset, startMarker_reset, endMarker_reset);
+  //recvWithStartEndMarkers(receivedChars_reset, numChars_reset, newData_reset, startMarker_reset, endMarker_reset);
+  if (Serial.available()){
+    received_buffer = Serial.readStringUntil('\n');
+  }
+  int str_len = received_buffer.length() + 1; 
+  char received_buffer_char[str_len];
+  received_buffer.toCharArray(received_buffer_char, str_len);
+
   switch(program_execution_state){
     // wait for the test initialization
-    case(0):  recvWithStartEndMarkers(receivedChars_test, numChars_test, newData_test, startMarker_test, endMarker_test);
+    case(0):  //recvWithStartEndMarkers(receivedChars_test, numChars_test, newData_test, startMarker_test, endMarker_test);
               if (newData_test == true){
-                select_stimuli_char(receivedChars_test, visual_stimuli, auditory_stimuli, tactile_stimuli);
+                //select_stimuli_char(receivedChars_test, visual_stimuli, auditory_stimuli, tactile_stimuli);
+                if (received_buffer_char[0] == '<'){
+                  select_stimuli_regex(received_buffer_char, visual_stimuli, auditory_stimuli, tactile_stimuli);
+                  test_ready_state = HIGH;
+                }
                 program_execution_state = 1;
               }
               break;
@@ -193,7 +206,9 @@ void loop() {
                                 last_debounce_time_reset,
                                 debounce_delay,
                                 program_execution_state);
-              reset_from_server(receivedChars_reset, program_execution_state);  
+              if (received_buffer_char[0] == '"'){
+                reset_from_server(received_buffer_char, program_execution_state); 
+              } 
               break;  
     // wait the signal to start the test and select the test to execute
     case(2):  //Serial.println("Case 1: ");
@@ -258,7 +273,9 @@ void loop() {
                                 last_debounce_time_reset,
                                 debounce_delay,
                                 program_execution_state);
-              reset_from_server(receivedChars_reset, program_execution_state);  
+              if (received_buffer_char[0] == '"'){
+                reset_from_server(received_buffer_char, program_execution_state); 
+              }  
 
               break;
     // wait a random time before releasing the balls
@@ -316,7 +333,9 @@ void loop() {
                                 last_debounce_time_reset,
                                 debounce_delay,
                                 program_execution_state);
-              reset_from_server(receivedChars_reset, program_execution_state);  
+              if (received_buffer_char[0] == '"'){
+                reset_from_server(received_buffer_char, program_execution_state); 
+              }   
               break;
     // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
     case(4):  //Serial.println("Case 3: ");
@@ -370,7 +389,9 @@ void loop() {
                                 last_debounce_time_reset,
                                 debounce_delay,
                                 program_execution_state);
-              reset_from_server(receivedChars_reset, program_execution_state);  
+              if (received_buffer_char[0] == '"'){
+                reset_from_server(received_buffer_char, program_execution_state); 
+              }  
               break;
     // see if the user chatches all the balls, if too much time is elapesed consider as the user didn't chatch the balls
     case(5):  //Serial.println("Case 4: ");
@@ -420,7 +441,9 @@ void loop() {
                                 last_debounce_time_reset,
                                 debounce_delay,
                                 program_execution_state);
-              reset_from_server(receivedChars_reset, program_execution_state);  
+              if (received_buffer_char[0] == '"'){
+                reset_from_server(received_buffer_char, program_execution_state); 
+              }  
               break;
     // compute results of this execution
     case(6):  //Serial.println("Case 5: ");
@@ -463,7 +486,9 @@ void loop() {
                                 last_debounce_time_reset,
                                 debounce_delay,
                                 program_execution_state);
-              reset_from_server(receivedChars_reset, program_execution_state);  
+              if (received_buffer_char[0] == '"'){
+                reset_from_server(received_buffer_char, program_execution_state); 
+              }   
               break;
     // reset state that doesn't reset the test to do
     case(7):  glove_state_sx = HIGH; //reset state
@@ -471,7 +496,7 @@ void loop() {
               led_start_state = HIGH; //LOW;
               led_stop_state = HIGH; //LOW;
               show_results = HIGH;
-              test_ready_state = HIGH;
+              test_ready_state = LOW;
               stimulus_sx = HIGH; //LOW;
               stimulus_dx = HIGH; //LOW;
               ongoing_test_sx = LOW;
@@ -491,7 +516,7 @@ void loop() {
               led_start_state = HIGH; //LOW;
               led_stop_state = HIGH; //LOW;
               show_results = HIGH;
-              test_ready_state = HIGH;
+              test_ready_state = LOW;
               stimulus_sx = HIGH; //LOW;
               stimulus_dx = HIGH; //LOW;
               ongoing_test_sx = LOW;
