@@ -1,14 +1,14 @@
 
-void recvWithStartEndMarkers(char receivedChars[], byte numChars, boolean &newData, char startMarker, char endMarker) {
-    static bool recvInProgress = false;
+void recvWithStartEndMarkers(char receivedChars[], byte numChars, bool &newData, char startMarker, char endMarker) {
+    static bool recvInProgress = LOW;
     static byte ndx = 0;
     
     char rc;
  
-    while (Serial.available() > 0 && newData == false) {
+    while (Serial.available() > 0 && newData == LOW) {
         rc = Serial.read();
 
-        if (recvInProgress == true) {
+        if (recvInProgress == HIGH) {
             if (rc != endMarker) {
                 receivedChars[ndx] = rc;
                 ndx++;
@@ -18,24 +18,24 @@ void recvWithStartEndMarkers(char receivedChars[], byte numChars, boolean &newDa
             }
             else {
                 receivedChars[ndx] = '\0'; // terminate the string
-                recvInProgress = false;
+                recvInProgress = LOW;
                 ndx = 0;
-                newData = true;
+                newData = HIGH;
             }
         }
 
         else if (rc == startMarker) {
-            recvInProgress = true;
+            recvInProgress = HIGH;
         }
     }
 }
 
 //just for debug purposes
-void showNewData(char receivedChars[], boolean &newData) {
-    if (newData == true) {
+void showNewData(char receivedChars[], bool &newData) {
+    if (newData == HIGH) {
         Serial.print("This just in ... ");
         Serial.println(receivedChars);
-        newData = false;
+        newData = LOW;
     }
 }
 
