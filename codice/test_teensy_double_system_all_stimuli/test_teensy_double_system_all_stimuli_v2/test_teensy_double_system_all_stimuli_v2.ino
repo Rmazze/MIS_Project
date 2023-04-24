@@ -431,8 +431,8 @@ void loop() {
                 }
   
                 if (show_results){
-                  Serial.println("Elapsed time sx: " + String(test_elapsed_time_sx));
-                  Serial.println("Elapsed time dx: " + String(test_elapsed_time_dx));
+                  Serial.println("HAP sx: " + String(test_elapsed_time_sx));
+                  Serial.println("HAP dx: " + String(test_elapsed_time_dx));
                   show_results = LOW;
                 }
   

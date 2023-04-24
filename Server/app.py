@@ -189,7 +189,7 @@ def longtest(self):
             raise Ignore()
         if("E" in st):
             break
-        if("SAD" in st):
+        if("HAP" in st):
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer': 5.756}
         #send_datum()
