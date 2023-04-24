@@ -12,11 +12,14 @@ import pandas as pd
 import os
 import csv
 import re
-from celery import Celery, Task
+from celery import Celery, Task, states
+from celery.exceptions import Ignore
 
 """
 Configuration
 """
+
+Ntest = 0
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = True
@@ -33,11 +36,12 @@ ports = list(serial.tools.list_ports.comports())
 for p in ports:
     print(p)    
 print("####")
-#serialcom = serial.Serial('/dev/ttyACM0',9600)
-#serialcom = serial.Serial('COM5',9600)
+serialcom = serial.Serial('/dev/ttyACM2',115200,timeout=5)
+#serialcom = serial.Serial('COM5',115200)
 #serialcom.timeout = 1
-serialcom = serial.serial_for_url('rfc2217://localhost:4000', baudrate=115200)
+#serialcom = serial.serial_for_url('rfc2217://localhost:4000',\
 
+#f = float B = unsigned Char (uint8_t equivalent)
 
 class NewThreadedTask(threading.Thread):
      def __init__(self):
@@ -47,8 +51,6 @@ class NewThreadedTask(threading.Thread):
          # run some code hereù
          readStream()
          print('Threaded task has been completed')
-
-
 
 '''
 General methods for building the business logic
@@ -63,11 +65,49 @@ def disconnect():
 	serialcom.close()
 
 def dummyMex():
-    print("sono dentro")
-    serialcom.write(str('<V,a,t>').encode())
-    serialcom.write(b'<V,a,t>')
+    print("sono dentro dummyMex")
+    recv = ""
+    while True:
+        serialcom.write(str('<V,a,t>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('0' in recv):
+            break
+        if('1' in recv):
+            break
+        """
+        time.sleep(1)
+        msg = serialcom.read(serialcom.inWaiting())
+        print(msg)
+        msg1 = str(msg, 'ascii')
+        print("Message from arduino " + msg1)
+        if("<" in msg1 ):
+            print("found char")
+            break
+        """
+    print("sono fupri dummyMex")
+    #serialcom.write(str('\"R\"').encode())
+
+
+
+def ResetMex():
+    print("Gonna reset the system")
+    serialcom.write(str('\"R\"').encode())
 
 def waitStream():
+    print("ciao")
+    while True:
+        ret = serialcom.readline()
+        print(ret)
+        st = str(ret, 'ascii')
+        print(st)
+        if st != "":
+            print(st + " dalla com con arduino")
+            break
+
+def waitStream2():
     #print("ciao")
     while True:
         ret = serialcom.readline()
@@ -79,16 +119,16 @@ def waitStream():
             found = m.group(1)
             print(found + " dalla com con arduino")
             break
+
+
 def readStream():
     #print("ciao")
-    ret = serialcom.readline()
-    print(ret)
-    st = str(ret, 'ascii')
-    m = re.search('<(.+?)>', st)
-    print(m)
-    if m:
-        found = m.group(1)
-        print(found + " dalla com con arduino")
+    while True:
+        ret = serialcom.readline(serialcom.in_waiting)
+        st = str(ret, 'ascii')
+        print(st)
+        if(st != ""):
+            break
 #new_thread = NewThreadedTask()
 #new_thread.start()
 
@@ -132,9 +172,30 @@ def add(x, y):
 def longtest(self):
     """Background task that runs a long function with progress reports."""
     print("startmondo")
-    dummyMex()
-    readStream()
-    send_data()
+    while True:
+        dummyMex()
+        break
+    while True:
+        ret = serialcom.readline(serialcom.in_waiting)
+        st = str(ret, 'ascii')
+        print(st)
+        if("SAD" in st):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': Ntest, 'total': 8,
+                                'status': "FAIL"}
+            )
+            print("diocane")
+            raise Ignore()
+        if("E" in st):
+            break
+        if("SAD" in st):
+            return {'current': 100, 'total': 100, 'status': 'Task completed!',
+            'timer': 5.756}
+        #send_datum()
+        self.update_state(state='PROGRESS',
+                          meta={'current': Ntest, 'total': 8,
+                                'status': "test numero: " + str(Ntest)})
     print("hola")
     #time.sleep(1000)
     return {'current': 100, 'total': 100, 'status': 'Task completed!',

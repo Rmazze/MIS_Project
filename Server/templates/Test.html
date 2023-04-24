@@ -32,24 +32,6 @@
                 window.console = i.contentWindow.console;
                 i.parentNode.removeChild(i);
             }
-            function start_long_task() {     
-                    // send ajax POST request to start background job
-                    $.ajax({
-                        type: 'POST',
-                        url: '/test',
-                        success: function(data, status, request) {
-                            //status_url = request.getResponseHeader('Location');
-                            log("changed readval on success");
-                        },
-                        error: function() {
-                            log('Unexpected error');
-                        },
-                        complete: function (data) {
-                            readVal = 1
-                            loh("changed readval on complete");
-                        }
-                    });
-                }
             /*
             Variables declaration and object instatiation.
             */
@@ -77,6 +59,61 @@
             let ypos2 = 0;    // position of the circle2 in the y axis
             let speed2 = 10;    // speed of the circle2 in the y axis
 
+            function start_long_task() {     
+                    // send ajax POST request to start background job
+                $.ajax({
+                    type: 'POST',
+                    url: '/test',
+                    success: function(data, status, request) {
+                        status_url = request.getResponseHeader('Location');
+                        update_progress(status_url);
+                        console.log("changed readval on success");
+                    },
+                    error: function(request, status, error) {
+                    },
+                    complete: function (data) {
+                        //readVal = 1
+                        log("changed readval on complete");
+                    }
+                });
+            }
+
+            function update_progress(status_url) {
+                // send GET request to status URL
+                $.getJSON(status_url, function(data) {
+                    // update UI
+                    console.log("sono dentro e lo stato e " + data['state'])
+                    if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+                        if(data['state'] == 'SUCCESS'){
+                            //la call alla presa riuscita funziona
+                            console.log('Resulting value: ' + readVal);
+                            readVal = 1
+                        }
+                        if ('result' in data) {
+                            // show result
+                            console.log('Result: ' + data['result']);
+                            readVal = 1
+                        }
+                        if ('error' in data) {
+                            // show result
+                            console.log('Result: ' + data['error']);
+                            readVal = 2
+                        }
+                        else {
+                            // something unexpected happened
+                            log('Result: ' + data['state']);
+                        }
+                    }else{
+                        setTimeout(function() {
+                            update_progress(status_url);
+                        }, 800);
+                    }
+                })
+                .fail(function() { 
+                    console.log("errore pesante");
+                    readVal = 2;
+                });
+            }
             /*
             Preload function used to handle asynchronous loading of external files in a blocking way.
             */
@@ -315,9 +352,97 @@
                     rect(width/3*2, height-50, width/3, 50);
                     textFont(Ftimer, 20);
                     fill(123, 125, 125);
-                    time = "Total time: " + str(t/1000);
+                    time = "Total time: " + str(5.008);
                     text(time, (width/3*2)+20, height-20);
                     winFinished = true;
+                }
+            }
+
+            /*
+            Function SadRain.
+            It allows to create the animation for when the user is not able to catch the balls.
+
+            :param start: float start time of the animation
+
+            :var colors: list of colors for the the circles
+            */
+            function SadRain(start) {
+                let colors = ["#6AABD2", "#385E72", "#646FDE", "#6896E8", "#68D9E8", "#64DECB"];
+                
+                // Initialization of the animation
+                if (init == false) {
+                    xpos1 = random(-width/2+100, width/2-100);    // randomly initialize the position of the circle1 in the x axis
+                
+                    // Initialize the position of the circle2 in the x axis according to circle1's position
+                    if (xpos1 > 0) {
+                        xpos2 = xpos1 + 200;
+                    }
+                    else {
+                        xpos2 = xpos1 - 200;
+                    }
+                    
+                    n1 = int(random(0, colors.length));    // initialize the color of circle1
+                    n2 = int(random(0, colors.length));    // initialize the color of circle2
+                    
+                    init = true;
+                }
+                
+                else {
+                    if ((millis() - start) < sadDur) {
+                    // Background creation
+                    fill("#FFFFFF");
+                    rect(0, 0, width, height);
+                    
+                    
+                    // Instantiate circle1
+                    fill(colors[n1]);    // define the circle1's color
+                    ypos1 = ypos1 + speed1;    // initialize the position in the y axis according to the speed
+                    ellipse(xpos1, ypos1, 20, 20);    // create the circle
+                    
+                    // Control the position in the y axis of circle1. Once the bottom is reached restart the circle from the top of the screen
+                    if (ypos1 > height){
+                        xpos1 = random(-width/2+200, width/2-200);     // randomly initialize the position of the circle1 in the x axis
+                        //speed1 = random(5, 10);    // randomly choose the speed
+                        speed1 = 10;
+                        ypos1 = 0;    // reset the position of circle1 in the y axis
+                        n1 = int(random(0, colors.length));    // set the color of circle1
+                    }
+                    
+                    
+                    // Instantiate circle2
+                    fill(colors[n2]);    // define the circle2's color
+                    ypos2 += speed2;    // initialize the position in the y axis according to the speed
+                    ellipse(xpos2, ypos2, 20, 20);    // create the circle
+                    
+                    // Control the position in the y axis of circle2. Once the bottom is reached restart the circle from the top of the screen
+                    if (ypos2 > height){
+                        // Initialize the position of the circle2 in the x axis according to circle1's position
+                        if (xpos1 > 0) {
+                            xpos2 = xpos1 + 300;
+                        }
+                        else {
+                            xpos2 = xpos1 - 300;
+                        }
+                        
+                        //speed2 = random(5, 10);    // randomly choose the speed
+                        speed2 = 8;
+                        ypos2 = 0;    // reset the position of circle2 in the y axis
+                        n2 = int(random(0, colors.length));    // set the color of circle2
+                    }
+                    }
+                    else {
+                        // Drawing of the "Try again" text
+                        
+                        // Opaque background creation
+                        fill(255, 255, 255, 90);
+                        rect(0, 0, width, height);
+                        
+                        // Print the text
+                        textFont(Floss, 100);
+                        fill("#EC264B");
+                        text("Try again", width/2-230, height/2+25);
+                        lossFinished = true;
+                    }
                 }
             }
         </script>
@@ -357,13 +482,6 @@
             <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
             <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
             <script>
-                function update_progress(status_url, nanobar, status_div) {
-                    // send GET request to status URL
-                    $.getJSON(status_url, function(data) {
-                        // update UI
-                        
-                    });
-                }
                 $(function() {
                     $('#start-bg-job').click(start_long_task);
                 });
