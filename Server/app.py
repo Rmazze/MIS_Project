@@ -32,25 +32,24 @@ celery = Celery(app.name,backend='redis://localhost:6379/0', broker=app.config["
 celery.conf.update(app.config)
 
 #open only when using arduin0
+teensyports = [
+    p.device
+    for p in serial.tools.list_ports.comports()
+    if "USB" in p.description
+]
+print(teensyports)
+"""
 ports = list(serial.tools.list_ports.comports())
 for p in ports:
-    print(p)    
+    print(p.description)    
 print("####")
-serialcom = serial.Serial('/dev/ttyACM2',115200,timeout=5)
+"""
+serialcom = serial.Serial(teensyports[0],115200,timeout=5)
 #serialcom = serial.Serial('COM5',115200)
 #serialcom.timeout = 1
 #serialcom = serial.serial_for_url('rfc2217://localhost:4000',\
 
 #f = float B = unsigned Char (uint8_t equivalent)
-
-class NewThreadedTask(threading.Thread):
-     def __init__(self):
-         super(NewThreadedTask, self).__init__()
- 
-     def run(self):
-         # run some code hereù
-         readStream()
-         print('Threaded task has been completed')
 
 '''
 General methods for building the business logic
@@ -185,7 +184,6 @@ def longtest(self):
                 meta={'current': Ntest, 'total': 8,
                                 'status': "FAIL"}
             )
-            print("diocane")
             raise Ignore()
         if("E" in st):
             break
