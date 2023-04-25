@@ -14,6 +14,7 @@ import csv
 import re
 from celery import Celery, Task, states
 from celery.exceptions import Ignore
+from teensy import *
 
 """
 Configuration
@@ -30,27 +31,6 @@ app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 
 celery = Celery(app.name,backend='redis://localhost:6379/0', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
-
-#open only when using arduin0
-teensyports = [
-    p.device
-    for p in serial.tools.list_ports.comports()
-    if "USB" in p.description
-]
-print(teensyports)
-"""
-ports = list(serial.tools.list_ports.comports())
-for p in ports:
-    print(p.description)    
-print("####")
-"""
-serialcom = serial.Serial(teensyports[0],115200,timeout=5)
-#serialcom = serial.Serial('COM5',115200)
-#serialcom.timeout = 1
-#serialcom = serial.serial_for_url('rfc2217://localhost:4000',\
-
-#f = float B = unsigned Char (uint8_t equivalent)
-
 '''
 General methods for building the business logic
 '''
@@ -63,6 +43,7 @@ def ledOff():
 def disconnect():
 	serialcom.close()
 
+"""
 def dummyMex():
     print("sono dentro dummyMex")
     recv = ""
@@ -76,19 +57,8 @@ def dummyMex():
             break
         if('1' in recv):
             break
-        """
-        time.sleep(1)
-        msg = serialcom.read(serialcom.inWaiting())
-        print(msg)
-        msg1 = str(msg, 'ascii')
-        print("Message from arduino " + msg1)
-        if("<" in msg1 ):
-            print("found char")
-            break
-        """
     print("sono fupri dummyMex")
-    #serialcom.write(str('\"R\"').encode())
-
+"""
 
 
 def ResetMex():
@@ -171,9 +141,7 @@ def add(x, y):
 def longtest(self):
     """Background task that runs a long function with progress reports."""
     print("startmondo")
-    while True:
-        dummyMex()
-        break
+    test_Vat()
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
@@ -188,8 +156,13 @@ def longtest(self):
         if("E" in st):
             break
         if("HAP" in st):
+            print(st)
+            numbers = re.findall(r'\d+',st)
+            print(numbers)
+            num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'timer': 5.756}
+            'timer1': num1, 'timer2': num2}
         #send_datum()
         self.update_state(state='PROGRESS',
                           meta={'current': Ntest, 'total': 8,
@@ -401,8 +374,12 @@ def taskstatus(task_id):
             'total': task.info.get('total', 1),
             'status': task.info.get('status', '')
         }
-        if 'result' in task.info:
-            response['result'] = task.info['result']
+        if 'timer1' in task.info:
+            print("ciao")
+            response['timer1'] = task.info['timer1']
+        if 'timer2' in task.info:
+            print("2ciao")
+            response['timer2'] = task.info['timer2']
     else:
         # something went wrong in the background job
         response = {

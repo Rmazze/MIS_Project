@@ -58,6 +58,8 @@
             let xpos2 = 0;    // position of the circle2 in the x axis
             let ypos2 = 0;    // position of the circle2 in the y axis
             let speed2 = 10;    // speed of the circle2 in the y axis
+            let text_timesx = "";     // timer for the left hand
+            let text_timedx = "";     // timer for the right hand
 
             function start_long_task() {     
                     // send ajax POST request to start background job
@@ -85,8 +87,14 @@
                     console.log("sono dentro e lo stato e " + data['state'])
                     if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                         if(data['state'] == 'SUCCESS'){
+                            stri = data['status']
+                            var dic_str = stri.replace(/'/g, "\"");
+                            var dic = JSON.parse(dic_str);
                             //la call alla presa riuscita funziona
-                            console.log('Resulting value: ' + readVal);
+                            //console.log('Resulting value: ' + dic['timer1']);
+                            //console.log('Resulting value: ' + dic['timer2']);
+                            text_timesx = dic['timer1']
+                            text_timedx = dic['timer2']
                             readVal = 1
                         }
                         if ('result' in data) {
@@ -352,7 +360,11 @@
                     rect(width/3*2, height-50, width/3, 50);
                     textFont(Ftimer, 20);
                     fill(123, 125, 125);
-                    time = "Total time: " + str(5.008);
+                    if((parseFloat(text_timedx)) >= (parseFloat(text_timesx))){
+                        time = "Total time: " + text_timedx;
+                    }else{
+                        time = "Total time: " + text_timesx;
+                    }
                     text(time, (width/3*2)+20, height-20);
                     winFinished = true;
                 }

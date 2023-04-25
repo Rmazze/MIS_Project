@@ -263,12 +263,11 @@ void loop() {
                 break;  
       // wait a random time before releasing the balls
       case(2):  // wait a random time than release the selected balls
-                {/*
+                {
                   if(first2){
                     Serial.println("State 2");
                     first2 = false;
-                  }*/
-                  Serial.println("State 2");
+                  }
                   if ((millis() - test_time_ready) >= rand_time){
                     switch(test_type){
                       case(0): stimulus_sx = HIGH; 
@@ -461,8 +460,8 @@ void loop() {
                 //Serial.println(test_elapsed_time_sx);
                 //Serial.println(test_elapsed_time_dx);
                 if (show_results){
-                  Serial.println("HAP sx: " + String(test_elapsed_time_sx));
-                  Serial.println("HAP dx: " + String(test_elapsed_time_dx));
+                  Serial.println("HAP sx:" + String(test_elapsed_time_sx) + "|dx:"+ String(test_elapsed_time_dx));
+                  //Serial.println("HAP dx: " + String(test_elapsed_time_dx));
                   show_results = false;
                 }
                 read_reset_button(reset_button_reading, 
