@@ -7,17 +7,18 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
     }
     if (auditory_stimuli == HIGH){
         if (stimulus_sx == HIGH && stimulus_dx == HIGH){
-            Serial.println("Produce auditory sx dx stimuli");
+            Serial.println("AUDXX"); // command to invoke both audio sources
         }
         else if (stimulus_sx == HIGH){
-            Serial.println("Produce auditory sx stimulus");
+            Serial.println("AUDSX");// command to invoke left audio source
         }
-        else if (stimulus_sx == HIGH){
-            Serial.println("Produce auditory dx stimulus");
+        else if (stimulus_dx == HIGH){
+            Serial.println("AUDDX");// command to invoke right audio source
         }
         else{
-            Serial.println("No stimuly to produce");
+            Serial.println("NOTAUD");// command for no audio (never gets considered though)
         }
+        
     }
     if (tactile_stimuli == HIGH){
         digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);

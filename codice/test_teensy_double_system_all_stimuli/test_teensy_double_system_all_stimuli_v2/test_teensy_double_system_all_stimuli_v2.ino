@@ -116,10 +116,12 @@ char startMarker_reset = '"';
 char endMarker_reset = '"';
 
 String received_buffer;
+String reset_buffer;
 char commands[3];
 char commandSerial[10];
 bool statecom = false;
 bool stateSerial = false;
+char reset_buffer_char[10];
 
 // For debugging reasons to avoid unneccessary looping prints
 bool first0 = true;
@@ -183,9 +185,9 @@ void loop() {
   hand_in_position_state_dx = digitalRead(hand_in_position_dx);
   delay(30);
   //recvWithStartEndMarkers(receivedChars_reset, numChars_reset, newData_reset, startMarker_reset, endMarker_reset);
-  if (Serial.available() > 0 && !statecom){
+  if (Serial.available() > 0){
     received_buffer = Serial.readStringUntil('\n');
-    //Serial.println(received_buffer);
+    Serial.println(received_buffer);
     //Serial.println(hand_in_position_state_sx);
     //Serial.println(hand_in_position_state_dx);
     Serial.flush();
@@ -200,7 +202,6 @@ void loop() {
     parseCom(received_buffer_char);
     Serial.flush();
   }
-  //Serial.println("la pizza alla " + String(commandSerial));
   if (statecom){
     switch(program_execution_state){
       // wait for the test initialization
@@ -257,7 +258,7 @@ void loop() {
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-                if (received_buffer_char[0] == '"'){
+                if (received_buffer_char[0] == 'R'){
                   reset_from_server(received_buffer_char, program_execution_state); 
                 } 
                 break;  
@@ -298,29 +299,13 @@ void loop() {
                     Serial.println("Hands not in position: ");
                   }
         
-                  //reset code
-                  //reset_button_reading = digitalRead(reset_button);
-                  //if (reset_button_reading != last_reset_button_state){
-                  //  last_debounce_time_reset = millis();
-                  //}
-    //
-                  //if ((millis() - last_debounce_time_reset) > debounce_delay){
-                  //  if (reset_button_reading != reset_button_state){
-                  //    reset_button_state = reset_button_reading;
-    //
-                  //    if (reset_button_state == HIGH){
-                  //      program_execution_state = -1; 
-                  //    }
-                  //  }
-                  //}
-                  //last_reset_button_state = reset_button_reading;
                   read_reset_button(reset_button_reading, 
                                     reset_button_state, 
                                     last_reset_button_state, 
                                     last_debounce_time_reset,
                                     debounce_delay,
                                     program_execution_state);
-                  if (commandSerial[0] == '"'){
+                  if (commandSerial[0] == 'R'){
                     reset_from_server(commandSerial, program_execution_state); 
                   }   
                   break;
@@ -358,30 +343,14 @@ void loop() {
                 else if (ongoing_test_dx == LOW){
                   stimulus_dx = LOW;
                 }
-  
-                //reset code
-                //reset_button_reading = digitalRead(reset_button);
-                //if (reset_button_reading != last_reset_button_state){
-                //  last_debounce_time_reset = millis();
-                //}
-  //
-                //if ((millis() - last_debounce_time_reset) > debounce_delay){
-                //  if (reset_button_reading != reset_button_state){
-                //    reset_button_state = reset_button_reading;
-  //
-                //    if (reset_button_state == HIGH){
-                //      program_execution_state = -1; 
-                //    }
-                //  }
-                //}
-                //last_reset_button_state = reset_button_reading;
+
                 read_reset_button(reset_button_reading, 
                                   reset_button_state, 
                                   last_reset_button_state, 
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-                if (commandSerial[0] == '"'){
+                if (commandSerial[0] == 'R'){
                   reset_from_server(commandSerial, program_execution_state); 
                 }  
                 break;
@@ -414,30 +383,13 @@ void loop() {
                   program_execution_state = -1;  
                 }
                 
-  
-                //reset code
-                //reset_button_reading = digitalRead(reset_button);
-                //if (reset_button_reading != last_reset_button_state){
-                //  last_debounce_time_reset = millis();
-                //}
-  //
-                //if ((millis() - last_debounce_time_reset) > debounce_delay){
-                //  if (reset_button_reading != reset_button_state){
-                //    reset_button_state = reset_button_reading;
-  //
-                //    if (reset_button_state == HIGH){
-                //      program_execution_state = -1; 
-                //    }
-                //  }
-                //}
-                //last_reset_button_state = reset_button_reading;
                 read_reset_button(reset_button_reading, 
                                   reset_button_state, 
                                   last_reset_button_state, 
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-                if (commandSerial[0] == '"'){
+                if (commandSerial[0] == 'R'){
                   reset_from_server(commandSerial, program_execution_state); 
                 }  
                 break;
@@ -457,12 +409,21 @@ void loop() {
                            test_elapsed_time_dx = 0;
                            break;
                 }
-                //Serial.println(test_elapsed_time_sx);
-                //Serial.println(test_elapsed_time_dx);
                 if (show_results){
                   Serial.println("HAP sx:" + String(test_elapsed_time_sx) + "|dx:"+ String(test_elapsed_time_dx));
                   //Serial.println("HAP dx: " + String(test_elapsed_time_dx));
                   show_results = false;
+                }
+                 if (Serial.available() > 0 && stateSerial){
+                  reset_buffer = Serial.readStringUntil('\n');
+                  Serial.println(reset_buffer);
+                  //Serial.println(hand_in_position_state_sx);
+                  //Serial.println(hand_in_position_state_dx);
+                }
+                received_buffer.toCharArray(reset_buffer_char, str_len);
+                if(str_len >= 1){ // 4 is an arbitrary number
+                  Serial.println(received_buffer_char[1]); // Print for debugging reasons
+                  parseCom(reset_buffer_char);
                 }
                 read_reset_button(reset_button_reading, 
                                   reset_button_state, 
@@ -470,7 +431,7 @@ void loop() {
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-                if (commandSerial[0] == '"'){
+                if (commandSerial[0] == 'R'){
                   reset_from_server(commandSerial, program_execution_state); 
                 }   
                 break;
@@ -536,6 +497,7 @@ void loop() {
                 first5 = true;
                 first6 = true;
                 firstD = true;
+                Serial.println("look at me dab at the end");
       }
   }
   // produce outputs

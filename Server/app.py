@@ -172,6 +172,9 @@ def longtest(self):
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'result': 42}
 
+@celery.task(bind=True)
+def reset(self):
+    print("reset")
 
 '''
 Routing of the pages
@@ -355,6 +358,15 @@ def run_task():
     #time.sleep(1000)
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}
+
+@app.route("/reset", methods=["POST"])
+def reset_task():
+    task = longtest.apply_async()
+    print("ho finito il calcolo")
+    #time.sleep(1000)
+    return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                  task_id=task.id)}
+
 
 #Introduced for debugging purposes
 @app.route('/status/<task_id>')
