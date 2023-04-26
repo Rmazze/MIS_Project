@@ -1,6 +1,7 @@
 import serial
 import serial.tools.list_ports as ports
 import time
+from pythonosc import udp_client
 
 teensyports = [
         p.device
@@ -8,24 +9,41 @@ teensyports = [
         if "USB" in p.description
     ]
 print(teensyports)
-serialcom = serial.Serial(teensyports[0],115200,timeout=5)
+teensy_name = "USB"
 #serialcom = serial.Serial('COM5',115200)
 #serialcom.timeout = 1
 #serialcom = serial.serial_for_url('rfc2217://localhost:4000',\
 
 #f = float B = unsigned Char (uint8_t equivalent)
 
-def hello():
-    print("hello")
-
-def ledOn():
-    serialcom.write(str('on').encode())
-    
-def ledOff():
-	serialcom.write(str('off').encode())
-
-def disconnect():
+def disconnect(serialcom):
 	serialcom.close()
+
+def connect():
+    print("mi sto connettendo")
+    ports = list(serial.tools.list_ports.comports())
+    for p in ports:
+        if teensy_name in p.description:
+            teensy_port = p.device
+            ser = serial.Serial(teensy_port, 115200)
+    return ser
+
+def pdSignal(serialcom):
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    while True:
+        msg = serialcom.read(serialcom.inWaiting()).decode('ascii')
+        #if((len(msg) > 2) and not('AUD' in msg)):
+        print(msg)
+        if('AUDXX' in msg): 
+            client.send_message("/x_state", 3)
+            client.send_message("/x_state", 4)
+            break
+        if('AUDSX' in msg):
+            client.send_message("/x_state", 3)
+            break
+        if('AUDDX' in msg):
+            client.send_message("/x_state", 4)
+            break
 
 def connect():
     teensyports = [
@@ -36,6 +54,11 @@ def connect():
     print(teensyports)
     serialcom = serial.Serial(teensyports[0],115200,timeout=5)
     return serialcom
+
+
+def ResetMex():
+    print("Gonna reset the system")
+    serialcom.write(str('\"R\"').encode())
 
 def test_Vat():
     recv = ""
@@ -50,7 +73,7 @@ def test_Vat():
         if('1' in recv):
             break
 
-def test_vAt():
+def test_vAt(serialcom):
     recv = ""
     while True:
         serialcom.write(str('<v,A,t>').encode())
@@ -62,6 +85,8 @@ def test_vAt():
             break
         if('1' in recv):
             break
+    pdSignal(serialcom)
+
 
 def test_vaT():
     recv = ""

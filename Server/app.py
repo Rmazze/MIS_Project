@@ -31,75 +31,6 @@ app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 
 celery = Celery(app.name,backend='redis://localhost:6379/0', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
-'''
-General methods for building the business logic
-'''
-def ledOn():
-    serialcom.write(str('on').encode())
-    
-def ledOff():
-	serialcom.write(str('off').encode())
-
-def disconnect():
-	serialcom.close()
-
-"""
-def dummyMex():
-    print("sono dentro dummyMex")
-    recv = ""
-    while True:
-        serialcom.write(str('<V,a,t>').encode())
-        time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
-        print(recv)
-        if('0' in recv):
-            break
-        if('1' in recv):
-            break
-    print("sono fupri dummyMex")
-"""
-
-
-def ResetMex():
-    print("Gonna reset the system")
-    serialcom.write(str('\"R\"').encode())
-
-def waitStream():
-    print("ciao")
-    while True:
-        ret = serialcom.readline()
-        print(ret)
-        st = str(ret, 'ascii')
-        print(st)
-        if st != "":
-            print(st + " dalla com con arduino")
-            break
-
-def waitStream2():
-    #print("ciao")
-    while True:
-        ret = serialcom.readline()
-        print(ret)
-        st = str(ret, 'ascii')
-        m = re.search('<(.+?)>', st)
-        print(m)
-        if m:
-            found = m.group(1)
-            print(found + " dalla com con arduino")
-            break
-
-
-def readStream():
-    #print("ciao")
-    while True:
-        ret = serialcom.readline(serialcom.in_waiting)
-        st = str(ret, 'ascii')
-        print(st)
-        if(st != ""):
-            break
-#new_thread = NewThreadedTask()
-#new_thread.start()
 
 '''
 Celery part
@@ -109,10 +40,6 @@ with the overall process
 
 NOTE: seems like serial does not interfere with the overall process
 '''
-
-@celery.task()
-def add(x, y):
-        return x + y
 
 @celery.task()
 def send_data():
@@ -139,24 +66,29 @@ def add(x, y):
 
 @celery.task(bind=True)
 def longtest(self):
+    serialcom = connect()
     """Background task that runs a long function with progress reports."""
     print("startmondo")
-    test_Vat()
+    test_vAt(serialcom)
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
-        print(st)
+        #print(st)
         if("SAD" in st):
             self.update_state(
                 state = states.FAILURE,
                 meta={'current': Ntest, 'total': 8,
                                 'status': "FAIL"}
             )
+            disconnect(serialcom)
+            time.sleep(1)
             raise Ignore()
         if("E" in st):
+            disconnect(serialcom)
             break
         if("HAP" in st):
             print(st)
+            disconnect(serialcom)
             numbers = re.findall(r'\d+',st)
             print(numbers)
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
@@ -354,7 +286,6 @@ def charts():
 @app.route("/test", methods=["POST"])
 def run_task():
     task = longtest.apply_async()
-    print("ho finito il calcolo")
     #time.sleep(1000)
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}

@@ -27,6 +27,11 @@
 #define magnet_sx 31
 #define magnet_dx 32
 
+//reboot teensy at the end of a test
+#define RESTART_ADDR       0xE000ED0C
+#define READ_RESTART()     (*(volatile uint32_t *)RESTART_ADDR)
+#define WRITE_RESTART(val) ((*(volatile uint32_t *)RESTART_ADDR) = (val))
+
 // Indicate in which state of the state machine the program is and if we are already in a test loop
 int program_execution_state = 0;
 bool execution = LOW;
@@ -74,7 +79,7 @@ unsigned long rand_time = 0;
 // How long are the stimuli to produce
 unsigned long stimuly_duration = 3000; //decrese this value
 // Time after which we consider that the user was not able to catch the balls
-unsigned long to_much_time_elapsed = 100000; //decrese this value
+unsigned long to_much_time_elapsed = 30000; //decrese this value
 // Saves the timestamp in which the test starts
 unsigned long test_time_ready = 0;
 // Saves the timestamp in which the ball is released
@@ -411,6 +416,8 @@ void loop() {
                 }
                 if (show_results){
                   Serial.println("HAP sx:" + String(test_elapsed_time_sx) + "|dx:"+ String(test_elapsed_time_dx));
+                  delay(300);
+                  WRITE_RESTART(0x5FA0004);
                   //Serial.println("HAP dx: " + String(test_elapsed_time_dx));
                   show_results = false;
                 }
