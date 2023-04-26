@@ -44,6 +44,7 @@ def pdSignal(serialcom):
         if('AUDDX' in msg):
             client.send_message("/x_state", 4)
             break
+    #client.close()
 
 def connect():
     teensyports = [
