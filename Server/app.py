@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, url_for, send_from_directory
-from flask_session import Session
+#from flask_session import Session
 from flask import jsonify
 import serial
 import serial.tools.list_ports as ports
@@ -23,9 +23,9 @@ Configuration
 Ntest = 0
 
 app = Flask(__name__)
-app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+#Session(app)
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
 
@@ -69,7 +69,7 @@ def longtest(self):
     serialcom = connect()
     """Background task that runs a long function with progress reports."""
     print("startmondo")
-    test_vAt(serialcom)
+    test_VAt(serialcom)
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
@@ -93,6 +93,7 @@ def longtest(self):
             print(numbers)
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            pdSignalHAP(serialcom)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
         #send_datum()
@@ -159,7 +160,7 @@ def trialLogin():
     # cannot be access directly
     if request.method == 'GET':
         # take usr
-        session["name"] = request.form.get("Username")
+        #session["name"] = request.form.get("Username")
         return render_template('Trial.html')
     
     
@@ -167,7 +168,7 @@ def trialLogin():
 
         # take form results
         form_data = request.form
-        session["name"] = request.form.get("Username")
+        #session["name"] = request.form.get("Username")
 
         # check if form is empty
         if form_data["Username"] and form_data["Password"]:
@@ -253,7 +254,7 @@ def trialSignUp():
 def charts():
     
     # take usr
-    usr = session["name"]
+    usr = "gainni"#session["name"]
 
     try:
         # read database
