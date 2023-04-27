@@ -33,17 +33,24 @@ def pdSignal(serialcom):
     while True:
         msg = serialcom.read(serialcom.inWaiting()).decode('ascii')
         #if((len(msg) > 2) and not('AUD' in msg)):
-        print(msg)
         if('AUDXX' in msg): 
+            print(msg + " in pure data")
             client.send_message("/x_state", 3)
             client.send_message("/x_state", 4)
             break
         if('AUDSX' in msg):
+            print(msg + " in pure data")
             client.send_message("/x_state", 3)
             break
         if('AUDDX' in msg):
+            print(msg + " in pure data")
             client.send_message("/x_state", 4)
             break
+    #client.close()
+
+def pdSignalHAP(serialcom):
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    client.send_message("/x_state", 2)
     #client.close()
 
 def connect():
@@ -61,7 +68,7 @@ def ResetMex():
     print("Gonna reset the system")
     serialcom.write(str('\"R\"').encode())
 
-def test_Vat():
+def test_Vat(serialcom):
     recv = ""
     while True:
         serialcom.write(str('<V,a,t>').encode())
@@ -102,7 +109,7 @@ def test_vaT():
         if('1' in recv):
             break
 
-def test_VAt():
+def test_VAt(serialcom):
     recv = ""
     while True:
         serialcom.write(str('<V,A,t>').encode())
@@ -114,6 +121,7 @@ def test_VAt():
             break
         if('1' in recv):
             break
+    pdSignal(serialcom)
 
 def test_VaT():
     recv = ""
@@ -128,20 +136,8 @@ def test_VaT():
         if('1' in recv):
             break
 
-def test_VAT():
-    recv = ""
-    while True:
-        serialcom.write(str('<V,A;T>').encode())
-        time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
-        print(recv)
-        if('0' in recv):
-            break
-        if('1' in recv):
-            break
 
-def test_vAT():
+def test_vAT(serialcom):
     recv = ""
     while True:
         serialcom.write(str('<v,A,T>').encode())
@@ -153,5 +149,19 @@ def test_vAT():
             break
         if('1' in recv):
             break
+    pdSignal(serialcom)
 
 
+def test_VAT(serialcom):
+    recv = ""
+    while True:
+        serialcom.write(str('<V,A,T>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('0' in recv):
+            break
+        if('1' in recv):
+            break
+    pdSignal(serialcom)
