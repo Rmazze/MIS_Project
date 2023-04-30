@@ -37,7 +37,7 @@ int program_execution_state = 0;
 bool execution = LOW;
 
 // Indicate if the results must be printed
-bool show_results = true;
+bool show_results = HIGH;
 
 // Indicate if all is ok and the test can start
 bool test_ready_state = LOW;
@@ -110,8 +110,8 @@ char receivedChars_test[numChars_test]; //to remove?
 char receivedChars_reset[numChars_reset]; //to remove?
 
 //idicate that a new massage has been received
-bool newData_test = false; //to remove?
-bool newData_reset = false; //to remove?
+bool newData_test = LOW; //to remove?
+bool newData_reset = LOW; //to remove?
  
 // markers for messages regarding stimuli selection
 char startMarker_test = '<';
@@ -188,7 +188,6 @@ void loop() {
   // read if hands are in the correct position
   hand_in_position_state_sx = digitalRead(hand_in_position_sx);
   hand_in_position_state_dx = digitalRead(hand_in_position_dx);
-  delay(30);
   //recvWithStartEndMarkers(receivedChars_reset, numChars_reset, newData_reset, startMarker_reset, endMarker_reset);
   if (Serial.available() > 0){
     received_buffer = Serial.readStringUntil('\n');
@@ -208,219 +207,269 @@ void loop() {
     Serial.flush();
   }
   if (statecom){
-    switch(program_execution_state){
-      // wait for the test initialization
+  switch(program_execution_state){
+    // wait for the test initialization
       case(0):  {
                   if(first0){
                     Serial.println("State 0");
                     first0 = false;
                   }
                   if (commandSerial[0] == '<'){
-                    Serial.println("First char <");
+                Serial.println("First char <");
                     select_stimuli_regex(commandSerial, visual_stimuli, auditory_stimuli, tactile_stimuli);
-                    test_ready_state = HIGH;
-                    program_execution_state = 1;
-                  } else{
+                test_ready_state = HIGH;
+                program_execution_state = 1;
+              } else{
                     Serial.println("First char: " + commandSerial[0]);    
-                  }
-                    
-                  //}
-                  break;
+              }
+                
+              //}
+              break;
                 }
-      // wait the user to be ready
-      case(1):  //Serial.println("Case 0: ");
-                // wait for hands of the user to be in the correct position
+    // wait the user to be ready
+    case(1):  //Serial.println("Case 0: ");
+              // wait for hands of the user to be in the correct position
                 if(first1){
                   Serial.println("State 1");
                   first1 = false;
                 }
-                if ((hand_in_position_state_sx == LOW) && (hand_in_position_state_dx == LOW)){
-                  led_start_state = LOW;
-                  led_stop_state = LOW;
-                  stimulus_sx = LOW;
-                  stimulus_dx = LOW;
-  
-                  test_time_ready = millis();
-                  randomSeed(millis());
-                  rand_time = random(5000, 10000);
-                  test_type = random(0, 3);
-                  Serial.println("Test type: " + String(test_type));
-                  switch(test_type){
-                    case(0): ongoing_test_sx = HIGH; break;
-                    case(1): ongoing_test_dx = HIGH; break;
-                    case(2): ongoing_test_sx = HIGH; ongoing_test_dx = HIGH; break;
-                    default: ongoing_test_sx = LOW; ongoing_test_dx = LOW;
-                  }
-                  // test is starteded
-                  test_ready_state = LOW;
-                  // go to next state
-                  program_execution_state = 2;
-                }      
-  
-                read_reset_button(reset_button_reading, 
-                                  reset_button_state, 
-                                  last_reset_button_state, 
-                                  last_debounce_time_reset,
-                                  debounce_delay,
-                                  program_execution_state);
+              if ((hand_in_position_state_sx == LOW) && (hand_in_position_state_dx == LOW)){
+                led_start_state = LOW;
+                led_stop_state = LOW;
+                stimulus_sx = LOW;
+                stimulus_dx = LOW;
+
+                test_time_ready = millis();
+                randomSeed(millis());
+                rand_time = random(5000, 10000);
+                test_type = random(0, 3);
+                Serial.println("Test type: " + String(test_type));
+                switch(test_type){
+                  case(0): ongoing_test_sx = HIGH; break;
+                  case(1): ongoing_test_dx = HIGH; break;
+                  case(2): ongoing_test_sx = HIGH; ongoing_test_dx = HIGH; break;
+                  default: ongoing_test_sx = LOW; ongoing_test_dx = LOW;
+                }
+                // test is starteded
+                test_ready_state = LOW;
+                // go to next state
+                program_execution_state = 2;
+              }      
+
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
                 if (received_buffer_char[0] == 'R'){
-                  reset_from_server(received_buffer_char, program_execution_state); 
-                } 
-                break;  
-      // wait a random time before releasing the balls
+                reset_from_server(received_buffer_char, program_execution_state); 
+              } 
+              break;  
+    // wait a random time before releasing the balls
       case(2):  // wait a random time than release the selected balls
                 {
                   if(first2){
                     Serial.println("State 2");
                     first2 = false;
                   }
-                  if ((millis() - test_time_ready) >= rand_time){
-                    switch(test_type){
-                      case(0): stimulus_sx = HIGH; 
-                               glove_state_sx = LOW;
-                               break;
-                      case(1): stimulus_dx = HIGH; 
-                               glove_state_dx = LOW;
-                               break;
-                      case(2): stimulus_sx = HIGH;
-                               stimulus_dx = HIGH;  
-                               glove_state_sx = LOW;
-                               glove_state_dx = LOW;
-                               break;
-                      default: stimulus_sx = LOW;
-                               stimulus_dx = LOW;  
-                               glove_state_sx = HIGH;
-                               glove_state_dx = HIGH;
-                               break;
-                    }
-                    program_execution_state = 4;
-                    test_time_start = millis();
-                    led_start_state = HIGH;
-                  }
+              if ((millis() - test_time_ready) >= rand_time){
+                switch(test_type){
+                  case(0): stimulus_sx = HIGH; 
+                           glove_state_sx = LOW;
+                           break;
+                  case(1): stimulus_dx = HIGH; 
+                           glove_state_dx = LOW;
+                           break;
+                  case(2): stimulus_sx = HIGH;
+                           stimulus_dx = HIGH;  
+                           glove_state_sx = LOW;
+                           glove_state_dx = LOW;
+                           break;
+                  default: stimulus_sx = LOW;
+                           stimulus_dx = LOW;  
+                           glove_state_sx = HIGH;
+                           glove_state_dx = HIGH;
+                           break;
+                }
+                program_execution_state = 4;
+                test_time_start = millis();
+                led_start_state = HIGH;
+              }
+
+              //check hands in position
+              if ((hand_in_position_state_sx == HIGH) || (hand_in_position_state_dx == HIGH)){
+                program_execution_state = 7;
+                Serial.println("Hands not in position: ");
+              }
     
-                  //check hands in position
-                  if ((hand_in_position_state_sx == HIGH) || (hand_in_position_state_dx == HIGH)){
-                    program_execution_state = 7;
-                    Serial.println("Hands not in position: ");
-                  }
-        
-                  read_reset_button(reset_button_reading, 
-                                    reset_button_state, 
-                                    last_reset_button_state, 
-                                    last_debounce_time_reset,
-                                    debounce_delay,
-                                    program_execution_state);
+              //reset code
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
                   if (commandSerial[0] == 'R'){
                     reset_from_server(commandSerial, program_execution_state); 
-                  }   
-                  break;
+              }   
+              break;
                 }
-      // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
-      case(3):  //Serial.println("Case 3: ");
-                // turn off stimuli if enought time is last than go to next state
+    // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
+    case(3):  //Serial.println("Case 3: ");
+              // turn off stimuli if enought time is last than go to next state
                 if(first3){
                   Serial.println("State 3");
                   first3 = false;
                 }
-                if ((millis() - test_time_start) >= stimuly_duration){
-                  switch(test_type){
-                    case(0): stimulus_sx = LOW; break;
-                    case(1): stimulus_dx = LOW; break;
-                    case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
-                    default: stimulus_sx = LOW; stimulus_dx = LOW;
-                  }
-                  program_execution_state = 4;  
+              if ((millis() - test_time_start) >= stimuly_duration){
+                switch(test_type){
+                  case(0): stimulus_sx = LOW; break;
+                  case(1): stimulus_dx = LOW; break;
+                  case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
+                  default: stimulus_sx = LOW; stimulus_dx = LOW;
                 }
-  
-                // turn off stimulus when user chatches the right ball
-                // when all released balls are cheched jump to state 5
-                if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
-                  stimulus_sx = LOW;
-                  stimulus_dx = LOW;
-                  led_start_state = LOW;
-                  led_stop_state = HIGH;
-                  Serial.println("Produce happy sound");
-                  program_execution_state = 5;
-                }
-                else if (ongoing_test_sx == LOW){
-                  stimulus_sx = LOW;
-                }
-                else if (ongoing_test_dx == LOW){
-                  stimulus_dx = LOW;
-                }
+                program_execution_state = 4;  
+              }
 
-                read_reset_button(reset_button_reading, 
-                                  reset_button_state, 
-                                  last_reset_button_state, 
-                                  last_debounce_time_reset,
-                                  debounce_delay,
-                                  program_execution_state);
+              // turn off stimulus when user chatches the right ball
+              // when all released balls are cheched jump to state 5
+              if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
+                stimulus_sx = LOW;
+                stimulus_dx = LOW;
+                led_start_state = LOW;
+                led_stop_state = HIGH;
+                Serial.println("Produce happy sound");
+                program_execution_state = 5;
+              }
+              else if (ongoing_test_sx == LOW){
+                stimulus_sx = LOW;
+              }
+              else if (ongoing_test_dx == LOW){
+                stimulus_dx = LOW;
+              }
+
+              //reset code
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
                 if (commandSerial[0] == 'R'){
                   reset_from_server(commandSerial, program_execution_state); 
-                }  
-                break;
-      // see if the user chatches all the balls, if too much time is elapesed consider as the user didn't chatch the balls
-      case(4):  //Serial.println("Case 4: ");
-                // when all released balls are cheched go to next state
+              }  
+              break;
+    // see if the user chatches all the balls, if too much time is elapesed consider as the user didn't chatch the balls
+    case(4):  //Serial.println("Case 4: ");
+              // when all released balls are cheched go to next state
                 if(first4){
                   Serial.println("State 4");
                   first4 = false;
                 }
-                if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
-                  stimulus_sx = LOW;
-                  stimulus_dx = LOW;
-                  led_start_state = LOW;
-                  led_stop_state = HIGH;
-                  Serial.println("Produce happy sound");
-                  program_execution_state = 5;
-                }
-                else if (ongoing_test_sx == LOW){
-                  stimulus_sx = LOW;
-                }
-                else if (ongoing_test_dx == LOW){
-                  stimulus_dx = LOW;
-                }
-  
-                // too much time is elapsed, consider as the user didn't chanch the balls
-                if ((millis() - test_time_start) >= to_much_time_elapsed){
+              if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
+                stimulus_sx = LOW;
+                stimulus_dx = LOW;
+                led_start_state = LOW;
+                led_stop_state = HIGH;
+                Serial.println("Produce happy sound");
+                program_execution_state = 5;
+              }
+              else if (ongoing_test_sx == LOW){
+                stimulus_sx = LOW;
+              }
+              else if (ongoing_test_dx == LOW){
+                stimulus_dx = LOW;
+              }
+
+              // too much time is elapsed, consider as the user didn't chanch the balls
+              if ((millis() - test_time_start) >= to_much_time_elapsed){
                   Serial.println("SAD");
-                  // may add something to communicate fake times?
-                  program_execution_state = -1;  
-                }
-                
-                read_reset_button(reset_button_reading, 
-                                  reset_button_state, 
-                                  last_reset_button_state, 
-                                  last_debounce_time_reset,
-                                  debounce_delay,
-                                  program_execution_state);
+                // may add something to communicate fake times?
+                program_execution_state = -1;  
+              }
+              
+
+              //reset code
+              //reset_button_reading = digitalRead(reset_button);
+              //if (reset_button_reading != last_reset_button_state){
+              //  last_debounce_time_reset = millis();
+              //}
+//
+              //if ((millis() - last_debounce_time_reset) > debounce_delay){
+              //  if (reset_button_reading != reset_button_state){
+              //    reset_button_state = reset_button_reading;
+//
+              //    if (reset_button_state == HIGH){
+              //      program_execution_state = -1; 
+              //    }
+              //  }
+              //}
+              //last_reset_button_state = reset_button_reading;
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
                 if (commandSerial[0] == 'R'){
                   reset_from_server(commandSerial, program_execution_state); 
-                }  
-                break;
-      // compute results of this execution
-      case(5):  //Serial.println("Case 5: ");
+              }  
+              break;
+    // compute results of this execution
+    case(5):  //Serial.println("Case 5: ");
                 if(first5){
                   Serial.println("State 5");
                   first5 = false;
                 }
-                switch(test_type){
-                  case(0): test_elapsed_time_sx = test_time_end_sx - test_time_start; break;
-                  case(1): test_elapsed_time_dx = test_time_end_dx - test_time_start; break;
-                  case(2): test_elapsed_time_sx = test_time_end_sx - test_time_start; 
-                           test_elapsed_time_dx = test_time_end_dx - test_time_start;
-                           break;
-                  default: test_elapsed_time_sx = 0; 
-                           test_elapsed_time_dx = 0;
-                           break;
-                }
-                if (show_results){
+              switch(test_type){
+                case(0): test_elapsed_time_sx = test_time_end_sx - test_time_start; break;
+                case(1): test_elapsed_time_dx = test_time_end_dx - test_time_start; break;
+                case(2): test_elapsed_time_sx = test_time_end_sx - test_time_start; 
+                         test_elapsed_time_dx = test_time_end_dx - test_time_start;
+                         break;
+                default: test_elapsed_time_sx = 0; 
+                         test_elapsed_time_dx = 0;
+                         break;
+              }
+
+              if (show_results){
                   Serial.println("HAP sx:" + String(test_elapsed_time_sx) + "|dx:"+ String(test_elapsed_time_dx));
                   delay(300);
                   WRITE_RESTART(0x5FA0004);
                   //Serial.println("HAP dx: " + String(test_elapsed_time_dx));
                   show_results = false;
-                }
+              }
                  if (Serial.available() > 0 && stateSerial){
                   reset_buffer = Serial.readStringUntil('\n');
                   Serial.println(reset_buffer);
@@ -432,79 +481,89 @@ void loop() {
                   Serial.println(received_buffer_char[1]); // Print for debugging reasons
                   parseCom(reset_buffer_char);
                 }
-                read_reset_button(reset_button_reading, 
-                                  reset_button_state, 
-                                  last_reset_button_state, 
-                                  last_debounce_time_reset,
-                                  debounce_delay,
-                                  program_execution_state);
+              read_reset_button(reset_button_reading, 
+                                reset_button_state, 
+                                last_reset_button_state, 
+                                last_debounce_time_reset,
+                                debounce_delay,
+                                program_execution_state);
                 if (commandSerial[0] == 'R'){
                   reset_from_server(commandSerial, program_execution_state); 
-                }   
-                break;
-      // reset state that doesn't reset the test to do
-      case(6):  
-                if(first6){
+              }   
+              break;
+    //test all different stimuli
+    case(6): test_dimuli(stimuly_duration);
+             program_execution_state = -1;
+    // reset state that doesn't reset the test to do
+    case(7):  if(first6){
                   Serial.println("State 6");
                   Serial.println("Waiting for signal");
                   first6 = false;
-                }
-                glove_state_sx = HIGH; //reset state
-                glove_state_dx = HIGH;
-                led_start_state = HIGH; //LOW;
-                led_stop_state = HIGH; //LOW;
-                show_results = true;
-                test_ready_state = LOW;
-                stimulus_sx = HIGH; //LOW;
-                stimulus_dx = HIGH; //LOW;
-                ongoing_test_sx = LOW;
-                ongoing_test_dx = LOW;
-                test_time_ready = 0;
-                test_time_start = 0;
-                test_time_end_sx = 0;
-                test_time_end_dx = 0;
-                test_elapsed_time_sx = 0;
-                test_elapsed_time_dx = 0;
-  
-                program_execution_state = 1;
-      // reset state that reset everything
-      default:  //Serial.println("Case default: ");
-                if(firstD){
-                  Serial.println("Default state");
-                  firstD = false;
-                }
-                glove_state_sx = HIGH; //reset state
-                glove_state_dx = HIGH;
-                led_start_state = HIGH; //LOW;
-                led_stop_state = HIGH; //LOW;
-                show_results = true;
-                test_ready_state = LOW;
-                stimulus_sx = HIGH; //LOW;
-                stimulus_dx = HIGH; //LOW;
-                ongoing_test_sx = LOW;
-                ongoing_test_dx = LOW;
-                test_time_ready = 0;
-                test_time_start = 0;
-                test_time_end_sx = 0;
-                test_time_end_dx = 0;
-                test_elapsed_time_sx = 0;
-                test_elapsed_time_dx = 0;
-  
-                newData_test = false;
-                newData_reset = false;
-  
-                received_buffer = "";
-  
-                program_execution_state = 0;
-                first0 = true;
-                first1 = true;
-                first2 = true;
-                first3 = true;
-                first4 = true;
-                first5 = true;
-                first6 = true;
-                firstD = true;
-                Serial.println("look at me dab at the end");
+              }
+              glove_state_sx = HIGH; //reset state
+              glove_state_dx = HIGH;
+              led_start_state = HIGH; //LOW;
+              led_stop_state = HIGH; //LOW;
+              show_results = HIGH;
+              test_ready_state = LOW;
+              stimulus_sx = HIGH; //LOW;
+              stimulus_dx = HIGH; //LOW;
+              ongoing_test_sx = LOW;
+              ongoing_test_dx = LOW;
+              test_time_ready = 0;
+              test_time_start = 0;
+              test_time_end_sx = 0;
+              test_time_end_dx = 0;
+              test_elapsed_time_sx = 0;
+              test_elapsed_time_dx = 0;
+
+              first0 = true;
+              first1 = true;
+              first2 = true;
+              first3 = true;
+              first4 = true;
+              first5 = true;
+              first6 = true;
+              firstD = true;
+
+              program_execution_state = 1;
+    // reset state that reset everything
+    default:  if(firstD){
+                Serial.println("Default state");
+                firstD = false;
+              }
+              glove_state_sx = HIGH; //reset state
+              glove_state_dx = HIGH;
+              led_start_state = HIGH; //LOW;
+              led_stop_state = HIGH; //LOW;
+              show_results = HIGH;
+              test_ready_state = LOW;
+              stimulus_sx = HIGH; //LOW;
+              stimulus_dx = HIGH; //LOW;
+              ongoing_test_sx = LOW;
+              ongoing_test_dx = LOW;
+              test_time_ready = 0;
+              test_time_start = 0;
+              test_time_end_sx = 0;
+              test_time_end_dx = 0;
+              test_elapsed_time_sx = 0;
+              test_elapsed_time_dx = 0;
+
+              newData_test = LOW;
+              newData_reset = LOW;
+
+              received_buffer = "";
+
+              program_execution_state = 0;
+              first0 = true;
+              first1 = true;
+              first2 = true;
+              first3 = true;
+              first4 = true;
+              first5 = true;
+              first6 = true;
+              firstD = true;
+              Serial.println("look at me dab at the end");
       }
   }
   // produce outputs
