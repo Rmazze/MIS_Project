@@ -6,7 +6,7 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
         //Serial.println("Produce visual stimuli");
     }
     if (auditory_stimuli == HIGH){
-        if (stimulus_sx == HIGH && stimulus_dx == HIGH){
+        if (stimulus_sx == HIGH && stimulus_dx == HIGH){ //mi sa che abbiamo un solo stimolo audio
             Serial.println("AUDXX"); // command to invoke both audio sources
         }
         else if (stimulus_sx == HIGH){
