@@ -28,15 +28,19 @@ def connect():
             ser = serial.Serial(teensy_port, 115200)
     return ser
 
-def pdSignal(serialcom):
+def pdSignal(serialcom, flag):
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     while True:
         msg = serialcom.read(serialcom.inWaiting()).decode('ascii')
         #if((len(msg) > 2) and not('AUD' in msg)):
         if('AUDXX' in msg): 
             print(msg + " in pure data")
-            client.send_message("/x_state", 3)
-            client.send_message("/x_state", 4)
+            if(flag):
+                pdSignalFast()
+            else:
+                pdSignalSlow()
+            client.send_message("/x_state", 3)# fast
+            client.send_message("/x_state", 4)# slow
             break
         if('AUDSX' in msg):
             print(msg + " in pure data")
@@ -48,25 +52,67 @@ def pdSignal(serialcom):
             break
     #client.close()
 
-def pdSignalHAP(serialcom):
+def pdSignalHAP():
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     client.send_message("/x_state", 2)
+
+def pdSignalSAD():
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    client.send_message("/x_state", 1)
+
+def pdSignalFast():
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    client.send_message("/x_state", 3)
+
+def pdSignalSlow():
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    client.send_message("/x_state", 4)
     #client.close()
 
 def connect():
-    teensyports = [
-        p.device
-        for p in serial.tools.list_ports.comports()
-        if "USB" in p.description
-    ]
-    print(teensyports)
-    serialcom = serial.Serial(teensyports[0],115200,timeout=5)
+    while True:
+        teensyports = [
+            p.device
+            for p in serial.tools.list_ports.comports()
+            if "USB" in p.description
+        ]
+        print(teensyports)
+        if(len(teensyports) > 0):
+            serialcom = serial.Serial(teensyports[0],115200,timeout=5)
+            break
+        time.sleep(4)
     return serialcom
 
 
-def ResetMex():
+def ResetMex(serialcom):
     print("Gonna reset the system")
-    serialcom.write(str('\"R\"').encode())
+    recv = ""
+    while True:
+        serialcom.write(str('\"R\"').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if("es" in recv):
+            return True
+        return False
+
+def test_Stimuli(serialcom):
+    recv = ""
+    while True:
+        serialcom.write(str('<V,a,t>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('0' in recv):
+            break
+        if('1' in recv):
+            break
+        if('ate' in recv):
+            break
+    print("sono fuori")
+
 
 def test_Vat(serialcom):
     recv = ""
@@ -80,6 +126,23 @@ def test_Vat(serialcom):
             break
         if('1' in recv):
             break
+        if('ate' in recv):
+            break
+    print("sono fuori")
+
+def test_vAtFast(serialcom):
+    recv = ""
+    while True:
+        serialcom.write(str('<v,A,t>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('0' in recv):
+            break
+        if('1' in recv):
+            break
+    pdSignal(serialcom,True)
 
 def test_vAt(serialcom):
     recv = ""
@@ -96,7 +159,7 @@ def test_vAt(serialcom):
     pdSignal(serialcom)
 
 
-def test_vaT():
+def test_vaT(serialcom):
     recv = ""
     while True:
         serialcom.write(str('<v,a,T>').encode())

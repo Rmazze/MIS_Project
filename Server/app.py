@@ -6,6 +6,7 @@ import serial.tools.list_ports as ports
 from tasks import *
 import random
 import time
+import datetime
 import threading
 from pythonosc import udp_client
 import pandas as pd
@@ -73,19 +74,39 @@ def longtest(self):
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
-        #print(st)
-        if("SAD" in st):
+        print(st)
+        """
+        if("ela" in st):
             self.update_state(
-                state = states.FAILURE,
-                meta={'current': Ntest, 'total': 8,
+                state = states.TESTING,
+                meta={'current': 3, 'total': 8,
                                 'status': "FAIL"}
             )
             disconnect(serialcom)
+            pdSignalSAD()
             time.sleep(1)
             raise Ignore()
-        if("E" in st):
+        """
+        if(("SAD" in st) or ("efa" in st)):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
             disconnect(serialcom)
-            break
+            pdSignalSAD()
+            time.sleep(1)
+            raise Ignore()
+        if("es" in st):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            raise Ignore()
         if("HAP" in st):
             print(st)
             disconnect(serialcom)
@@ -93,21 +114,22 @@ def longtest(self):
             print(numbers)
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
-            pdSignalHAP(serialcom)
+            pdSignalHAP()
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
         #send_datum()
         self.update_state(state='PROGRESS',
                           meta={'current': Ntest, 'total': 8,
                                 'status': "test numero: " + str(Ntest)})
-    print("hola")
-    #time.sleep(1000)
-    return {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'result': 42}
+        
+
 
 @celery.task(bind=True)
 def reset(self):
     print("reset")
+    serialcom = connect()
+    ResetMex(serialcom)
+    return {'reset': True}
 
 '''
 Routing of the pages
@@ -229,7 +251,7 @@ def trialSignUp():
                 else:
                     # transform dict to df to csv
                     new_user = pd.DataFrame.from_dict([form_data])
-                    new_user.to_csv("database/usr.csv", sep = ';', mode = 'a', index = False, header = ["Username", "Password"])
+                    new_user.to_csv("database/usr.csv", sep = ';', mode = 'a', index = False, header = False)
 
                     # go to login page  
                     msg = "Account has been created"
@@ -284,7 +306,7 @@ def charts():
     return render_template('Charts.html', usr = usr, rt_avg = rt_avg, c_avg =c_avg, allTime_chart_label = allTime_chart_label, allTime_c_data = allTime_c_data, allTime_rt_data = allTime_rt_data)
 
 
-@app.route("/test", methods=["POST"])
+@app.route("/longtest", methods=["POST"])
 def run_task():
     task = longtest.apply_async()
     #time.sleep(1000)
@@ -293,11 +315,10 @@ def run_task():
 
 @app.route("/reset", methods=["POST"])
 def reset_task():
-    task = longtest.apply_async()
-    print("ho finito il calcolo")
+    task = reset.apply_async()
+    print("reset")
     #time.sleep(1000)
-    return jsonify({}), 202, {'Location': url_for('taskstatus',
-                                                  task_id=task.id)}
+    return jsonify({}), 202, {'Location': 0}
 
 
 #Introduced for debugging purposes
@@ -335,6 +356,29 @@ def taskstatus(task_id):
     return jsonify(response)
 
 #TODO: fare funzione che scrive nel file csv i risultati delle prove con gli stimoli. Un file per utente
+
+def resultsFill():
+    if 'results.csv' in os.listdir('database'):
+        # create a dictionary with the informations
+        new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+
+        # convert the dictionary to dataframe
+        new_data = pd.DataFrame.from_dict(new_data)
+
+        # save in csv
+        new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = False)
+    
+    else:
+        # create a dictionary with the informations
+        new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+
+        # convert the dictionary to dataframe
+        new_data = pd.DataFrame.from_dict(new_data)
+
+        # save in csv
+        new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = ["Catch", "ReactionTime", "C_Visual", "C_Auditory", "C_Tactile", "Date", "Username"])
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

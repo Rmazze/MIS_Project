@@ -24,4 +24,4 @@ Analyze reflex phenomena through multisensory interactive sustems
 /etc/wpa_supplicant/wpa_supplicant.conf
 /etc/dhcpcd.conf
 \\\
-use them to set up the network router
+use them to set up the network router there is a priority field use it to set up the order on which the Pi connects to the wifi

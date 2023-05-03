@@ -1,24 +1,23 @@
-#N canvas 198 175 1386 720 12;
-#X obj 152 26 294;
-#X obj 308 -251 cnv 15 500 500 empty empty empty 20 12 0 14 -262130
+#N canvas 246 179 1492 739 12;
+#X obj 308 -232 cnv 15 500 500 empty empty empty 20 12 0 14 -262130
 -66577 0;
-#X text 337 -236 Receiver;
-#X obj 344 -167 mrpeach/unpackOSC;
-#X floatatom 344 -85 5 0 0 0 - - -;
-#X obj 560 -47 print warning_message_not_routed;
-#X obj 508 -57 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X text 337 -217 Receiver;
+#X obj 344 -148 mrpeach/unpackOSC;
+#X floatatom 344 -66 5 0 0 0 - - -;
+#X obj 560 -28 print warning_message_not_routed;
+#X obj 508 -38 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X obj 344 -193 netreceive -u -b 5005;
-#X obj 344 -127 mrpeach/routeOSC /x_state;
-#X obj 465 -8 s x_state;
-#X obj 17 -251 cnv 19 250 150 empty empty empty 20 12 0 12 -204800
+#X obj 344 -174 netreceive -u -b 5005;
+#X obj 344 -108 mrpeach/routeOSC /x_state;
+#X obj 465 11 s x_state;
+#X obj 17 -232 cnv 19 250 150 empty empty empty 20 12 0 12 -204800
 -66577 0;
-#X msg 33 -159 \; pd dsp \$1;
-#X obj 33 -231 tgl 30 0 empty empty empty 17 7 0 10 -162280 -1 -1 0
+#X msg 33 -140 \; pd dsp \$1;
+#X obj 33 -212 tgl 30 0 empty empty empty 17 7 0 10 -162280 -1 -1 0
 1;
-#X obj 42 -179 s global_volume_fade;
-#X text 73 -226 <-Click to start/stop DSP;
-#X obj 859 -251 cnv 19 1000 400 empty empty empty 20 12 0 12 -261682
+#X obj 42 -160 s global_volume_fade;
+#X text 73 -207 <-Click to start/stop DSP;
+#X obj 859 -232 cnv 19 1000 400 empty empty empty 20 12 0 12 -261682
 -66577 0;
 #N canvas 1916 0 1920 966 SadMel 0;
 #X text 21 220 Every 650 perform next sound;
@@ -318,10 +317,10 @@
 #X connect 135 0 118 0;
 #X connect 136 0 116 0;
 #X connect 137 0 88 0;
-#X restore 1348 56 pd SadMel;
-#X obj 1348 21 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
+#X restore 1348 75 pd SadMel;
+#X obj 1348 40 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
 -1 -1;
-#X obj 1470 23 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
+#X obj 1470 42 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
 -1 -1;
 #N canvas -102 6 1920 966 HappyMel 0;
 #X text 21 220 Every 650 perform next sound;
@@ -682,15 +681,15 @@
 #X connect 159 0 94 0;
 #X connect 160 0 95 0;
 #X connect 160 0 94 0;
-#X restore 1470 55 pd HappyMel;
-#X obj 875 -120 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1
+#X restore 1470 74 pd HappyMel;
+#X obj 875 -101 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1
 0 1;
-#X text 875 -251 Data from digital sensors;
-#X obj 1348 104 dac~ 1 2;
-#X obj 1471 104 dac~ 1 2;
-#X obj 1054 -15 print;
-#X obj 875 -230 r x_state;
-#X obj 1092 -134 sel 1 2 3 4;
+#X text 875 -232 Data from digital sensors;
+#X obj 1348 123 dac~ 1 2;
+#X obj 1471 123 dac~ 1 2;
+#X obj 600 223 print;
+#X obj 875 -211 r x_state;
+#X obj 1092 -115 sel 1 2 3 4;
 #N canvas 1913 74 1920 966 CueOne 0;
 #X obj 266 827 outlet~;
 #X obj 271 765 *~;
@@ -852,7 +851,7 @@
 #X connect 77 0 1 0;
 #X connect 80 0 4 0;
 #X connect 82 0 49 0;
-#X restore 1632 54 pd CueOne;
+#X restore 1632 73 pd CueOne;
 #N canvas -55 104 1920 966 CueTwo 0;
 #X floatatom 1986 254 5 0 0 0 - - -;
 #X obj 1986 117 vsl 15 128 0 1000 0 0 empty empty empty 0 -9 0 10 -262144
@@ -1064,57 +1063,83 @@
 #X connect 103 0 27 0;
 #X connect 107 0 75 0;
 #X connect 108 0 30 0;
-#X restore 1743 57 pd CueTwo;
-#X obj 1630 19 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
+#X restore 1743 76 pd CueTwo;
+#X obj 1630 38 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
 -1 -1;
-#X obj 1752 21 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
+#X obj 1752 40 bng 19 250 50 0 empty empty empty 0 -10 0 12 -262144
 -1 -1;
-#X obj 1630 101 dac~ 1 2;
-#X obj 1753 101 dac~ 1 2;
-#X obj 326 -10 print Key_received;
-#X obj 875 -196 unpack f;
-#X obj 927 -99 print Key_received;
-#X obj 55 115 cnv 15 500 500 empty empty empty 20 12 0 14 -262130 -66577
+#X obj 1630 120 dac~ 1 2;
+#X obj 1753 120 dac~ 1 2;
+#X obj 326 9 print Key_received;
+#X obj 875 -177 unpack f;
+#X obj 927 -80 print Key_received;
+#X obj 55 134 cnv 15 500 500 empty empty empty 20 12 0 14 -262130 -66577
 0;
-#X floatatom 84 240 5 0 0 0 - - -;
-#X obj 300 278 print warning_message_not_routed;
-#X obj 248 268 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X floatatom 84 259 5 0 0 0 - - -;
+#X obj 300 297 print warning_message_not_routed;
+#X obj 248 287 tgl 30 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X obj 84 198 mrpeach/routeOSC /x_state;
-#X obj 205 317 s x_state;
-#X obj 66 315 print Key_received;
-#X obj 84 158 websocket-server 9001;
+#X obj 205 336 s x_state;
+#X obj 66 334 print Key_received;
+#X obj 83 137 r \$0/to-websocket;
+#X obj 87 176 websocket-server 9001;
+#N canvas 72 96 450 300 messages-to-local 0;
+#X obj 14 15 inlet;
+#X obj 14 256 outlet;
+#X obj 269 258 outlet;
+#X obj 14 120 list;
+#X obj 14 91 t b a;
+#X obj 14 233 list trim;
+#X obj 269 212 list trim;
+#X obj 14 68 list split 1;
+#X obj 269 235 symbol;
+#X connect 0 0 7 0;
+#X connect 3 0 5 0;
+#X connect 4 0 3 0;
+#X connect 4 1 6 0;
+#X connect 5 0 1 0;
+#X connect 6 0 8 0;
+#X connect 7 0 4 0;
+#X connect 7 1 3 1;
+#X connect 8 0 2 0;
+#X restore 567 86 pd messages-to-local;
+#X obj 83 224;
+#X obj 697 138 1;
+#X connect 2 0 7 0;
+#X connect 3 0 5 0;
 #X connect 3 0 8 0;
-#X connect 4 0 6 0;
-#X connect 4 0 9 0;
-#X connect 4 0 33 0;
+#X connect 3 0 32 0;
+#X connect 6 0 2 0;
 #X connect 7 0 3 0;
-#X connect 8 0 4 0;
-#X connect 8 1 5 0;
-#X connect 12 0 11 0;
-#X connect 12 0 13 0;
-#X connect 16 0 22 0;
-#X connect 16 0 22 1;
-#X connect 17 0 16 0;
-#X connect 18 0 19 0;
-#X connect 19 0 23 0;
-#X connect 19 0 23 1;
-#X connect 25 0 34 0;
-#X connect 26 0 17 0;
-#X connect 26 1 18 0;
-#X connect 26 2 29 0;
-#X connect 26 3 30 0;
+#X connect 7 1 4 0;
+#X connect 11 0 10 0;
+#X connect 11 0 12 0;
+#X connect 15 0 21 0;
+#X connect 15 0 21 1;
+#X connect 16 0 15 0;
+#X connect 17 0 18 0;
+#X connect 18 0 22 0;
+#X connect 18 0 22 1;
+#X connect 24 0 33 0;
+#X connect 25 0 16 0;
+#X connect 25 1 17 0;
+#X connect 25 2 28 0;
+#X connect 25 3 29 0;
+#X connect 26 0 30 0;
 #X connect 27 0 31 0;
-#X connect 28 0 32 0;
+#X connect 28 0 26 0;
 #X connect 29 0 27 0;
-#X connect 30 0 28 0;
-#X connect 34 0 20 0;
-#X connect 34 0 26 0;
-#X connect 34 0 35 0;
-#X connect 37 0 39 0;
-#X connect 37 0 41 0;
-#X connect 37 0 42 0;
-#X connect 40 0 37 0;
-#X connect 40 1 38 0;
-#X connect 43 0 40 0;
-#X coords 0 7200 10 7190 0 0 0;
+#X connect 33 0 19 0;
+#X connect 33 0 25 0;
+#X connect 33 0 34 0;
+#X connect 36 0 38 0;
+#X connect 36 0 39 0;
+#X connect 36 0 40 0;
+#X connect 41 0 42 0;
+#X connect 42 0 43 0;
+#X connect 43 0 23 0;
+#X connect 43 0 45 0;
+#X connect 44 0 36 0;
+#X connect 44 1 37 0;
+#X connect 45 0 25 0;
+#X coords 0 7390 10 7380 0 0 0;
