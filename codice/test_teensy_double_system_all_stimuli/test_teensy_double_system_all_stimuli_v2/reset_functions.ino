@@ -15,6 +15,7 @@ void read_reset_button(bool reset_button_reading,
             reset_button_state = reset_button_reading;
             if (reset_button_state == HIGH){
                 program_execution_state = -1;
+                Serial.println("esesesese");
             }
         }
     }

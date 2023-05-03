@@ -79,7 +79,7 @@ bool led_stop_state = HIGH;
 // Random time to wait before releasing the ball
 unsigned long rand_time = 0;
 // How long are the stimuli to produce
-unsigned long stimuly_duration = 1000; //decrese this value
+unsigned long stimuly_duration = 3000; //decrese this value
 // Time after which we consider that the user was not able to catch the balls
 unsigned long to_much_time_elapsed = 30000; //decrese this value
 // Saves the timestamp in which the test starts
@@ -99,32 +99,8 @@ bool ongoing_test_dx = LOW;
 // Select the test type to execute (0: only sx, 1: only dx, 2: both sx and dx)
 int test_type = 0; 
 
-// variables for the serial communication
-//how many characters to wait
-const byte numChars_test = 4; // 1 for stimulus (3) +1 for termination character //to remove?
-const byte numChars_reset = 2; // one for reset signal +1 for termination character //to remove?
-
-// receive a string containing start and end marker and letters separated by a comma e.g. <v,A,T>
-// here we store only the letters, if a letter is uppercase means we want to activate that stimulus
-char receivedChars_test[numChars_test]; //to remove?
-// receive a string containing start and end marker and a letter "R"
-// here we store only the letters, if we receive 'R' it means we want to reset the execution state
-char receivedChars_reset[numChars_reset]; //to remove?
-
-//idicate that a new massage has been received
-bool newData_test = LOW; //to remove?
-bool newData_reset = LOW; //to remove?
- 
-// markers for messages regarding stimuli selection
-char startMarker_test = '<';
-char endMarker_test = '>';
-//markers regarding reset signal
-char startMarker_reset = '"';
-char endMarker_reset = '"';
-
-String received_buffer;
+String received_buffer; // buffer for receiving commands
 String reset_buffer;
-char commands[3];
 char commandSerial[10];
 bool statecom = false;
 bool stateSerial = false;
@@ -138,6 +114,7 @@ bool first3 = true;
 bool first4 = true;
 bool first5 = true;
 bool first6 = true;
+bool first7 = true;
 bool firstD = true;
 
 void setup() {
@@ -190,13 +167,9 @@ void loop() {
   // read if hands are in the correct position
   hand_in_position_state_sx = digitalRead(hand_in_position_sx);
   hand_in_position_state_dx = digitalRead(hand_in_position_dx);
-  
-  //recvWithStartEndMarkers(receivedChars_reset, numChars_reset, newData_reset, startMarker_reset, endMarker_reset);
   if (Serial.available() > 0){
     received_buffer = Serial.readStringUntil('\n');
     Serial.println(received_buffer);
-    //Serial.println(hand_in_position_state_sx);
-    //Serial.println(hand_in_position_state_dx);
     Serial.flush();
   }
   int str_len = received_buffer.length() + 1; 
@@ -263,9 +236,7 @@ void loop() {
                                   debounce_delay,
                                   program_execution_state);
 
-                //if (received_buffer_char[0] == 'R'){ //non ha senso fare lo stesso controllo che viene poi fatto dentro la funzione
                 reset_from_server(received_buffer_char, program_execution_state); 
-                //} 
                 break;  
 
       // wait a random time before releasing the balls
@@ -303,7 +274,7 @@ void loop() {
                              glove_state_dx = HIGH;
                              break;
                   }
-                  program_execution_state = 4;
+                  program_execution_state = 3;
                   test_time_start = millis();
                   led_start_state = HIGH;
                 }
@@ -315,9 +286,7 @@ void loop() {
                                   debounce_delay,
                                   program_execution_state);
 
-                //if (received_buffer_char[0] == 'R'){ //non ha senso fare lo stesso controllo che viene poi fatto dentro la funzione
-                reset_from_server(received_buffer_char, program_execution_state); 
-                //}   
+                reset_from_server(received_buffer_char, program_execution_state);  
                 break;
 
       // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
@@ -328,12 +297,14 @@ void loop() {
 
                 // turn off stimuli if enought time is last than go to next state
                 if ((millis() - test_time_start) >= stimuly_duration){
-                  switch(test_type){
-                    case(0): stimulus_sx = LOW; break;
-                    case(1): stimulus_dx = LOW; break;
-                    case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
-                    default: stimulus_sx = LOW; stimulus_dx = LOW;
-                  }
+                  //switch(test_type){
+                  //  case(0): stimulus_sx = LOW; break;
+                  //  case(1): stimulus_dx = LOW; break;
+                  //  case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
+                  //  default: stimulus_sx = LOW; stimulus_dx = LOW;
+                  //}
+                  stimulus_sx = LOW;
+                  stimulus_dx = LOW;
                   program_execution_state = 4;  
                 }
 
@@ -344,7 +315,6 @@ void loop() {
                   stimulus_dx = LOW;
                   led_start_state = LOW;
                   led_stop_state = HIGH;
-                  Serial.println("Produce happy sound");
                   program_execution_state = 5;
                 }
                 else if (ongoing_test_sx == LOW){
@@ -360,10 +330,8 @@ void loop() {
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-
-                //if (received_buffer_char[0] == 'R'){ //non ha senso fare lo stesso controllo che viene poi fatto dentro la funzione
-                reset_from_server(received_buffer_char, program_execution_state); 
-                //}  
+                                  
+                reset_from_server(received_buffer_char, program_execution_state);  
                 break;
 
       // see if the user chatches all the balls, if too much time is elapesed consider as the user didn't chatch the balls
@@ -374,18 +342,10 @@ void loop() {
 
                 // when all released balls are cheched go to next state
                 if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
-                  stimulus_sx = LOW;
-                  stimulus_dx = LOW;
                   led_start_state = LOW;
                   led_stop_state = HIGH;
                   Serial.println("Produce happy sound");
                   program_execution_state = 5;
-                }
-                else if (ongoing_test_sx == LOW){
-                  stimulus_sx = LOW;
-                }
-                else if (ongoing_test_dx == LOW){
-                  stimulus_dx = LOW;
                 }
 
                 // too much time is elapsed, consider as the user didn't chanch the balls
@@ -401,10 +361,7 @@ void loop() {
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-
-                //if (received_buffer_char[0] == 'R'){ //non ha senso fare lo stesso controllo che viene poi fatto dentro la funzione
                 reset_from_server(received_buffer_char, program_execution_state); 
-                //} 
                 break;
 
       // compute results of this execution
@@ -424,23 +381,11 @@ void loop() {
                 }
 
                 if (show_results){
-                  Serial.println("HAP sx:" + String(test_elapsed_time_sx) + "|dx:"+ String(test_elapsed_time_dx));
                   delay(300);
+                  Serial.println("HAP sx:" + String(test_elapsed_time_sx) + "|dx:"+ String(test_elapsed_time_dx));
                   //WRITE_RESTART(0x5FA0004);
-                  //Serial.println("HAP dx: " + String(test_elapsed_time_dx));
                   show_results = false;
                   program_execution_state = -1; //better to use this again
-                }
-
-                if (Serial.available() > 0 && stateSerial){ //cosa fa questo stato?
-                  reset_buffer = Serial.readStringUntil('\n');
-                  Serial.println(reset_buffer);
-                }
-
-                received_buffer.toCharArray(reset_buffer_char, str_len);
-                if(str_len >= 1){ // 4 is an arbitrary number
-                  Serial.println(received_buffer_char[1]); // Print for debugging reasons
-                  parseCom(reset_buffer_char);
                 }
 
                 read_reset_button(reset_button_reading, 
@@ -449,32 +394,38 @@ void loop() {
                                   last_debounce_time_reset,
                                   debounce_delay,
                                   program_execution_state);
-                //if (commandSerial[0] == 'R'){
-                  reset_from_server(commandSerial, program_execution_state); 
-                //}   
+                reset_from_server(commandSerial, program_execution_state); 
                 break;
 
       //test all different stimuli
-      case(6): test_dimuli(stimuly_duration);
+      case(6): if(first6){
+                  Serial.println("State 6");
+                  first6 = false;
+               }
+               test_dimuli(stimuly_duration);
                program_execution_state = -1;
                break;
 
       // reset for when hands not in position
-      case(7):  test_ready_state = LOW;
+      case(7):  if(first7){
+                  Serial.println("State 7");
+                  first7 = false;
+                }
+                test_ready_state = LOW;
                 led_start_state = LOW;
                 led_stop_state = LOW;
 
                 test_time_ready = millis();
                 rand_time = random(5000, 10000);
 
-                first1 = true;
+                first2 = true;
 
-                program_execution_state = 1;
+                program_execution_state = 2;
                 break;
 
       // reset state that reset everything
       default:  if(firstD){
-                  Serial.println("Default state");
+                  Serial.println("Defau lt state");
                   firstD = false;
                 }
 
@@ -486,6 +437,9 @@ void loop() {
                 test_ready_state = LOW;
 
                 show_results = HIGH;
+
+                hand_in_position_state_sx = HIGH;
+                hand_in_position_state_dx = HIGH; 
 
                 stimulus_sx = LOW;
                 stimulus_dx = LOW;
@@ -499,10 +453,7 @@ void loop() {
                 test_time_end_dx = 0;
                 test_elapsed_time_sx = 0;
                 test_elapsed_time_dx = 0;
-
-                newData_test = LOW;
-                newData_reset = LOW;
-
+                
                 received_buffer = "";
                 reset_buffer = "";
 
@@ -516,8 +467,10 @@ void loop() {
                 first4 = true;
                 first5 = true;
                 first6 = true;
+                first7 = true;
                 firstD = true;
-                Serial.println("look at me dab at the end");
+                statecom = false;
+                Serial.println("Defau lt state");
     }
     // produce outputs
     produce_stimuli(stimulus_sx, stimulus_dx, visual_stimuli, auditory_stimuli, tactile_stimuli);

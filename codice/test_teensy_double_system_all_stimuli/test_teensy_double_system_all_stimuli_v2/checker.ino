@@ -1,4 +1,3 @@
-
 void parseCom ( char commands[]){
   if((commands[1] == 'V' || commands[1] == 'v') && (commands[3] == 'A'|| commands[3] == 'a') && (commands[5] == 'T'|| commands[5] == 't')){
     if(!statecom){
@@ -9,7 +8,7 @@ void parseCom ( char commands[]){
     stateSerial = true;
   }
   else if(commands[0] == 'R'){
-    //Serial.println("B");
+    //Serial.println("ResetResetseses");
     statecom = true;
   }
   else{

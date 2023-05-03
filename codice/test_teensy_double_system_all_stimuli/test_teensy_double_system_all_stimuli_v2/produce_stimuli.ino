@@ -16,7 +16,7 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
             Serial.println("AUDDX");// command to invoke right audio source
         }
         else{
-            Serial.println("NOTAUD");// command for no audio (never gets considered though)
+            //Serial.println("NOTAUD");// command for no audio (never gets considered though)
         }
         
     }
