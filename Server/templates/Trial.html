@@ -6,23 +6,6 @@
 
         <!-- p5.js code for timer and animations -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>
-        <!-- 
-            function createP5 (){
-                let canvasWidth = document.getElementById("widthInput").value;
-                let canvasHeight = document.getElementById("heightInput").value;
-                var canvas = new p5(function (p) {
-                    p.setup = function (){
-                        p.createCanvas(canvasWidth, canvasHeight);
-                    }
-                    p.draw = function(){
-                        p.background(55);
-                        p.stroke(0);
-                        p.rect(p.width/5, p.height/5, p.width/5 * 3, p.height/5 * 3);
-                    }
-                    }, "cont");
-                }
-		</script>
-        -->
 
         <script>
             /*
@@ -398,6 +381,8 @@
                 <div class = "hoverMenu">
                     <img src = "/static/Menu.png" class = "sandwich">
                     <div class = "hoverMenu-content">
+                        <a title = "Cues" href = "{{ url_for('cues') }}">Cues</a>
+                        <a title = "Test" href = "{{ url_for('test') }}">Test</a>
                         <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
                         <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
                         <a title = "Log out" href = "/">Log Out</a>
@@ -407,21 +392,30 @@
 
             <div class = "whiteBoxBig">
                 <h1 id = "title">Training Tool for Reaction Time</h1>
-                <h1 id = "sent">Hello {{session.name}}, It's nice to have you here! </h1>
+                <h1 id = "sent">Single Trial Session</h1>
 
                 <div id = "animation">
                 </div>
 
+                <label for = "trialSel">Choose a trial:</label>
+                <select name = "trialSel" id = "trialSel">
+                    <option value = "random">Random</option>
+                    <option value = "noCue">No cue</option>
+                    <option value = "Vat">Visual</option>
+                    <option value = "vAt1">Auditory 1</option>
+                    <option value = "vAt2">Auditory 2</option>
+                    <option value = "vaT">Haptic</option>
+                    <option value = "VAt">Visual and Auditory</option>
+                    <option value = "vAT">Auditory and Haptic</option>
+                    <option value = "VaT">Visual and Haptic</option>
+                    <option value = "VAT">All</option>
+                </select>
+                <br><br>
                 <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />
-                <input type = "submit" id = "HStopBtn" value = "Happy stop" class = "btn" />
-                <input type = "submit"  id = "SStopBtn" value = "Sad stop" class = "btn" />
 
-                <!-- 
-                <input type = "button" value = "create canvas" onclick = 'createP5()'/>
-                <textarea id = "widthInput"></textarea>
-                <textarea id = "heightInput"></textarea>
-                <br><br><br>
-                -->
+                <button type = "submit" onclick = "window.location.href = '/Test';">
+                    <img src = "static/Arrow.png" alt = "NEXT" border = "0" />
+                </button>
             </div> 
         </center>
     </body>

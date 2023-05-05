@@ -145,10 +145,25 @@ def favicon():
 def admin():
     return render_template('Admin.html')
 
+# cues page
+@app.route('/Cues')
+def cues():
+    return render_template('Cues.html')
+
+# trial page
+@app.route('/Trial')
+def trial():
+    return render_template('Trial.html')
+
+# test page
+@app.route('/Test')
+def test():
+    return render_template('Test.html')
+
 # login page
 @app.route('/')
 def main():
-    return render_template('Test.html')
+    return render_template('Login.html')
 
 # sign up page
 @app.route('/SignUp')
@@ -175,15 +190,15 @@ def questionnaire():
     return render_template('Questionnaire.html')
 
 
-# From login page go to trial page or to error page
-@app.route('/Trial/', methods = ["POST", "GET"])
-def trialLogin():
+# From login page go to cues page or to error page
+@app.route('/Cues/', methods = ["POST", "GET"])
+def cuesLogin():
     print(add(4,4))
     # cannot be access directly
     if request.method == 'GET':
         # take usr
         #session["name"] = request.form.get("Username")
-        return render_template('Trial.html')
+        return render_template('Cues.html')
     
     
     if request.method == 'POST':
@@ -202,9 +217,9 @@ def trialLogin():
                 # check if username exists
                 if df[df["Username"] == form_data["Username"]].empty == False:
 
-                    # check psw: if right, go to trial page
+                    # check psw: if right, go to cues page
                     if df[(df["Username"] == form_data["Username"]) & (df["Password"] == form_data["Password"])].empty == False:
-                        return render_template('Trial.html', usr = form_data["Username"])
+                        return render_template('Cues.html', usr = form_data["Username"])
 
                     # if psw is not right, go to error page
                     else:
@@ -227,7 +242,7 @@ def trialLogin():
 
 # From signup page create new credentials and go to login page or to error page
 @app.route('/Login/', methods = ["POST", "GET"])
-def trialSignUp():
+def loginSignUp():
     
     if request.method == 'POST':
 
