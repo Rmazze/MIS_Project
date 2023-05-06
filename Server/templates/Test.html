@@ -92,9 +92,13 @@
                     // update UI
                     console.log("sono dentro e lo stato e " + data['state'])
                     if(data['state'] == 'PROGRESS'){
-                            console.log("AFHUSFH");
-                            readVal = 0
-                        }
+                        console.log("Rilascio delle palline");
+                        readVal = 0
+                    }
+                    if(data['state'] == 'PENDING'){
+                        console.log("Clear");
+                        readVal = 3
+                    }
                     if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                         if(data['state'] == 'SUCCESS'){
                             stri = data['status']
@@ -186,6 +190,11 @@
                             else if (readVal == 2) {
                                 status = 3;
                             }
+                            else if (readVal == 3) {
+                                background("#FFFFFF"); 
+                                timer.startTime = 0;
+                                timer.display();
+                            }
                             break;
 
                     case 1: timer.display();
@@ -215,7 +224,7 @@
                                 status = 0;
                                 winStarted = false;
                                 winFinished = false;
-                                readVal = 3;    // TO DO: remove after inserting true communication
+                                readVal = 4;    // TO DO: remove after inserting true communication
                             }
                             break;
 
@@ -234,7 +243,7 @@
                                 lossStarted = false;
                                 lossFinished = false;
                                 init = false;
-                                readVal = 3;    // TO DO: remove after inserting true communication
+                                readVal = 4;    // TO DO: remove after inserting true communication
                             }
                             break;
                 }

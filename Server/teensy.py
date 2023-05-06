@@ -97,20 +97,31 @@ def ResetMex(serialcom):
             return True
         return False
 
-def test_Stimuli(serialcom):
+def test_StimuliAudio(serialcom):
     recv = ""
-    while True:
-        serialcom.write(str('<V,a,t>').encode())
+    for x in range(10):
+        serialcom.write(str('<P,A>').encode())
         time.sleep(1)
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
-        print(recv)
-        if('0' in recv):
-            break
-        if('1' in recv):
-            break
-        if('ate' in recv):
-            break
+    print("sono fuori")
+
+def test_StimuliVideo(serialcom):
+    recv = ""
+    for x in range(10):
+        serialcom.write(str('<P,V>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+    print("sono fuori")
+
+def test_StimuliTactile(serialcom):
+    recv = ""
+    for x in range(10):
+        serialcom.write(str('<P,T>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
     print("sono fuori")
 
 
@@ -184,7 +195,7 @@ def test_VAt(serialcom):
             break
         if('1' in recv):
             break
-    pdSignal(serialcom)
+    pdSignal(serialcom, True)
 
 def test_VaT():
     recv = ""

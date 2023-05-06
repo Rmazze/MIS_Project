@@ -71,23 +71,19 @@ def longtest(self):
     """Background task that runs a long function with progress reports."""
     print("startmondo")
     test_VAt(serialcom)
+    eject_flag = False
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
-        print(st)
-        """
-        if("ela" in st):
-            self.update_state(
-                state = states.TESTING,
-                meta={'current': 3, 'total': 8,
-                                'status': "FAIL"}
-            )
-            disconnect(serialcom)
-            pdSignalSAD()
-            time.sleep(1)
-            raise Ignore()
-        """
-        if(("SAD" in st) or ("efa" in st)):
+        if(not 'AUD' in st):
+            print(st)
+        if("eta" in st):
+            print("palla staccara")
+            eject_flag = True
+            self.update_state(state='EJECTED',
+                          meta={'current': Ntest, 'total': 8,
+                                'status': "test numero: " + str(Ntest)})
+        if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
             self.update_state(
                 state = states.FAILURE,
                 meta={'current': 1, 'total': 8,
@@ -118,9 +114,14 @@ def longtest(self):
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
         #send_datum()
-        self.update_state(state='PROGRESS',
-                          meta={'current': Ntest, 'total': 8,
-                                'status': "test numero: " + str(Ntest)})
+        if not eject_flag:
+            self.update_state(state='PROGRESS',
+                            meta={'current': Ntest, 'total': 8,
+                                    'status': "test numero: " + str(Ntest)})
+        else:
+            self.update_state(state='PROGRESS',
+                            meta={'current': Ntest, 'total': 8,
+                                    'status': "test numero: " + str(Ntest)})
         
 
 
@@ -340,14 +341,8 @@ def reset_task():
 @app.route('/status/<task_id>')
 def taskstatus(task_id):
     task = longtest.AsyncResult(task_id)
-    if task.state == 'PENDING':
-        response = {
-            'state': task.state,
-            'current': 0,
-            'total': 1,
-            'status': 'Pending...'
-        }
-    elif task.state != 'SUCCESS':
+    if task.state == 'SUCCESS':
+        print(task.info)
         response = {
             'state': task.state,
             'current': task.info.get('current', 0),
