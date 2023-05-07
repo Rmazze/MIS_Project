@@ -11,6 +11,24 @@ void parseCom ( char commands[]){
     //Serial.println("ResetResetseses");
     statecom = true;
   }
+  else if(commands[0] == 'P' && commands[0] == 'V'){
+    if(!statecom){
+      strcpy(commandSerial, commands);
+    }
+    statecom = true;
+  }
+  else if(commands[0] == 'P' && commands[0] == 'A'){
+    if(!statecom){
+      strcpy(commandSerial, commands);
+    }
+    statecom = true;
+  }
+  else if(commands[0] == 'P' && commands[0] == 'T'){
+    if(!statecom){
+      strcpy(commandSerial, commands);
+    }
+    statecom = true;
+  }
   else{
     //Serial.println("E");
     statecom = false;

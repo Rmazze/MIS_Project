@@ -50,6 +50,7 @@ bool stimulus_dx = LOW;
 //int stimuli_type = 4; // arrive from python
 // Variables that indicate if a stimulus have to be activated or not
 bool visual_stimuli = LOW;
+bool noaudio_stimuli = LOW;
 bool auditory_stimuli = LOW;
 bool tactile_stimuli = LOW;
 
@@ -178,8 +179,9 @@ void loop() {
   //Serial.println(str_len); // Print for debugging reasons
   //Serial.println(received_buffer_char); // Print for debugging reasons
   if(str_len >= 1){ // 4 is an arbitrary number
-    //Serial.println(received_buffer_char[1]); // Print for debugging reasons
+    //Serial.println(received_buffer_char); // Print for debugging reasons
     parseCom(received_buffer_char);
+    
     Serial.flush();
   }
   if (statecom){
@@ -195,7 +197,9 @@ void loop() {
                     select_stimuli_regex(commandSerial, visual_stimuli, auditory_stimuli, tactile_stimuli);
                     test_ready_state = HIGH;
                     program_execution_state = 1;
-                  } else{
+                  }else if(commandSerial[1] == 'P'){
+                    program_execution_state = 6;
+                  }else{
                     Serial.println("First char: " + commandSerial[0]);    
                   }
 
@@ -274,7 +278,10 @@ void loop() {
                              glove_state_dx = HIGH;
                              break;
                   }
-                  Serial.println("DelayDelayDelay");
+                  for(int x = 0; x < 4; x++) {
+                    Serial.println("DetachDetachDetachDetach");
+                  }
+                  Serial.println("DetachDetachDetachDetach");
                   program_execution_state = 3;
                   test_time_start = millis();
                   led_start_state = HIGH;
@@ -403,7 +410,15 @@ void loop() {
                   Serial.println("State 6");
                   first6 = false;
                }
-               test_dimuli(stimuly_duration);
+
+               if(commandSerial[3] == 'V'){
+                digitalWrite(visual_stimulus_led_sx, stimulus_sx);
+                digitalWrite(visual_stimulus_led_dx, stimulus_dx);
+               } else {
+                digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);
+                digitalWrite(tactile_stimulus_actuator_dx, stimulus_dx);
+               }
+               
                program_execution_state = -1;
                break;
 
@@ -474,7 +489,7 @@ void loop() {
                 Serial.println("Default state");
     }
     // produce outputs
-    produce_stimuli(stimulus_sx, stimulus_dx, visual_stimuli, auditory_stimuli, tactile_stimuli);
+    produce_stimuli(stimulus_sx, stimulus_dx, visual_stimuli, auditory_stimuli, noaudio_stimuli, tactile_stimuli);
     digitalWrite(ready_led, test_ready_state);
     digitalWrite(magnet_sx, glove_state_sx);
     digitalWrite(magnet_dx, glove_state_dx);

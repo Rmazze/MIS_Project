@@ -50,6 +50,8 @@ def pdSignal(serialcom, flag):
             print(msg + " in pure data")
             client.send_message("/x_state", 4)
             break
+        if('NOTAUD' in msg):
+            break
     #client.close()
 
 def pdSignalHAP():
@@ -98,21 +100,21 @@ def ResetMex(serialcom):
         return False
 
 def test_StimuliAudio(serialcom):
-    recv = ""
     for x in range(10):
         serialcom.write(str('<P,A>').encode())
         time.sleep(1)
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
+        print(recv)
     print("sono fuori")
 
 def test_StimuliVideo(serialcom):
-    recv = ""
     for x in range(10):
         serialcom.write(str('<P,V>').encode())
         time.sleep(1)
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
+        print(recv)
     print("sono fuori")
 
 def test_StimuliTactile(serialcom):
@@ -122,6 +124,7 @@ def test_StimuliTactile(serialcom):
         time.sleep(1)
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
+        print(recv)
     print("sono fuori")
 
 
@@ -139,7 +142,7 @@ def test_Vat(serialcom):
             break
         if('ate' in recv):
             break
-    print("sono fuori")
+    pdSignal(serialcom,True)
 
 def test_vAtFast(serialcom):
     recv = ""
@@ -167,7 +170,7 @@ def test_vAt(serialcom):
             break
         if('1' in recv):
             break
-    pdSignal(serialcom)
+    pdSignal(serialcom, True)
 
 
 def test_vaT(serialcom):
@@ -182,6 +185,7 @@ def test_vaT(serialcom):
             break
         if('1' in recv):
             break
+    pdSignal(serialcom,True)
 
 def test_VAt(serialcom):
     recv = ""
@@ -197,7 +201,7 @@ def test_VAt(serialcom):
             break
     pdSignal(serialcom, True)
 
-def test_VaT():
+def test_VaT(serialcom):
     recv = ""
     while True:
         serialcom.write(str('<V,a,T>').encode())
@@ -209,6 +213,7 @@ def test_VaT():
             break
         if('1' in recv):
             break
+    pdSignal(serialcom,True)
 
 
 def test_vAT(serialcom):
@@ -223,7 +228,7 @@ def test_vAT(serialcom):
             break
         if('1' in recv):
             break
-    pdSignal(serialcom)
+    pdSignal(serialcom, True)
 
 
 def test_VAT(serialcom):
@@ -238,4 +243,23 @@ def test_VAT(serialcom):
             break
         if('1' in recv):
             break
-    pdSignal(serialcom)
+    pdSignal(serialcom, True)
+
+def test_vat(serialcom):
+    recv = ""
+    while True:
+        serialcom.write(str('<v,a,t>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('0' in recv):
+            break
+        if('1' in recv):
+            break
+    pdSignal(serialcom,True)
+
+def test_video(serialcom):
+    for x in range(6):
+        serialcom.write(str('<P,V>').encode())
+        time.sleep(1)

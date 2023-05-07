@@ -3,7 +3,8 @@
         <title>TTR - Training Tool Reaction</title>
         <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
         <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
-
+        <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <!-- p5.js code for timer and animations -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>
 
@@ -34,7 +35,86 @@
             let xpos2 = 0;    // position of the circle2 in the x axis
             let ypos2 = 0;    // position of the circle2 in the y axis
             let speed2 = 10;    // speed of the circle2 in the y axis
+            let command;
 
+            function command_task() {     
+                var e = document.getElementById("trialSel");
+                var value = e.options[e.selectedIndex].value;
+                    // send ajax POST request to start background job
+                $.ajax({
+                    type: 'POST',
+                    url: '/trial',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ 'value': value }),
+                    success: function(data, status, request) {
+                        status_url = request.getResponseHeader('Location');
+                        update_progress(status_url);
+                        console.log("changed readval on success");
+                    },
+                    error: function(request, status, error) {
+                    },
+                    complete: function (data) {
+                        //readVal = 1
+
+                        log("changed readval on complete");
+                    }
+                });
+            }
+            
+            function update_progress(status_url) {
+                // send GET request to status URL
+                $.getJSON(status_url, function(data) {
+                    // update UI
+                    console.log("sono dentro e lo stato e " + data['state'])
+                    if(data['state'] == 'PROGRESS'){
+                        console.log(data['current']);
+                        readVal = 0
+                    }
+                    if(data['state'] == 'PENDING'){
+                        console.log("Clear");
+                        readVal = 3
+                    }
+                    if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+                        if(data['state'] == 'SUCCESS'){
+                            stri = data['status']
+                            console.log("DIOPOR")
+                            console.log(stri)
+                            console.log("%j", data)
+                            //var dic_str = stri.replace(/'/g, "\"");
+                            //var dic = JSON.parse(stri);
+                            //la call alla presa riuscita funziona
+                            //console.log('Resulting value: ' + dic['timer1']);
+                            //console.log('Resulting value: ' + dic['timer2']);
+                            text_timesx = data['timer1']
+                            text_timedx = data['timer2']
+                            readVal = 1
+                        }
+                        if ('result' in data) {
+                            // show result
+                            console.log('Result: ' + data['result']);
+                            readVal = 1
+                        }
+                        if ('error' in data) {
+                            // show result
+                            console.log('Result: ' + data['error']);
+                            readVal = 2
+                        }
+                        else {
+                            // something unexpected happened
+                            log('Result: ' + data['state']);
+                        }
+                    }else{
+                        setTimeout(function() {
+                            update_progress(status_url);
+                        }, 200);
+                    }
+                })
+                .fail(function() { 
+                    console.log("errore pesante");
+                    readVal = 2;
+                });
+            }
 
             /*
             Preload function used to handle asynchronous loading of external files in a blocking way.
@@ -57,6 +137,9 @@
                 noStroke();    // remove the border of shapes
                 timer = new Timer();    // create the Timer object
                 timer.display();
+                document.getElementById('StartBtn').addEventListener("click", function() {
+                    command_task();
+                });
             }
             
 
@@ -65,16 +148,7 @@
             */
             function draw() {
                 // Fake communication set up
-                // TO DO: add real communication
-                document.getElementById('StartBtn').addEventListener("click", function() {
-                    readVal = 0;
-                });
-                document.getElementById('HStopBtn').addEventListener("click", function() {
-                    readVal = 1;
-                });
-                document.getElementById('SStopBtn').addEventListener("click", function() {
-                    readVal = 2;
-                });
+                // TO DO: add real communicatio
 
                 // Handling of the states of the program. The program has four states:
                 // 0: initial state of the progam. Here a communication is waited
@@ -91,6 +165,11 @@
                             }
                             else if (readVal == 2) {
                                 status = 3;
+                            }
+                            else if (readVal == 3) {
+                                background("#FFFFFF"); 
+                                timer.startTime = 0;
+                                timer.display();
                             }
                             break;
 
@@ -121,7 +200,7 @@
                                 status = 0;
                                 winStarted = false;
                                 winFinished = false;
-                                readVal = 3;    // TO DO: remove after inserting true communication
+                                readVal = 4;    // TO DO: remove after inserting true communication
                             }
                             break;
 
@@ -140,7 +219,7 @@
                                 lossStarted = false;
                                 lossFinished = false;
                                 init = false;
-                                readVal = 3;    // TO DO: remove after inserting true communication
+                                readVal = 4;    // TO DO: remove after inserting true communication
                             }
                             break;
                 }
@@ -401,14 +480,14 @@
                 <select name = "trialSel" id = "trialSel">
                     <option value = "random">Random</option>
                     <option value = "noCue">No cue</option>
-                    <option value = "Vat">Visual</option>
-                    <option value = "vAt1">Auditory 1</option>
-                    <option value = "vAt2">Auditory 2</option>
-                    <option value = "vaT">Haptic</option>
-                    <option value = "VAt">Visual and Auditory</option>
-                    <option value = "vAT">Auditory and Haptic</option>
-                    <option value = "VaT">Visual and Haptic</option>
-                    <option value = "VAT">All</option>
+                    <option value = "<V,a,t>">Visual</option>
+                    <option value = "<v,A,t,1>">Auditory 1</option>
+                    <option value = "<v,A,t,2>">Auditory 2</option>
+                    <option value = "<v,a,T>">Haptic</option>
+                    <option value = "<V,A,t>">Visual and Auditory</option>
+                    <option value = "<v,A,T>">Auditory and Haptic</option>
+                    <option value = "<V,a,T>">Visual and Haptic</option>
+                    <option value = "<V,A,T>">All</option>
                 </select>
                 <br><br>
                 <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />

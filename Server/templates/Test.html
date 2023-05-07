@@ -45,26 +45,35 @@
             let speed2 = 10;    // speed of the circle2 in the y axis
             let text_timesx = "";     // timer for the left hand
             let text_timedx = "";     // timer for the right hand
+            let done_test = []
+            let list_test = ['<v,A,t>','<V,a,t>','<v,A,t>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>']
             //let ws = new WebSocket('http://127.0.0.1:9001'); //websocket to call directly puredata
-
             function start_long_task() {     
                     // send ajax POST request to start background job
-                $.ajax({
-                    type: 'POST',
-                    url: '/longtest',
-                    success: function(data, status, request) {
-                        status_url = request.getResponseHeader('Location');
-                        update_progress(status_url);
-                        console.log("changed readval on success");
-                    },
-                    error: function(request, status, error) {
-                    },
-                    complete: function (data) {
-                        //readVal = 1
+                if (list_test.length === 0){
+                    console.log("update test");
+                }else{
+                    value = list_test.shift();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/trial',
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({ 'value': value }),
+                        success: function(data, status, request) {
+                            status_url = request.getResponseHeader('Location');
+                            update_progress(status_url);
+                            console.log("changed readval on success");
+                        },
+                        error: function(request, status, error) {
+                        },
+                        complete: function (data) {
+                            //readVal = 1
 
-                        log("changed readval on complete");
-                    }
-                });
+                            log("changed readval on complete");
+                        }
+                    });
+                }
             }
 
             function reset_task() {     

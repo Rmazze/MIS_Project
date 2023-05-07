@@ -70,7 +70,7 @@ def longtest(self):
     serialcom = connect()
     """Background task that runs a long function with progress reports."""
     print("startmondo")
-    test_VAt(serialcom)
+    test_Vat(serialcom)
     eject_flag = False
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
@@ -122,14 +122,112 @@ def longtest(self):
             self.update_state(state='PROGRESS',
                             meta={'current': Ntest, 'total': 8,
                                     'status': "test numero: " + str(Ntest)})
-        
 
+@celery.task(bind=True)
+def command_task(self,command):
+    serialcom = connect()
+    """Background task that runs a long function with progress reports."""
+    print("la stringa arrivata e " + command)
+    if('ando' in command):
+        print()
+    elif('<V,A,T>' in command):
+        print("Starting all test")
+        test_VAT(serialcom)
+    elif('<V,a,t>' in command):
+        print("Starting Visual test")
+        test_VaT(serialcom)
+    elif('<v,A,t>' in command):
+        print("Starting audio test")
+        test_vAt(serialcom)
+    elif('<v,a,T>' in command):
+        print("Starting tactile test")
+        test_vaT(serialcom)
+    elif('<V,A,t>' in command):
+        print("Starting Visual/audio test")
+        test_VAt(serialcom)
+    elif('<V,a,T>' in command):
+        print("Starting Visual/tactile test")
+        test_VaT(serialcom)
+    elif('<v,A,T>' in command):
+        print("Starting all test")
+        test_vAT(serialcom)
+    elif('<v,a,t>' in command):
+        test_vat(serialcom)
+
+    eject_flag = False
+
+    while True:
+        ret = serialcom.readline(serialcom.in_waiting)
+        st = str(ret, 'ascii')
+        if(not 'AUD' in st):
+            print(st)
+        if("eta" in st):
+            print("palla staccara")
+            eject_flag = True
+            self.update_state(state='EJECTED',
+                          meta={'current': Ntest, 'total': 8,
+                                'status': "test numero: " + str(Ntest)})
+        if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            raise Ignore()
+        if("es" in st):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            raise Ignore()
+        if("HAP" in st):
+            print(st)
+            disconnect(serialcom)
+            numbers = re.findall(r'\d+',st)
+            print(numbers)
+            num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            pdSignalHAP()
+            return {'current': 100, 'total': 100, 'status': 'Task completed!',
+            'timer1': num1, 'timer2': num2}
+        #send_datum()
+        self.update_state(state='PROGRESS',
+                            meta={'current': 1, 'total': 8,
+                                    'status': "test numero: " + str(Ntest)})
 
 @celery.task(bind=True)
 def reset(self):
     print("reset")
     serialcom = connect()
     ResetMex(serialcom)
+    return {'reset': True}
+
+@celery.task()
+def audiocue(self):
+    print("Test audio stimuli")
+    serialcom = connect()
+    test_StimuliAudio(serialcom)
+    return {'reset': True}
+
+@celery.task()
+def videocue():
+    print("Testing video stimuli")
+    serialcom = connect()
+    test_StimuliVideo(serialcom)
+    return {'reset': True}
+
+@celery.task()
+def hapticcue():
+    print("Testing video stimuli")
+    serialcom = connect()
+    test_StimuliTactile(serialcom)
     return {'reset': True}
 
 '''
@@ -324,8 +422,45 @@ def charts():
 
 @app.route("/longtest", methods=["POST"])
 def run_task():
+    data = request.get_json()
+    result = data['value']
     task = longtest.apply_async()
     #time.sleep(1000)
+    return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                  task_id=task.id)}
+
+
+@app.route("/trial", methods=["POST"])
+def command_test():
+    print("dioporco")
+    print(request)
+    data = request.get_json() # retrieve the data sent from JavaScript
+    print(data)
+    # process the data using Python code
+    result = data['value']
+    print(result)
+    task = command_task.delay(result)    
+    return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                  task_id=task.id)}
+
+@app.route("/audio", methods=["POST"])
+def audiocue_test():
+    # process the data using Python code
+    task = audiocue.apply_async()    
+    return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                  task_id=task.id)}
+
+@app.route("/video", methods=["POST"])
+def videocue_test():
+    # process the data using Python code
+    task = videocue.apply_async()    
+    return jsonify({}), 202, {'Location': url_for('taskstatus',
+                                                  task_id=task.id)}
+
+@app.route("/haptic", methods=["POST"])
+def hapticcue_test():
+    # process the data using Python code
+    task = hapticcue.apply_async()    
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}
 
@@ -359,8 +494,8 @@ def taskstatus(task_id):
         # something went wrong in the background job
         response = {
             'state': task.state,
-            'current': 1,
-            'total': 1,
+            'current': 0,
+            'total': 0,
             'status': str(task.info),  # this is the exception raised
         }
     return jsonify(response)

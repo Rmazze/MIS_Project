@@ -37,10 +37,10 @@
 //}
 
 
-void select_stimuli_regex(char received_buffer[], bool &visual_stimuli, bool &auditory_stimuli, bool &tactile_stimuli){
-    
-    if (received_buffer[1] == 'V'){
+void select_stimuli_regex(char received_buffer[], bool &visual_stimuli, bool &auditory_stimuli, bool &noaudio_stimuli, bool &tactile_stimuli){  
+    if (received_buffer[1] == 'V' || received_buffer[3] == 'V'){
         visual_stimuli = HIGH;
+        noaudio_stimuli = HIGH;
     } else{
         visual_stimuli = LOW;    
     }
@@ -51,8 +51,9 @@ void select_stimuli_regex(char received_buffer[], bool &visual_stimuli, bool &au
         auditory_stimuli = LOW;    
     }
 
-    if (received_buffer[5] == 'T'){
+    if (received_buffer[5] == 'T'|| received_buffer[3] == 'T'){
         tactile_stimuli = HIGH;
+        noaudio_stimuli = HIGH;
     } else{
         tactile_stimuli = LOW;    
     } 
