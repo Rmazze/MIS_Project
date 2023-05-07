@@ -281,7 +281,6 @@ void loop() {
                   for(int x = 0; x < 4; x++) {
                     Serial.println("DetachDetachDetachDetach");
                   }
-                  Serial.println("DetachDetachDetachDetach");
                   program_execution_state = 3;
                   test_time_start = millis();
                   led_start_state = HIGH;

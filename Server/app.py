@@ -41,26 +41,6 @@ with the overall process
 
 NOTE: seems like serial does not interfere with the overall process
 '''
-
-@celery.task()
-def send_data():
-        client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
-        for x in range(10):
-            to_send = random.random()
-            client.send_message("/filter", to_send)
-            print("to_send: ", to_send)
-            ledOn()
-            time.sleep(1)
-            #ledOff()
-
-@celery.task()
-def send_datum():
-        client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
-        to_send = random.random()
-        client.send_message("/filter", to_send)
-        print("to_send: ", to_send)
-        time.sleep(1)
-
 @celery.task()
 def add(x, y):
         return x + y
@@ -78,7 +58,7 @@ def longtest(self):
         if(not 'AUD' in st):
             print(st)
         if("eta" in st):
-            print("palla staccara")
+            #print("palla staccara")
             eject_flag = True
             self.update_state(state='EJECTED',
                           meta={'current': Ntest, 'total': 8,
@@ -111,6 +91,7 @@ def longtest(self):
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
             pdSignalHAP()
+            resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
         #send_datum()
@@ -128,9 +109,7 @@ def command_task(self,command):
     serialcom = connect()
     """Background task that runs a long function with progress reports."""
     print("la stringa arrivata e " + command)
-    if('ando' in command):
-        print()
-    elif('<V,A,T>' in command):
+    if('<V,A,T>' in command):
         print("Starting all test")
         test_VAT(serialcom)
     elif('<V,a,t>' in command):
@@ -155,6 +134,7 @@ def command_task(self,command):
         test_vat(serialcom)
 
     eject_flag = False
+    data = {}
 
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
@@ -176,6 +156,22 @@ def command_task(self,command):
             disconnect(serialcom)
             pdSignalSAD()
             time.sleep(1)
+            data = {'catch': 0, 'reactionTime': 0}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = 1
+            else:
+                data['Visual'] = 0
+            if(list(command)[3] == 'A'):
+                data['Audio'] = 1
+            else:
+                data['Audio'] = 0
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = 1
+            else:
+                data['Tactile'] = 0
+            data['Date'] = str(datetime.date.today())
+            data['us'] = session['name']
+            resultsFillFailure(data)
             raise Ignore()
         if("es" in st):
             self.update_state(
@@ -195,6 +191,26 @@ def command_task(self,command):
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
             pdSignalHAP()
+            if(num1 > num2):
+                data['catch'] = [1]
+                data['reactionTime'] = [num1]
+            else:
+                data = {'catch': [1], 'reactionTime': [num2]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = ["gianni"]
+            resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
         #send_datum()
@@ -430,10 +446,8 @@ def run_task():
                                                   task_id=task.id)}
 
 
-@app.route("/trial", methods=["POST"])
+@app.route("/triala", methods=["POST"])
 def command_test():
-    print("dioporco")
-    print(request)
     data = request.get_json() # retrieve the data sent from JavaScript
     print(data)
     # process the data using Python code
@@ -502,23 +516,47 @@ def taskstatus(task_id):
 
 #TODO: fare funzione che scrive nel file csv i risultati delle prove con gli stimoli. Un file per utente
 
-def resultsFill():
+def resultsFillSuccess(data):
     if 'results.csv' in os.listdir('database'):
         # create a dictionary with the informations
-        new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        #new_data = {'catch': 1, 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
 
         # convert the dictionary to dataframe
-        new_data = pd.DataFrame.from_dict(new_data)
+        print(data)
+        myFile = open('database/results.csv', 'r+')
+        writer = csv.writer(myFile)
+        new_data = pd.DataFrame.from_dict(data)
+        writer.writerow(data.values())
+        myFile.close()
 
         # save in csv
         new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = False)
     
     else:
         # create a dictionary with the informations
-        new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        #new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
 
         # convert the dictionary to dataframe
-        new_data = pd.DataFrame.from_dict(new_data)
+        new_data = pd.DataFrame.from_dict(data)
+
+        # save in csv
+        new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = ["Catch", "ReactionTime", "C_Visual", "C_Auditory", "C_Tactile", "Date", "Username"])
+
+def resultsFillFailure(data):
+    if 'results.csv' in os.listdir('database'):
+        # create a dictionary with the informations
+        #new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        # convert the dictionary to dataframe
+        new_data = pd.DataFrame.from_dict(data)
+
+        # save in csv
+        new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = False)
+    
+    else:
+        # create a dictionary with the informations
+        #new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        # convert the dictionary to dataframe
+        new_data = pd.DataFrame.from_dict(data)
 
         # save in csv
         new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = ["Catch", "ReactionTime", "C_Visual", "C_Auditory", "C_Tactile", "Date", "Username"])

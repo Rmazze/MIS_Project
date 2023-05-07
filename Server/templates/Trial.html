@@ -36,14 +36,21 @@
             let ypos2 = 0;    // position of the circle2 in the y axis
             let speed2 = 10;    // speed of the circle2 in the y axis
             let command;
-
+            let text_timesx = "";     // timer for the left hand
+            let text_timedx = "";     // timer for the right hand
+            let done_test = [];
+            let list_test = ['<v,A,t>','<V,a,t>','<v,A,t>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>','<v,a,t>']
+            
             function command_task() {     
                 var e = document.getElementById("trialSel");
                 var value = e.options[e.selectedIndex].value;
-                    // send ajax POST request to start background job
+                if(value === 'random'){
+                    inte = Math.floor(Math.random() * list_test.length);
+                    value = list_test[inte]
+                }
                 $.ajax({
                     type: 'POST',
-                    url: '/trial',
+                    url: '/triala',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify({ 'value': value }),
@@ -78,9 +85,6 @@
                     if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                         if(data['state'] == 'SUCCESS'){
                             stri = data['status']
-                            console.log("DIOPOR")
-                            console.log(stri)
-                            console.log("%j", data)
                             //var dic_str = stri.replace(/'/g, "\"");
                             //var dic = JSON.parse(stri);
                             //la call alla presa riuscita funziona
@@ -450,7 +454,7 @@
                 }
             }
 
-
+            
         </script>
     </head>
     <body>
@@ -479,7 +483,7 @@
                 <label for = "trialSel">Choose a trial:</label>
                 <select name = "trialSel" id = "trialSel">
                     <option value = "random">Random</option>
-                    <option value = "noCue">No cue</option>
+                    <option value = "<v,a,t>">No cue</option>
                     <option value = "<V,a,t>">Visual</option>
                     <option value = "<v,A,t,1>">Auditory 1</option>
                     <option value = "<v,A,t,2>">Auditory 2</option>
