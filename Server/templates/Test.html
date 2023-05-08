@@ -53,7 +53,7 @@
                 if (list_test.length === 0){
                     console.log("update test");
                 }else{
-                    value = list_test.shift();
+                    value = list_test[0];
                     $.ajax({
                         type: 'POST',
                         url: '/trial',
@@ -66,10 +66,11 @@
                             console.log("changed readval on success");
                         },
                         error: function(request, status, error) {
+
                         },
                         complete: function (data) {
                             //readVal = 1
-
+                            list_test.shift();
                             log("changed readval on complete");
                         }
                     });

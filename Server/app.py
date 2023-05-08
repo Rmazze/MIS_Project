@@ -136,7 +136,7 @@ def command_task(self,command):
     elif('<V,a,t>' in command):
         print("Starting Visual test")
         test_Vat(serialcom)
-    elif('<v,A,t>' in command):
+    elif('<v,A,t' in command):
         print("Starting audio test")
         test_vAt(serialcom)
     elif('<v,a,T>' in command):
