@@ -135,7 +135,7 @@ def command_task(self,command):
         test_VAT(serialcom)
     elif('<V,a,t>' in command):
         print("Starting Visual test")
-        test_VaT(serialcom)
+        test_Vat(serialcom)
     elif('<v,A,t>' in command):
         print("Starting audio test")
         test_vAt(serialcom)
