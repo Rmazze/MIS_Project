@@ -1,16 +1,16 @@
 // Sensors to see when you chatch the ball
-#define hand_sens_sx 11
-#define hand_sens_dx 12
+#define hand_sens_sx 7
+#define hand_sens_dx 10
 
 // Sensors to see if the hands are in the correct position to begin the test
-#define hand_in_position_sx 36
-#define hand_in_position_dx 35
+#define hand_in_position_sx 23
+#define hand_in_position_dx 20
 // Leds to indicate if the hands are in the correct position to begin the test
-#define hand_in_position_sx_led 38
-#define hand_in_position_dx_led 37
+#define hand_in_position_sx_led 24
+#define hand_in_position_dx_led 25
 
 // Buttons to start and stop the test
-#define reset_button 25
+#define reset_button 16
 
 // Leds to show in which state the program is
 #define ready_led 26
@@ -20,12 +20,12 @@
 // Output for the visial and tactile stimulus
 #define visual_stimulus_led_sx 29
 #define visual_stimulus_led_dx 30
-#define tactile_stimulus_actuator_sx 13
-#define tactile_stimulus_actuator_dx 14
+#define tactile_stimulus_actuator_sx 31
+#define tactile_stimulus_actuator_dx 32
 
 // The electromagnet that release the balls
-#define magnet_sx 31
-#define magnet_dx 32
+#define magnet_sx 11
+#define magnet_dx 12
 
 //reboot teensy at the end of a test
 #define RESTART_ADDR       0xE000ED0C
@@ -410,7 +410,8 @@ void loop() {
                   Serial.println("State 6");
                   first6 = false;
                }
-
+               stimulus_dx = HIGH;
+               stimulus_sx = HIGH;
                if(commandSerial[3] == 'V'){
                 digitalWrite(visual_stimulus_led_sx, stimulus_sx);
                 digitalWrite(visual_stimulus_led_dx, stimulus_dx);
@@ -418,6 +419,8 @@ void loop() {
                 digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);
                 digitalWrite(tactile_stimulus_actuator_dx, stimulus_dx);
                }
+               stimulus_dx = LOW;
+               stimulus_sx = LOW;
                
                program_execution_state = -1;
                break;

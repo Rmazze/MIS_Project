@@ -30,7 +30,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
 
-celery = Celery(app.name,backend='redis://localhost:6379/0', broker=app.config["CELERY_BROKER_URL"])
+celery = Celery(app.name,backend='redis://localhost:6379', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
 '''

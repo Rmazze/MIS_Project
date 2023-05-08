@@ -140,6 +140,8 @@ def test_Vat(serialcom):
             break
         if('1' in recv):
             break
+        if('2' in recv):
+            break
         if('ate' in recv):
             break
     pdSignal(serialcom,True)
@@ -156,6 +158,8 @@ def test_vAtFast(serialcom):
             break
         if('1' in recv):
             break
+        if('2' in recv):
+            break
     pdSignal(serialcom,True)
 
 def test_vAt(serialcom):
@@ -169,6 +173,8 @@ def test_vAt(serialcom):
         if('0' in recv):
             break
         if('1' in recv):
+            break
+        if('2' in recv):
             break
     pdSignal(serialcom, True)
 
@@ -185,6 +191,8 @@ def test_vaT(serialcom):
             break
         if('1' in recv):
             break
+        if('2' in recv):
+            break
     pdSignal(serialcom,True)
 
 def test_VAt(serialcom):
@@ -199,6 +207,8 @@ def test_VAt(serialcom):
             break
         if('1' in recv):
             break
+        if('2' in recv):
+            break
     pdSignal(serialcom, True)
 
 def test_VaT(serialcom):
@@ -212,6 +222,8 @@ def test_VaT(serialcom):
         if('0' in recv):
             break
         if('1' in recv):
+            break
+        if('2' in recv):
             break
     pdSignal(serialcom,True)
 
@@ -228,6 +240,8 @@ def test_vAT(serialcom):
             break
         if('1' in recv):
             break
+        if('2' in recv):
+            break
     pdSignal(serialcom, True)
 
 
@@ -243,6 +257,8 @@ def test_VAT(serialcom):
             break
         if('1' in recv):
             break
+        if('2' in recv):
+            break
     pdSignal(serialcom, True)
 
 def test_vat(serialcom):
@@ -256,6 +272,8 @@ def test_vat(serialcom):
         if('0' in recv):
             break
         if('1' in recv):
+            break
+        if('2' in recv):
             break
     pdSignal(serialcom,True)
 
