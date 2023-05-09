@@ -132,11 +132,13 @@ def command_task(self,command,user):
             numbers = re.findall(r'\d+',st)
             print(numbers)
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            num1 = num1.replace(',', '.') 
             if float(num1) > 40:
                 num1 = '0,' + str(num1)
                 num1 = num1.replace(',', '.') 
                 num1 = float(num1)
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            num2 = num2.replace(',', '.') 
             if float(num2) > 40:
                 num2 = '0,' + str(num2)
                 num2 = num2.replace(',', '.') 
@@ -170,11 +172,13 @@ def command_task(self,command,user):
                 numbers = re.findall(r'\d+',st)
                 print(numbers)
                 num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+                num1 = num1.replace(',', '.') 
                 if float(num1) > 40:
                     num1 = '0,' + str(num1)
                     num1 = num1.replace(',', '.') 
                     num1 = float(num1)
                 num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+                num2 = num2.replace(',', '.') 
                 if float(num2) > 40:
                     num2 = '0,' + str(num2)
                     num2 = num2.replace(',', '.') 
@@ -207,14 +211,16 @@ def command_task(self,command,user):
                 numbers = [int(match) for match in matches]
                 print(numbers)
                 num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+                num1 = num1.replace(',', '.') 
                 if float(num1) > 40:
                     num1 = '0,' + str(num1)
                     num1 = num1.replace(',', '.') 
                     num1 = float(num1)
                 num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+                num2 = num2.replace(',', '.') 
                 if float(num2) > 40:
                     num2 = '0,' + str(num2)
-                    num1 = num2.replace(',', '.') 
+                    num2 = num2.replace(',', '.') 
                     num2 = float(num2)
                 pdSignalHAP()
                 if(num1 > num2):
