@@ -78,6 +78,132 @@ def command_task(self,command,user):
     data = {}
 
     start_time = time.time()
+    while True:
+        ret = serialcom.readline(serialcom.in_waiting)
+        st = str(ret, 'ascii')
+        if(not 'AUD' in st):
+            print(st)
+        if("eta" in st):
+            print("palla staccara")
+            eject_flag = True
+            self.update_state(state='EJECTED',
+                          meta={'current': Ntest, 'total': 8,
+                                'status': "test numero: " + str(Ntest)})
+        if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            data = {'catch': [0], 'reactionTime': []}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillFailure(data)
+            raise Ignore()
+        if("es" in st):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            raise Ignore()
+        if("HAP" in st):
+            print(st)
+            disconnect(serialcom)
+            numbers = re.findall(r'\d+',st)
+            print(numbers)
+            num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            num1 = num1.replace(',', '.') 
+            if float(num1) > 40:
+                num1 = '0,' + str(num1)
+                num1 = num1.replace(',', '.') 
+                num1 = float(num1)
+            num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            num2 = num2.replace(',', '.') 
+            if float(num2) > 40:
+                num2 = '0,' + str(num2)
+                num2 = num2.replace(',', '.') 
+                num2 = float(num2)
+            pdSignalHAP()
+            if(num1 > num2):
+                data['catch'] = [1]
+                data['reactionTime'] = [num1]
+            else:
+                data = {'catch': [1], 'reactionTime': [num2]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillSuccess(data)
+            return {'current': 100, 'total': 100, 'status': 'Task completed!',
+            'timer1': num1, 'timer2': num2}
+        if time.time() < start_time + 3:
+            recv = RecoverTime(serialcom)
+            numbers = re.findall(r'\d+',recv)
+            print(numbers)
+            break
+
+@celery.task(bind=True)
+def command_task(self,command,user):
+    serialcom = connect()
+    """Background task that runs a long function with progress reports."""
+    print("la stringa arrivata e " + command)
+    if('<V,A,T>' in command):
+        print("Starting all test")
+        test_VAT(serialcom)
+    elif('<V,a,t>' in command):
+        print("Starting Visual test")
+        test_Vat(serialcom)
+    elif('<v,A,t' in command):
+        print("Starting audio test")
+        test_vAt(serialcom)
+    elif('<v,a,T>' in command):
+        print("Starting tactile test")
+        test_vaT(serialcom)
+    elif('<V,A,t>' in command):
+        print("Starting Visual/audio test")
+        test_VAt(serialcom)
+    elif('<V,a,T>' in command):
+        print("Starting Visual/tactile test")
+        test_VaT(serialcom)
+    elif('<v,A,T>' in command):
+        print("Starting all test")
+        test_vAT(serialcom)
+    elif('<v,a,t>' in command):
+        test_vat(serialcom)
+
+    eject_flag = False
+    data = {}
+
+    start_time = time.time()
 
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
@@ -166,6 +292,8 @@ def command_task(self,command,user):
             resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
+        
+
         if time.time() < start_time + 3:
             recv = RecoverTime(serialcom)
             if 'RES' in recv:
