@@ -30,7 +30,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
 
-celery = Celery(app.name,backend='redis://localhost:6379/0', broker=app.config["CELERY_BROKER_URL"])
+celery = Celery(app.name,backend='redis://localhost:6379', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
 '''
@@ -114,8 +114,8 @@ def command_task(self,command):
         test_VAT(serialcom)
     elif('<V,a,t>' in command):
         print("Starting Visual test")
-        test_VaT(serialcom)
-    elif('<v,A,t>' in command):
+        test_Vat(serialcom)
+    elif('<v,A,t' in command):
         print("Starting audio test")
         test_vAt(serialcom)
     elif('<v,a,T>' in command):
