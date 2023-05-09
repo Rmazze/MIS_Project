@@ -170,11 +170,10 @@ def command_task(self,command,user):
             numbers = re.findall(r'\d+',recv)
             print(numbers)
             break
-
+"""
 @celery.task(bind=True)
 def command_task(self,command,user):
     serialcom = connect()
-    """Background task that runs a long function with progress reports."""
     print("la stringa arrivata e " + command)
     if('<V,A,T>' in command):
         print("Starting all test")
@@ -404,6 +403,7 @@ def command_task(self,command,user):
         self.update_state(state='PROGRESS',
                             meta={'current': 1, 'total': 8,
                                     'status': "test numero: " + str(Ntest)})
+"""
 
 @celery.task()
 def reset():
