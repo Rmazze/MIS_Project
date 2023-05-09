@@ -274,11 +274,11 @@ def command_task(self,command,user):
                 num2 = num2.replace(',', '.') 
                 num2 = float(num2)
             pdSignalHAP()
-            if(num1 > num2):
+            if(float(num1) > float(num2)):
                 data['catch'] = [1]
-                data['reactionTime'] = [num1]
+                data['reactionTime'] = [float(num1)]
             else:
-                data = {'catch': [1], 'reactionTime': [num2]}
+                data = {'catch': [1], 'reactionTime': [float(num2)]}
             if(list(command)[1] == 'V'):
                 data['Visual'] = [1]
             else:
@@ -318,11 +318,11 @@ def command_task(self,command,user):
                         num2 = num2.replace(',', '.') 
                         num2 = float(num2)
                     pdSignalHAP()
-                    if(num1 > num2):
+                    if(float(num1) > float(num2)):
                         data['catch'] = [1]
-                        data['reactionTime'] = [num1]
+                        data['reactionTime'] = [float(num1)]
                     else:
-                        data = {'catch': [1], 'reactionTime': [num2]}
+                        data = {'catch': [1], 'reactionTime': [float(num2)]}
                     if(list(command)[1] == 'V'):
                         data['Visual'] = [1]
                     else:
