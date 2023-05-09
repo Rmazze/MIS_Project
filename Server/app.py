@@ -218,18 +218,17 @@ def command_task(self,command):
                             meta={'current': 1, 'total': 8,
                                     'status': "test numero: " + str(Ntest)})
 
-@celery.task(bind=True)
-def reset(self):
+@celery.task()
+def reset():
     print("reset")
     serialcom = connect()
     ResetMex(serialcom)
     return {'reset': True}
 
 @celery.task()
-def audiocue(self):
+def audiocue():
     print("Test audio stimuli")
-    serialcom = connect()
-    test_StimuliAudio(serialcom)
+    test_StimuliAudio()
     return {'reset': True}
 
 @celery.task()
@@ -241,7 +240,7 @@ def videocue():
 
 @celery.task()
 def hapticcue():
-    print("Testing video stimuli")
+    print("Testing haptic stimuli")
     serialcom = connect()
     test_StimuliTactile(serialcom)
     return {'reset': True}

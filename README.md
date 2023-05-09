@@ -26,4 +26,8 @@ Analyze reflex phenomena through multisensory interactive sustems
 \\\
 use them to set up the network router there is a priority field use it to set up the order on which the Pi connects to the wifi
 
+- sometimes the Pi doesnt recognize the behringer sound device at the start. Just detach and reattach the usb cable. This error is recognizable by a "*ALSA input error (snd_pcm_open): No such file or directory*" from pure data console
+
+
 MIS@DISI
+

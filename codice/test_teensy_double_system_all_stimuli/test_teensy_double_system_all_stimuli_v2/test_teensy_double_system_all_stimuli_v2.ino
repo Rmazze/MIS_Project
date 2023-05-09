@@ -197,8 +197,10 @@ void loop() {
                     select_stimuli_regex(commandSerial, visual_stimuli, auditory_stimuli, tactile_stimuli);
                     test_ready_state = HIGH;
                     program_execution_state = 1;
-                  }else if(commandSerial[1] == 'P'){
+                  }
+                  if(commandSerial[1] == 'P'){
                     program_execution_state = 6;
+                    Serial.println("SI va nello stato 6: " + commandSerial[0]);
                   }else{
                     Serial.println("First char: " + commandSerial[0]);    
                   }
@@ -409,17 +411,22 @@ void loop() {
                   Serial.println("State 6");
                   first6 = false;
                }
-               stimulus_dx = HIGH;
-               stimulus_sx = HIGH;
                if(commandSerial[3] == 'V'){
-                digitalWrite(visual_stimulus_led_sx, stimulus_sx);
-                digitalWrite(visual_stimulus_led_dx, stimulus_dx);
-               } else {
-                digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);
-                digitalWrite(tactile_stimulus_actuator_dx, stimulus_dx);
+                Serial.println("Visivo");
+                digitalWrite(visual_stimulus_led_sx, HIGH);
+                digitalWrite(visual_stimulus_led_dx, HIGH);
+                delay(stimuly_duration);
+                digitalWrite(visual_stimulus_led_sx, LOW);
+                digitalWrite(visual_stimulus_led_dx, LOW);
+               } 
+               else if (commandSerial[3] == 'T'){
+                Serial.println("Tattile");
+                digitalWrite(tactile_stimulus_actuator_sx, HIGH);
+                digitalWrite(tactile_stimulus_actuator_dx, HIGH);
+                delay(stimuly_duration);
+                digitalWrite(tactile_stimulus_actuator_sx, LOW);
+                digitalWrite(tactile_stimulus_actuator_dx, LOW);
                }
-               stimulus_dx = LOW;
-               stimulus_sx = LOW;
                
                program_execution_state = -1;
                break;
