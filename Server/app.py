@@ -29,7 +29,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 #Session(app)
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
-
+Session(app)
 celery = Celery(app.name,backend='redis://localhost:6379', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
@@ -313,7 +313,7 @@ def cuesLogin():
     # cannot be access directly
     if request.method == 'GET':
         # take usr
-        #session["name"] = request.form.get("Username")
+        session["name"] = request.form.get("Username")
         return render_template('Cues.html')
     
     
@@ -321,7 +321,8 @@ def cuesLogin():
 
         # take form results
         form_data = request.form
-        #session["name"] = request.form.get("Username")
+        session["name"] = request.form.get("Username")
+        print(session["name"])
 
         # check if form is empty
         if form_data["Username"] and form_data["Password"]:
@@ -409,6 +410,7 @@ def charts():
     
     # take usr
     usr = session["name"]
+    print(usr)
 
     try:
         # read database
@@ -422,17 +424,16 @@ def charts():
 
         # average of catch and reaction time
         allTime_c_data_int = [float(i) for i in allTime_c_data]
-        allTime_rt_data_int = [float(i) for i in allTime_rt_data]
+        allTime_rt_data_int = [float(i.replace(",", ".")) for i in allTime_rt_data]
         c_avg = "{:.2f}".format(sum(allTime_c_data_int) / len(allTime_c_data_int)) + "%"
         rt_avg = "{:.2f}".format(sum(allTime_rt_data_int) / len(allTime_rt_data_int)) + " sec"
-    
+
     except:
         allTime_chart_label = []
         allTime_c_data = []
         allTime_rt_data = []
         c_avg = "0%"
         rt_avg = "0 sec"
-        
 
     # render Charts.html    
     return render_template('Charts.html', usr = usr, rt_avg = rt_avg, c_avg =c_avg, allTime_chart_label = allTime_chart_label, allTime_c_data = allTime_c_data, allTime_rt_data = allTime_rt_data)
