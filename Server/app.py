@@ -96,7 +96,7 @@ def command_task(self,command,user):
             disconnect(serialcom)
             pdSignalSAD()
             time.sleep(1)
-            data = {'catch': [0], 'reactionTime': []}
+            data = {'catch': [0], 'reactionTime': [0]}
             if(list(command)[1] == 'V'):
                 data['Visual'] = [1]
             else:
@@ -175,7 +175,7 @@ def command_task(self,command,user):
             disconnect(serialcom)
             pdSignalSAD()
             time.sleep(1)
-            data = {'catch': [0], 'reactionTime': []}
+            data = {'catch': [0], 'reactionTime': [0]}
             if(list(command)[1] == 'V'):
                 data['Visual'] = [1]
             else:
