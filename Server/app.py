@@ -81,8 +81,6 @@ def command_task(self,command,user):
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
-        if(not 'AUD' in st):
-            print(st)
         if("eta" in st):
             print("palla staccara")
             eject_flag = True
@@ -169,7 +167,31 @@ def command_task(self,command,user):
             recv = RecoverTime(serialcom)
             numbers = re.findall(r'\d+',recv)
             print(numbers)
-            break
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            data = {'catch': [0], 'reactionTime': []}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillFailure(data)
+            raise Ignore()
 """
 @celery.task(bind=True)
 def command_task(self,command,user):
