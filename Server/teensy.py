@@ -128,22 +128,17 @@ def test_StimuliTactile(serialcom):
 
 def RecoverTime(serialcom):
     recv = ""
-    while True:
+    for x in range (5):
         serialcom.write(str('<C>').encode())
         time.sleep(1)
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
-        print(recv)
         if('RES' in recv):
             break
         if('HAP' in recv):
             break
     print(recv)
-    lines = recv.split('\n')
-    # print each line
-    for line in lines:
-        print(line)
-    return lines[1]
+    return recv
 
 def test_Vat(serialcom):
     recv = ""
