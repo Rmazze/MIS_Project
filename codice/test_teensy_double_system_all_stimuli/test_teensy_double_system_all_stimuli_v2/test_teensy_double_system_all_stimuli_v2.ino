@@ -82,7 +82,7 @@ unsigned long rand_time = 0;
 // How long are the stimuli to produce
 unsigned long stimuly_duration = 3000; //decrese this value
 // Time after which we consider that the user was not able to catch the balls
-unsigned long to_much_time_elapsed = 20000; //decrese this value
+unsigned long to_much_time_elapsed = 2000; //decrese this value
 // Saves the timestamp in which the test starts
 unsigned long test_time_ready = 0;
 // Saves the timestamp in which the ball is released

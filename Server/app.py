@@ -166,7 +166,7 @@ def command_task(self,command,user):
             resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
-        if time.time() < start_time + 8:
+        if time.time() < start_time + 3:
             recv = RecoverTime(serialcom)
             if 'RES' in recv:
                 numbers = re.findall(r'\d+',st)
