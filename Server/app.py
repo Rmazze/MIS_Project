@@ -336,9 +336,8 @@ def questionnaire():
 
 
 # From login page go to cues page or to error page
-@app.route('/Cues/', methods = ["POST", "GET"])
+@app.route('/Cues', methods = ["POST", "GET"])
 def cuesLogin():
-    print(add(4,4))
     # cannot be access directly
     if request.method == 'GET':
         # take usr
