@@ -136,7 +136,8 @@ def RecoverTime(serialcom):
         print(recv)
         if('RES' in recv):
             break
-    pdSignal(serialcom,True)
+        if('HAP' in recv):
+            break
     return recv
 
 def test_Vat(serialcom):
