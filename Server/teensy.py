@@ -139,6 +139,10 @@ def RecoverTime(serialcom):
         if('HAP' in recv):
             break
     print(recv)
+    lines = recv.split('\n')
+    # print each line
+    for line in lines:
+        print(line)
     return recv
 
 def test_Vat(serialcom):
