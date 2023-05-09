@@ -260,10 +260,12 @@ def favicon():
 def admin():
     return render_template('Admin.html')
 
+"""
 # cues page
 @app.route('/Cues')
 def cues():
     return render_template('Cues.html')
+"""
 
 # trial page
 @app.route('/Trial')
