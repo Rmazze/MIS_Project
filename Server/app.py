@@ -46,66 +46,7 @@ def add(x, y):
         return x + y
 
 @celery.task(bind=True)
-def longtest(self):
-    serialcom = connect()
-    """Background task that runs a long function with progress reports."""
-    print("startmondo")
-    test_Vat(serialcom)
-    eject_flag = False
-    while True:
-        ret = serialcom.readline(serialcom.in_waiting)
-        st = str(ret, 'ascii')
-        if(not 'AUD' in st):
-            print(st)
-        if("eta" in st):
-            #print("palla staccara")
-            eject_flag = True
-            self.update_state(state='EJECTED',
-                          meta={'current': Ntest, 'total': 8,
-                                'status': "test numero: " + str(Ntest)})
-        if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
-            self.update_state(
-                state = states.FAILURE,
-                meta={'current': 1, 'total': 8,
-                                'status': "FAIL"}
-            )
-            disconnect(serialcom)
-            pdSignalSAD()
-            time.sleep(1)
-            raise Ignore()
-        if("es" in st):
-            self.update_state(
-                state = states.FAILURE,
-                meta={'current': 1, 'total': 8,
-                                'status': "FAIL"}
-            )
-            disconnect(serialcom)
-            pdSignalSAD()
-            time.sleep(1)
-            raise Ignore()
-        if("HAP" in st):
-            print(st)
-            disconnect(serialcom)
-            numbers = re.findall(r'\d+',st)
-            print(numbers)
-            num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
-            num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
-            pdSignalHAP()
-            resultsFillSuccess(data)
-            return {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'timer1': num1, 'timer2': num2}
-        #send_datum()
-        if not eject_flag:
-            self.update_state(state='PROGRESS',
-                            meta={'current': Ntest, 'total': 8,
-                                    'status': "test numero: " + str(Ntest)})
-        else:
-            self.update_state(state='PROGRESS',
-                            meta={'current': Ntest, 'total': 8,
-                                    'status': "test numero: " + str(Ntest)})
-
-@celery.task(bind=True)
-def command_task(self,command):
+def command_task(self,command,user):
     serialcom = connect()
     """Background task that runs a long function with progress reports."""
     print("la stringa arrivata e " + command)
@@ -209,7 +150,9 @@ def command_task(self,command):
             else:
                 data['Tactile'] = [0]
             data['Date'] = [str(datetime.date.today())]
-            data['us'] = [session['name']]
+            data['us'] = [user]
+            usr = user
+            print(usr)
             resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
@@ -439,24 +382,16 @@ def charts():
     return render_template('Charts.html', usr = usr, rt_avg = rt_avg, c_avg =c_avg, allTime_chart_label = allTime_chart_label, allTime_c_data = allTime_c_data, allTime_rt_data = allTime_rt_data)
 
 
-@app.route("/longtest", methods=["POST"])
-def run_task():
-    data = request.get_json()
-    result = data['value']
-    task = longtest.apply_async()
-    #time.sleep(1000)
-    return jsonify({}), 202, {'Location': url_for('taskstatus',
-                                                  task_id=task.id)}
-
-
-@app.route("/triala", methods=["POST"])
+@app.route("/trial", methods=["POST"])
 def command_test():
     data = request.get_json() # retrieve the data sent from JavaScript
     print(data)
     # process the data using Python code
     result = data['value']
     print(result)
-    task = command_task.delay(result)    
+    usr = session["name"]
+    print(usr)
+    task = command_task.delay(result,usr)    
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}
 
@@ -492,7 +427,7 @@ def reset_task():
 #Introduced for debugging purposes
 @app.route('/status/<task_id>')
 def taskstatus(task_id):
-    task = longtest.AsyncResult(task_id)
+    task = command_task.AsyncResult(task_id)
     if task.state == 'SUCCESS':
         print(task.info)
         response = {

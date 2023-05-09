@@ -44,13 +44,14 @@
             function command_task() {     
                 var e = document.getElementById("trialSel");
                 var value = e.options[e.selectedIndex].value;
+                console.log("ciao")
                 if(value === 'random'){
                     inte = Math.floor(Math.random() * list_test.length);
                     value = list_test[inte]
                 }
                 $.ajax({
                     type: 'POST',
-                    url: '/triala',
+                    url: '/trial',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
                     data: JSON.stringify({ 'value': value }),
