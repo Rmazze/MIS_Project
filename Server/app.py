@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, url_for, send_from_directory
-#from flask_session import Session
+from flask_session import Session
 from flask import jsonify
 import serial
 import serial.tools.list_ports as ports
@@ -156,21 +156,21 @@ def command_task(self,command):
             disconnect(serialcom)
             pdSignalSAD()
             time.sleep(1)
-            data = {'catch': 0, 'reactionTime': 0}
+            data = {'catch': [0], 'reactionTime': []}
             if(list(command)[1] == 'V'):
-                data['Visual'] = 1
+                data['Visual'] = [1]
             else:
-                data['Visual'] = 0
+                data['Visual'] = [0]
             if(list(command)[3] == 'A'):
-                data['Audio'] = 1
+                data['Audio'] = [1]
             else:
-                data['Audio'] = 0
+                data['Audio'] = [0]
             if(list(command)[5] == 'T'):
-                data['Tactile'] = 1
+                data['Tactile'] = [1]
             else:
-                data['Tactile'] = 0
-            data['Date'] = str(datetime.date.today())
-            data['us'] = session['name']
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [session['name']]
             resultsFillFailure(data)
             raise Ignore()
         if("es" in st):
@@ -209,7 +209,7 @@ def command_task(self,command):
             else:
                 data['Tactile'] = [0]
             data['Date'] = [str(datetime.date.today())]
-            data['us'] = ["gianni"]
+            data['us'] = [session['name']]
             resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
@@ -335,6 +335,7 @@ def cuesLogin():
 
                     # check psw: if right, go to cues page
                     if df[(df["Username"] == form_data["Username"]) & (df["Password"] == form_data["Password"])].empty == False:
+                        session['name'] = form_data["Username"]
                         return render_template('Cues.html', usr = form_data["Username"])
 
                     # if psw is not right, go to error page
@@ -407,7 +408,7 @@ def loginSignUp():
 def charts():
     
     # take usr
-    usr = "gainni"#session["name"]
+    usr = session["name"]
 
     try:
         # read database
@@ -524,11 +525,11 @@ def resultsFillSuccess(data):
 
         # convert the dictionary to dataframe
         print(data)
-        myFile = open('database/results.csv', 'r+')
-        writer = csv.writer(myFile)
+        #myFile = open('database/results.csv', 'r+')
+        #writer = csv.writer(myFile)
         new_data = pd.DataFrame.from_dict(data)
-        writer.writerow(data.values())
-        myFile.close()
+        #writer.writerow(data.values())
+        #myFile.close()
 
         # save in csv
         new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = False)

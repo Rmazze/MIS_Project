@@ -281,7 +281,7 @@ void loop() {
                              break;
                   }
                   for(int x = 0; x < 4; x++) {
-                    Serial.println("DetachDetachDetachDetach");
+                    Serial.println("NOAUD");
                   }
                   program_execution_state = 3;
                   test_time_start = millis();

@@ -3,6 +3,9 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
     if (visual_stimuli == HIGH){
         digitalWrite(visual_stimulus_led_sx, stimulus_sx);
         digitalWrite(visual_stimulus_led_dx, stimulus_dx);
+        if (stimulus_sx == HIGH || stimulus_dx == HIGH){
+          Serial.println("NOTAUD");
+        }
     }
     if (auditory_stimuli == HIGH){
         if (stimulus_sx == HIGH && stimulus_dx == HIGH){ //mi sa che abbiamo un solo stimolo audio
@@ -22,6 +25,9 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
     if (tactile_stimuli == HIGH){
         digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);
         digitalWrite(tactile_stimulus_actuator_dx, stimulus_dx);
+        if (stimulus_sx == HIGH || stimulus_dx == HIGH){
+          Serial.println("NOTAUD");
+        }
         //Serial.println("Produce tactile stimuli");
     }  
 }

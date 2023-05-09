@@ -51,6 +51,8 @@ def pdSignal(serialcom, flag):
             client.send_message("/x_state", 4)
             break
         if('NOTAUD' in msg):
+            print(msg + " in pure data")
+            client.send_message("/x_state", 5)
             break
     #client.close()
 
@@ -111,7 +113,7 @@ def test_StimuliVideo(serialcom):
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
         #if (not 'AUD' in recv):
-        #print(recv)
+        print(recv)
     #print("sono fuori")
 
 def test_StimuliTactile(serialcom):
