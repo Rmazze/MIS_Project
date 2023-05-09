@@ -143,7 +143,7 @@ def RecoverTime(serialcom):
     # print each line
     for line in lines:
         print(line)
-    return recv
+    return lines[1]
 
 def test_Vat(serialcom):
     recv = ""
