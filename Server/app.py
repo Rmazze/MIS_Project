@@ -405,7 +405,7 @@ def cuesLogin():
             return render_template('ErrorLogin.html', msg = msg, msg_type = "error")
 
 # From signup page create new credentials and go to login page or to error page
-@app.route('/Login/', methods = ["POST", "GET"])
+@app.route('/Login', methods = ["POST", "GET"])
 def loginSignUp():
     
     if request.method == 'POST':
