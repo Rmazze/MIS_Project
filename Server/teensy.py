@@ -114,7 +114,8 @@ def test_StimuliVideo(serialcom):
         time.sleep(1)
         recv = serialcom.read(serialcom.inWaiting())
         recv = str(recv, 'ascii')
-        print(recv)
+        if (not 'AUD' in recv):
+            print(recv)
     print("sono fuori")
 
 def test_StimuliTactile(serialcom):
