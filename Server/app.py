@@ -186,6 +186,34 @@ def command_task(self,command,user):
                 resultsFillSuccess(data)
                 return {'current': 100, 'total': 100, 'status': 'Task completed!',
                 'timer1': num1, 'timer2': num2}
+            if 'HAP' in recv:
+                numbers = re.findall(r'\d+',st)
+                print(numbers)
+                num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+                num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+                pdSignalHAP()
+                if(num1 > num2):
+                    data['catch'] = [1]
+                    data['reactionTime'] = [num1]
+                else:
+                    data = {'catch': [1], 'reactionTime': [num2]}
+                if(list(command)[1] == 'V'):
+                    data['Visual'] = [1]
+                else:
+                    data['Visual'] = [0]
+                if(list(command)[3] == 'A'):
+                    data['Audio'] = [1]
+                else:
+                    data['Audio'] = [0]
+                if(list(command)[5] == 'T'):
+                    data['Tactile'] = [1]
+                else:
+                    data['Tactile'] = [0]
+                data['Date'] = [str(datetime.date.today())]
+                data['us'] = [user]
+                resultsFillSuccess(data)
+                return {'current': 100, 'total': 100, 'status': 'Task completed!',
+                'timer1': num1, 'timer2': num2}
             else:
                 self.update_state(
                 state = states.FAILURE,
