@@ -138,7 +138,7 @@ def RecoverTime(serialcom):
             break
         if('HAP' in recv):
             break
-    print("il paccheto recuperato e" + recv)
+    print(recv)
     return recv
 
 def test_Vat(serialcom):
