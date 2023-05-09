@@ -188,8 +188,8 @@ def command_task(self,command,user):
                 'timer1': num1, 'timer2': num2}
             if 'HAP' in recv:
                 matches = re.findall(r'\d+',recv)
-                print(numbers)
                 numbers = [int(match) for match in matches]
+                print(numbers)
                 num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
                 num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
                 pdSignalHAP()
