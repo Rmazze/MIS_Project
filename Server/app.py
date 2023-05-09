@@ -111,7 +111,7 @@ def command_task(self,command,user):
             else:
                 data['Tactile'] = [0]
             data['Date'] = [str(datetime.date.today())]
-            data['us'] = [session['name']]
+            data['us'] = [user]
             resultsFillFailure(data)
             raise Ignore()
         if("es" in st):
@@ -151,8 +151,6 @@ def command_task(self,command,user):
                 data['Tactile'] = [0]
             data['Date'] = [str(datetime.date.today())]
             data['us'] = [user]
-            usr = user
-            print(usr)
             resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
