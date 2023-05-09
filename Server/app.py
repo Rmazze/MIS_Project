@@ -44,11 +44,10 @@ NOTE: seems like serial does not interfere with the overall process
 @celery.task()
 def add(x, y):
         return x + y
-
+"""
 @celery.task(bind=True)
 def command_task(self,command,user):
     serialcom = connect()
-    """Background task that runs a long function with progress reports."""
     print("la stringa arrivata e " + command)
     if('<V,A,T>' in command):
         print("Starting all test")
@@ -81,12 +80,6 @@ def command_task(self,command,user):
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
         st = str(ret, 'ascii')
-        if("eta" in st):
-            print("palla staccara")
-            eject_flag = True
-            self.update_state(state='EJECTED',
-                          meta={'current': Ntest, 'total': 8,
-                                'status': "test numero: " + str(Ntest)})
         if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
             self.update_state(
                 state = states.FAILURE,
@@ -113,17 +106,7 @@ def command_task(self,command,user):
             data['us'] = [user]
             resultsFillFailure(data)
             raise Ignore()
-        if("es" in st):
-            self.update_state(
-                state = states.FAILURE,
-                meta={'current': 1, 'total': 8,
-                                'status': "FAIL"}
-            )
-            disconnect(serialcom)
-            pdSignalSAD()
-            time.sleep(1)
-            raise Ignore()
-        if("HAP" in st):
+        elif("HAP" in st):
             print(st)
             disconnect(serialcom)
             numbers = re.findall(r'\d+',st)
@@ -163,8 +146,10 @@ def command_task(self,command,user):
             resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
-        if time.time() < start_time + 3:
+        if time.time() > start_time + 3:
             recv = RecoverTime(serialcom)
+            disconnect(serialcom)
+            print("totti")
             numbers = re.findall(r'\d+',recv)
             print(numbers)
             self.update_state(
@@ -172,9 +157,7 @@ def command_task(self,command,user):
                 meta={'current': 1, 'total': 8,
                                 'status': "FAIL"}
             )
-            disconnect(serialcom)
             pdSignalSAD()
-            time.sleep(1)
             data = {'catch': [0], 'reactionTime': [0]}
             if(list(command)[1] == 'V'):
                 data['Visual'] = [1]
@@ -315,7 +298,7 @@ def command_task(self,command,user):
             'timer1': num1, 'timer2': num2}
         
 
-        if time.time() < start_time + 3:
+        if time.time() > start_time + 3:
             recv = RecoverTime(serialcom)
             if 'RES' in recv:
                 numbers = re.findall(r'\d+',st)
@@ -425,7 +408,6 @@ def command_task(self,command,user):
         self.update_state(state='PROGRESS',
                             meta={'current': 1, 'total': 8,
                                     'status': "test numero: " + str(Ntest)})
-"""
 
 @celery.task()
 def reset():
