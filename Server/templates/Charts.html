@@ -52,14 +52,22 @@
 
                     // reaction time chart
                     const allTime_line_labels =  {{ allTime_chart_label | tojson }};
+                    const allTime_rt_datum =  {{ allTime_rt_data | tojson }};
+                    const floatList = [];
 
+                    for (let i = 0; i < allTime_rt_datum.length; i++) {
+                        const floatValue = parseFloat(allTime_rt_datum[i]);
+                        floatList.push(floatValue);
+                    }
+
+                    console.log({{ allTime_rt_data | tojson  }});
                     const allTime_data = {
                         labels: allTime_line_labels,
                         datasets: [{
                             label: "Reaction Time Chart",
                             backgroundColor: '#b30c3b',
                             borderColor: '#b30c3b',
-                            data: {{ allTime_rt_data | tojson}},
+                            data: floatList,
                         }]
                     };
 

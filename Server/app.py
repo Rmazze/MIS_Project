@@ -132,7 +132,13 @@ def command_task(self,command,user):
             numbers = re.findall(r'\d+',st)
             print(numbers)
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            if num1 > 40:
+                num1 = '0,' + str(num1)
+                num1 = float(num1)
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            if num2 > 40:
+                num2 = '0,' + str(num1)
+                num2 = float(num1)
             pdSignalHAP()
             if(num1 > num2):
                 data['catch'] = [1]
@@ -162,7 +168,13 @@ def command_task(self,command,user):
                 numbers = re.findall(r'\d+',st)
                 print(numbers)
                 num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+                if num1 > 40:
+                    num1 = '0,' + str(num1)
+                    num1 = float(num1)
                 num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+                if num2 > 40:
+                    num2 = '0,' + str(num1)
+                    num2 = float(num1)
                 pdSignalHAP()
                 if(num1 > num2):
                     data['catch'] = [1]
@@ -191,7 +203,13 @@ def command_task(self,command,user):
                 numbers = [int(match) for match in matches]
                 print(numbers)
                 num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+                if num1 > 40:
+                    num1 = '0,' + str(num1)
+                    num1 = float(num1)
                 num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+                if num2 >40:
+                    num2 = '0,' + str(num1)
+                    num2 = float(num1)
                 pdSignalHAP()
                 if(num1 > num2):
                     data['catch'] = [1]
