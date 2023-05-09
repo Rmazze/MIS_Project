@@ -161,7 +161,10 @@
                     start_long_task()
                 });
                 document.getElementById('StopBtn').addEventListener("click", function() {
-                    readVal = 1;
+                    readVal = 2;
+                });
+                document.getElementById('NextBtn').addEventListener("click", function() {
+                    list_test.shift();
                 });
             }
             /*
@@ -505,6 +508,7 @@
 
                 <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />
                 <input type = "submit"  id = "StopBtn" value = "Stop" class = "btn" />
+                <input type = "submit"  id = "NextBtn" value = "Next" class = "btn" />
 
                 <button type = "submit" onclick = "window.location.href = '/Questionnaire';">
                     <img src = "static/Arrow.png" alt = "NEXT" border = "0" />
