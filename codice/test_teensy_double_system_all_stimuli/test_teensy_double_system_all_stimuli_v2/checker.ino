@@ -23,6 +23,12 @@ void parseCom ( char commands[]){
     }
     statecom = true;
   }
+  else if(commands[1] == 'C'){
+    if(!statecom){
+      strcpy(commandSerial, commands);
+    }
+    statecom = true;
+  }
   else{
     //Serial.println("E");
     statecom = false;

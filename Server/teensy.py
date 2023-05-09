@@ -126,6 +126,18 @@ def test_StimuliTactile(serialcom):
         print(recv)
     #print("sono fuori")
 
+def RecoverTime(serialcom):
+    recv = ""
+    while True:
+        serialcom.write(str('<C>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('RES' in recv):
+            break
+    pdSignal(serialcom,True)
+    return recv
 
 def test_Vat(serialcom):
     recv = ""
