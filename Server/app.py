@@ -229,7 +229,7 @@ def command_task(self,command,user):
             disconnect(serialcom)
             pdSignalSAD()
             time.sleep(1)
-            data = {'catch': [0], 'reactionTime': []}
+            data = {'catch': [0], 'reactionTime': [0]}
             if(list(command)[1] == 'V'):
                 data['Visual'] = [1]
             else:
@@ -301,6 +301,7 @@ def command_task(self,command,user):
         if time.time() > start_time + 3:
             recv = RecoverTime(serialcom)
             if 'RES' in recv:
+                print(recv)
                 numbers = re.findall(r'\d+',st)
                 print(numbers)
                 if(len(numbers) > 0):
@@ -348,7 +349,7 @@ def command_task(self,command,user):
                     disconnect(serialcom)
                     pdSignalSAD()
                     time.sleep(1)
-                    data = {'catch': [0], 'reactionTime': []}
+                    data = {'catch': [0], 'reactionTime': [0]}
                     if(list(command)[1] == 'V'):
                         data['Visual'] = [1]
                     else:
