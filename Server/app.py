@@ -183,6 +183,12 @@ def command_task(self,command,user):
     if('<V,A,T>' in command):
         print("Starting all test")
         test_VAT(serialcom)
+    elif('<v,A,t,1>' in command):
+        print("Starting all test")
+        test_vAtSlow(serialcom)
+    elif('<v,A,t,2>' in command):
+        print("Starting all test")
+        test_vAtFast(serialcom)
     elif('<V,a,t>' in command):
         print("Starting Visual test")
         test_Vat(serialcom)

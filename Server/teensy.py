@@ -39,8 +39,6 @@ def pdSignal(serialcom, flag):
                 pdSignalFast()
             else:
                 pdSignalSlow()
-            client.send_message("/x_state", 3)# fast
-            client.send_message("/x_state", 4)# slow
             break
         if('AUDSX' in msg):
             print(msg + " in pure data")
@@ -48,7 +46,7 @@ def pdSignal(serialcom, flag):
             break
         if('AUDDX' in msg):
             print(msg + " in pure data")
-            client.send_message("/x_state", 4)
+            client.send_message("/x_state", 3)
             break
         if('NOTAUD' in msg):
             print(msg + " in pure data")
@@ -171,6 +169,22 @@ def test_vAtFast(serialcom):
         if('2' in recv):
             break
     pdSignal(serialcom,True)
+
+def test_vAtSlow(serialcom):
+    recv = ""
+    while True:
+        serialcom.write(str('<v,A,t>').encode())
+        time.sleep(1)
+        recv = serialcom.read(serialcom.inWaiting())
+        recv = str(recv, 'ascii')
+        print(recv)
+        if('0' in recv):
+            break
+        if('1' in recv):
+            break
+        if('2' in recv):
+            break
+    pdSignal(serialcom,False)
 
 def test_vAt(serialcom):
     recv = ""
