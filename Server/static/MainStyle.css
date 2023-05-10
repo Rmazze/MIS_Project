@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); /* Poppins font */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap'); /* Noto Sans font */
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); Poppins font */
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap'); Noto Sans font */
 
 /* background */
 body {
@@ -382,4 +382,14 @@ select option {
 @font-face {
     font-family: TRTitle;
     src: url(Airbeat.ttf);
+}
+
+@font-face {
+    font-family: Noto;
+    src: url(NotoSans-Regular.ttf);
+}
+
+@font-face {
+    font-family: Poppins;
+    src: url(Poppins-Regular.ttf);
 }

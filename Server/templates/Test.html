@@ -9,13 +9,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>
 
         <script>
-            function restoreConsole() {
-                var i = document.createElement('iframe');
-                i.style.display = 'none';
-                document.body.appendChild(i);
-                window.console = i.contentWindow.console;
-                i.parentNode.removeChild(i);
-            }
             /*
             Variables declaration and object instatiation.
             */
@@ -47,12 +40,14 @@
             let text_timesx = "";     // timer for the left hand
             let text_timedx = "";     // timer for the right hand
             let done_test = []
-            let list_test = ['<v,a,t>','<V,a,t>','<v,A,t>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>']
+            let list_test = ['<V,a,t>','<v,A,t>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>']
             //let ws = new WebSocket('http://127.0.0.1:9001'); //websocket to call directly puredata
+            
             function start_long_task() {     
                     // send ajax POST request to start background job
                 if (list_test.length === 0){
-                    console.log("update test");
+                    console.log("Finish test");
+                    alert("Congratulations u have finished the test");
                 }else{
                     value = list_test[0];
                     $.ajax({
@@ -64,14 +59,14 @@
                         success: function(data, status, request) {
                             status_url = request.getResponseHeader('Location');
                             update_progress(status_url);
+
                             console.log("changed readval on success");
                         },
                         error: function(request, status, error) {
-
+                            readVal = 2
                         },
                         complete: function (data) {
                             //readVal = 1
-                            list_test.shift();
                             log("changed readval on complete");
                         }
                     });
@@ -113,17 +108,10 @@
                     if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                         if(data['state'] == 'SUCCESS'){
                             stri = data['status']
-                            console.log("DIOPOR")
-                            console.log(stri)
-                            console.log("%j", data)
-                            //var dic_str = stri.replace(/'/g, "\"");
-                            //var dic = JSON.parse(stri);
-                            //la call alla presa riuscita funziona
-                            //console.log('Resulting value: ' + dic['timer1']);
-                            //console.log('Resulting value: ' + dic['timer2']);
                             text_timesx = data['timer1']
                             text_timedx = data['timer2']
                             readVal = 1
+                            list_test.shift();
                         }
                         if ('result' in data) {
                             // show result
@@ -174,7 +162,10 @@
                     start_long_task()
                 });
                 document.getElementById('StopBtn').addEventListener("click", function() {
-                    readVal = 1;
+                    readVal = 2;
+                });
+                document.getElementById('NextBtn').addEventListener("click", function() {
+                    list_test.shift();
                 });
             }
             /*
@@ -500,13 +491,13 @@
                 <div class = "hoverMenu">
                     <img src = "/static/Menu.png" class = "sandwich">
                     <div class = "hoverMenu-content">
-                        <a title = "Cue" href = "{{ url_for('cues') }}">Cues</a>
+                        <a title = "Cue" href = "{{ url_for('cuesLogin') }}">Cues</a>
                         <a title = "Trial" href = "{{ url_for('trial') }}">Trial</a>
                         <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
                         <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
                         <a title = "Log out" href = "/">Log Out</a>
                     </ul>
-                </div>
+                </div>S
             </header>
 
             <div class = "whiteBoxBig">
@@ -518,6 +509,7 @@
 
                 <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />
                 <input type = "submit"  id = "StopBtn" value = "Stop" class = "btn" />
+                <input type = "submit"  id = "NextBtn" value = "Next" class = "btn" />
 
                 <button type = "submit" onclick = "window.location.href = '/Questionnaire';">
                     <img src = "static/Arrow.png" alt = "NEXT" border = "0" />

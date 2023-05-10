@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session, url_for, send_from_directory
-#from flask_session import Session
+from flask_session import Session
 from flask import jsonify
 import serial
 import serial.tools.list_ports as ports
@@ -29,7 +29,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 #Session(app)
 app.config["CELERY_BROKER_URL"] = "redis://localhost:6379"
 #app.add_url_rule('/Favicon.ico', redirect_to=url_for('static', filename='Favicon.ico'))
-
+Session(app)
 celery = Celery(app.name,backend='redis://localhost:6379', broker=app.config["CELERY_BROKER_URL"])
 celery.conf.update(app.config)
 
@@ -41,96 +41,15 @@ with the overall process
 
 NOTE: seems like serial does not interfere with the overall process
 '''
-
-@celery.task()
-def send_data():
-        client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
-        for x in range(10):
-            to_send = random.random()
-            client.send_message("/filter", to_send)
-            print("to_send: ", to_send)
-            ledOn()
-            time.sleep(1)
-            #ledOff()
-
-@celery.task()
-def send_datum():
-        client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
-        to_send = random.random()
-        client.send_message("/filter", to_send)
-        print("to_send: ", to_send)
-        time.sleep(1)
-
 @celery.task()
 def add(x, y):
         return x + y
-
+"""
 @celery.task(bind=True)
-def longtest(self):
+def command_task(self,command,user):
     serialcom = connect()
-    """Background task that runs a long function with progress reports."""
-    print("startmondo")
-    test_Vat(serialcom)
-    eject_flag = False
-    while True:
-        ret = serialcom.readline(serialcom.in_waiting)
-        st = str(ret, 'ascii')
-        if(not 'AUD' in st):
-            print(st)
-        if("eta" in st):
-            print("palla staccara")
-            eject_flag = True
-            self.update_state(state='EJECTED',
-                          meta={'current': Ntest, 'total': 8,
-                                'status': "test numero: " + str(Ntest)})
-        if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
-            self.update_state(
-                state = states.FAILURE,
-                meta={'current': 1, 'total': 8,
-                                'status': "FAIL"}
-            )
-            disconnect(serialcom)
-            pdSignalSAD()
-            time.sleep(1)
-            raise Ignore()
-        if("es" in st):
-            self.update_state(
-                state = states.FAILURE,
-                meta={'current': 1, 'total': 8,
-                                'status': "FAIL"}
-            )
-            disconnect(serialcom)
-            pdSignalSAD()
-            time.sleep(1)
-            raise Ignore()
-        if("HAP" in st):
-            print(st)
-            disconnect(serialcom)
-            numbers = re.findall(r'\d+',st)
-            print(numbers)
-            num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
-            num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
-            pdSignalHAP()
-            return {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'timer1': num1, 'timer2': num2}
-        #send_datum()
-        if not eject_flag:
-            self.update_state(state='PROGRESS',
-                            meta={'current': Ntest, 'total': 8,
-                                    'status': "test numero: " + str(Ntest)})
-        else:
-            self.update_state(state='PROGRESS',
-                            meta={'current': Ntest, 'total': 8,
-                                    'status': "test numero: " + str(Ntest)})
-
-@celery.task(bind=True)
-def command_task(self,command):
-    serialcom = connect()
-    """Background task that runs a long function with progress reports."""
     print("la stringa arrivata e " + command)
-    if('ando' in command):
-        print()
-    elif('<V,A,T>' in command):
+    if('<V,A,T>' in command):
         print("Starting all test")
         test_VAT(serialcom)
     elif('<V,a,t>' in command):
@@ -155,6 +74,140 @@ def command_task(self,command):
         test_vat(serialcom)
 
     eject_flag = False
+    data = {}
+
+    start_time = time.time()
+    while True:
+        ret = serialcom.readline(serialcom.in_waiting)
+        st = str(ret, 'ascii')
+        if(("SAD" in st) or ("efa" in st) or ("irs" in st)):
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            disconnect(serialcom)
+            pdSignalSAD()
+            time.sleep(1)
+            data = {'catch': [0], 'reactionTime': [0]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillFailure(data)
+            raise Ignore()
+        elif("HAP" in st):
+            print(st)
+            disconnect(serialcom)
+            numbers = re.findall(r'\d+',st)
+            print(numbers)
+            num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            num1 = num1.replace(',', '.') 
+            if float(num1) > 40:
+                num1 = '0,' + str(num1)
+                num1 = num1.replace(',', '.') 
+                num1 = float(num1)
+            num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            num2 = num2.replace(',', '.') 
+            if float(num2) > 40:
+                num2 = '0,' + str(num2)
+                num2 = num2.replace(',', '.') 
+                num2 = float(num2)
+            pdSignalHAP()
+            if(num1 > num2):
+                data['catch'] = [1]
+                data['reactionTime'] = [num1]
+            else:
+                data = {'catch': [1], 'reactionTime': [num2]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillSuccess(data)
+            return {'current': 100, 'total': 100, 'status': 'Task completed!',
+            'timer1': num1, 'timer2': num2}
+        if time.time() > start_time + 3:
+            recv = RecoverTime(serialcom)
+            disconnect(serialcom)
+            print("totti")
+            numbers = re.findall(r'\d+',recv)
+            print(numbers)
+            self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+            )
+            pdSignalSAD()
+            data = {'catch': [0], 'reactionTime': [0]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillFailure(data)
+            raise Ignore()
+"""
+@celery.task(bind=True)
+def command_task(self,command,user):
+    serialcom = connect()
+    print("la stringa arrivata e " + command)
+    if('<V,A,T>' in command):
+        print("Starting all test")
+        test_VAT(serialcom)
+    elif('<V,a,t>' in command):
+        print("Starting Visual test")
+        test_Vat(serialcom)
+    elif('<v,A,t' in command):
+        print("Starting audio test")
+        test_vAt(serialcom)
+    elif('<v,a,T>' in command):
+        print("Starting tactile test")
+        test_vaT(serialcom)
+    elif('<V,A,t>' in command):
+        print("Starting Visual/audio test")
+        test_VAt(serialcom)
+    elif('<V,a,T>' in command):
+        print("Starting Visual/tactile test")
+        test_VaT(serialcom)
+    elif('<v,A,T>' in command):
+        print("Starting all test")
+        test_vAT(serialcom)
+    elif('<v,a,t>' in command):
+        test_vat(serialcom)
+
+    eject_flag = False
+    data = {}
+
+    start_time = time.time()
 
     while True:
         ret = serialcom.readline(serialcom.in_waiting)
@@ -176,6 +229,22 @@ def command_task(self,command):
             disconnect(serialcom)
             pdSignalSAD()
             time.sleep(1)
+            data = {'catch': [0], 'reactionTime': [0]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillFailure(data)
             raise Ignore()
         if("es" in st):
             self.update_state(
@@ -193,27 +262,127 @@ def command_task(self,command):
             numbers = re.findall(r'\d+',st)
             print(numbers)
             num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+            num1 = num1.replace(',', '.') 
+            if float(num1) > 40:
+                num1 = '0,' + str(num1)
+                num1 = num1.replace(',', '.') 
+                num1 = float(num1)
             num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+            num2 = num2.replace(',', '.') 
+            if float(num2) > 40:
+                num2 = '0,' + str(num2)
+                num2 = num2.replace(',', '.') 
+                num2 = float(num2)
             pdSignalHAP()
+            if(float(num1) > float(num2)):
+                data['catch'] = [1]
+                data['reactionTime'] = [float(num1)]
+            else:
+                data = {'catch': [1], 'reactionTime': [float(num2)]}
+            if(list(command)[1] == 'V'):
+                data['Visual'] = [1]
+            else:
+                data['Visual'] = [0]
+            if(list(command)[3] == 'A'):
+                data['Audio'] = [1]
+            else:
+                data['Audio'] = [0]
+            if(list(command)[5] == 'T'):
+                data['Tactile'] = [1]
+            else:
+                data['Tactile'] = [0]
+            data['Date'] = [str(datetime.date.today())]
+            data['us'] = [user]
+            resultsFillSuccess(data)
             return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'timer1': num1, 'timer2': num2}
+        
+
+        if time.time() > start_time + 3:
+            recv = RecoverTime(serialcom)
+            if 'RES' in recv:
+                print(recv)
+                numbers = re.findall(r'\d+',st)
+                print(numbers)
+                if(len(numbers) > 0):
+                    num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
+                    num1 = num1.replace(',', '.') 
+                    if float(num1) > 40:
+                        num1 = '0,' + str(num1)
+                        num1 = num1.replace(',', '.') 
+                        num1 = float(num1)
+                    num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
+                    num2 = num2.replace(',', '.') 
+                    if float(num2) > 40:
+                        num2 = '0,' + str(num2)
+                        num2 = num2.replace(',', '.') 
+                        num2 = float(num2)
+                    pdSignalHAP()
+                    if(float(num1) > float(num2)):
+                        data['catch'] = [1]
+                        data['reactionTime'] = [float(num1)]
+                    else:
+                        data = {'catch': [1], 'reactionTime': [float(num2)]}
+                    if(list(command)[1] == 'V'):
+                        data['Visual'] = [1]
+                    else:
+                        data['Visual'] = [0]
+                    if(list(command)[3] == 'A'):
+                        data['Audio'] = [1]
+                    else:
+                        data['Audio'] = [0]
+                    if(list(command)[5] == 'T'):
+                        data['Tactile'] = [1]
+                    else:
+                        data['Tactile'] = [0]
+                    data['Date'] = [str(datetime.date.today())]
+                    data['us'] = [user]
+                    resultsFillSuccess(data)
+                    return {'current': 100, 'total': 100, 'status': 'Task completed!',
+                    'timer1': num1, 'timer2': num2}
+                else:
+                    self.update_state(
+                    state = states.FAILURE,
+                    meta={'current': 1, 'total': 8,
+                                    'status': "FAIL"}
+                    )
+                    disconnect(serialcom)
+                    pdSignalSAD()
+                    time.sleep(1)
+                    data = {'catch': [0], 'reactionTime': [0]}
+                    if(list(command)[1] == 'V'):
+                        data['Visual'] = [1]
+                    else:
+                        data['Visual'] = [0]
+                    if(list(command)[3] == 'A'):
+                        data['Audio'] = [1]
+                    else:
+                        data['Audio'] = [0]
+                    if(list(command)[5] == 'T'):
+                        data['Tactile'] = [1]
+                    else:
+                        data['Tactile'] = [0]
+                    data['Date'] = [str(datetime.date.today())]
+                    data['us'] = [user]
+                    resultsFillFailure(data)
+                    raise Ignore()
+
         #send_datum()
         self.update_state(state='PROGRESS',
                             meta={'current': 1, 'total': 8,
                                     'status': "test numero: " + str(Ntest)})
 
-@celery.task(bind=True)
-def reset(self):
+@celery.task()
+def reset():
     print("reset")
     serialcom = connect()
     ResetMex(serialcom)
     return {'reset': True}
 
 @celery.task()
-def audiocue(self):
+def audiocue():
     print("Test audio stimuli")
-    serialcom = connect()
-    test_StimuliAudio(serialcom)
+    test_StimuliAudio()
     return {'reset': True}
 
 @celery.task()
@@ -225,7 +394,7 @@ def videocue():
 
 @celery.task()
 def hapticcue():
-    print("Testing video stimuli")
+    print("Testing haptic stimuli")
     serialcom = connect()
     test_StimuliTactile(serialcom)
     return {'reset': True}
@@ -244,10 +413,12 @@ def favicon():
 def admin():
     return render_template('Admin.html')
 
+"""
 # cues page
 @app.route('/Cues')
 def cues():
     return render_template('Cues.html')
+"""
 
 # trial page
 @app.route('/Trial')
@@ -290,13 +461,12 @@ def questionnaire():
 
 
 # From login page go to cues page or to error page
-@app.route('/Cues/', methods = ["POST", "GET"])
+@app.route('/Cues', methods = ["POST", "GET"])
 def cuesLogin():
-    print(add(4,4))
     # cannot be access directly
     if request.method == 'GET':
         # take usr
-        #session["name"] = request.form.get("Username")
+        session["name"] = request.form.get("Username")
         return render_template('Cues.html')
     
     
@@ -304,7 +474,8 @@ def cuesLogin():
 
         # take form results
         form_data = request.form
-        #session["name"] = request.form.get("Username")
+        session["name"] = request.form.get("Username")
+        print(session["name"])
 
         # check if form is empty
         if form_data["Username"] and form_data["Password"]:
@@ -318,6 +489,7 @@ def cuesLogin():
 
                     # check psw: if right, go to cues page
                     if df[(df["Username"] == form_data["Username"]) & (df["Password"] == form_data["Password"])].empty == False:
+                        session['name'] = form_data["Username"]
                         return render_template('Cues.html', usr = form_data["Username"])
 
                     # if psw is not right, go to error page
@@ -340,7 +512,7 @@ def cuesLogin():
             return render_template('ErrorLogin.html', msg = msg, msg_type = "error")
 
 # From signup page create new credentials and go to login page or to error page
-@app.route('/Login/', methods = ["POST", "GET"])
+@app.route('/Login', methods = ["POST", "GET"])
 def loginSignUp():
     
     if request.method == 'POST':
@@ -390,7 +562,8 @@ def loginSignUp():
 def charts():
     
     # take usr
-    usr = "gainni"#session["name"]
+    usr = session["name"]
+    print(usr)
 
     try:
         # read database
@@ -404,42 +577,31 @@ def charts():
 
         # average of catch and reaction time
         allTime_c_data_int = [float(i) for i in allTime_c_data]
-        allTime_rt_data_int = [float(i) for i in allTime_rt_data]
+        allTime_rt_data_int = [float(i.replace(",", ".")) for i in allTime_rt_data]
         c_avg = "{:.2f}".format(sum(allTime_c_data_int) / len(allTime_c_data_int)) + "%"
         rt_avg = "{:.2f}".format(sum(allTime_rt_data_int) / len(allTime_rt_data_int)) + " sec"
-    
+
     except:
         allTime_chart_label = []
         allTime_c_data = []
         allTime_rt_data = []
         c_avg = "0%"
         rt_avg = "0 sec"
-        
 
     # render Charts.html    
     return render_template('Charts.html', usr = usr, rt_avg = rt_avg, c_avg =c_avg, allTime_chart_label = allTime_chart_label, allTime_c_data = allTime_c_data, allTime_rt_data = allTime_rt_data)
 
 
-@app.route("/longtest", methods=["POST"])
-def run_task():
-    data = request.get_json()
-    result = data['value']
-    task = longtest.apply_async()
-    #time.sleep(1000)
-    return jsonify({}), 202, {'Location': url_for('taskstatus',
-                                                  task_id=task.id)}
-
-
 @app.route("/trial", methods=["POST"])
 def command_test():
-    print("dioporco")
-    print(request)
     data = request.get_json() # retrieve the data sent from JavaScript
     print(data)
     # process the data using Python code
     result = data['value']
     print(result)
-    task = command_task.delay(result)    
+    usr = session["name"]
+    print(usr)
+    task = command_task.delay(result,usr)    
     return jsonify({}), 202, {'Location': url_for('taskstatus',
                                                   task_id=task.id)}
 
@@ -475,7 +637,7 @@ def reset_task():
 #Introduced for debugging purposes
 @app.route('/status/<task_id>')
 def taskstatus(task_id):
-    task = longtest.AsyncResult(task_id)
+    task = command_task.AsyncResult(task_id)
     if task.state == 'SUCCESS':
         print(task.info)
         response = {
@@ -502,23 +664,47 @@ def taskstatus(task_id):
 
 #TODO: fare funzione che scrive nel file csv i risultati delle prove con gli stimoli. Un file per utente
 
-def resultsFill():
+def resultsFillSuccess(data):
     if 'results.csv' in os.listdir('database'):
         # create a dictionary with the informations
-        new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        #new_data = {'catch': 1, 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
 
         # convert the dictionary to dataframe
-        new_data = pd.DataFrame.from_dict(new_data)
+        print(data)
+        #myFile = open('database/results.csv', 'r+')
+        #writer = csv.writer(myFile)
+        new_data = pd.DataFrame.from_dict(data)
+        #writer.writerow(data.values())
+        #myFile.close()
 
         # save in csv
         new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = False)
     
     else:
         # create a dictionary with the informations
-        new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        #new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
 
         # convert the dictionary to dataframe
-        new_data = pd.DataFrame.from_dict(new_data)
+        new_data = pd.DataFrame.from_dict(data)
+
+        # save in csv
+        new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = ["Catch", "ReactionTime", "C_Visual", "C_Auditory", "C_Tactile", "Date", "Username"])
+
+def resultsFillFailure(data):
+    if 'results.csv' in os.listdir('database'):
+        # create a dictionary with the informations
+        #new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        # convert the dictionary to dataframe
+        new_data = pd.DataFrame.from_dict(data)
+
+        # save in csv
+        new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = False)
+    
+    else:
+        # create a dictionary with the informations
+        #new_data = {'catch': [form_data["catch"]], 'reactionTime': [form_data["rt"]], 'Visual': [form_data["visual"]], 'Audio': [form_data["aptic"]], 'Tactile': [form_data["tactile"]], 'Date': [str(datetime.date.today())], 'us': [session['name']]}
+        # convert the dictionary to dataframe
+        new_data = pd.DataFrame.from_dict(data)
 
         # save in csv
         new_data.to_csv('database/results.csv', sep = ';', mode = 'a', index = False, header = ["Catch", "ReactionTime", "C_Visual", "C_Auditory", "C_Tactile", "Date", "Username"])

@@ -14,7 +14,7 @@
                 <div class = "hoverMenu">
                     <img src = "/static/Menu.png" class = "sandwich">
                     <div class = "hoverMenu-content">
-                        <a title = "Cues" href = "{{ url_for('cues') }}">Cues</a>
+                        <a title = "Cues" href = "{{ url_for('cuesLogin') }}">Cues</a>
                         <a title = "Test" href = "{{ url_for('test') }}">Test</a>
                         <a title = "Trial" href = "{{ url_for('trial') }}">Trial</a>
                         <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
@@ -53,14 +53,22 @@
 
                     // reaction time chart
                     const allTime_line_labels =  {{ allTime_chart_label | tojson }};
+                    const allTime_rt_datum =  {{ allTime_rt_data | tojson }};
+                    const floatList = [];
 
+                    for (let i = 0; i < allTime_rt_datum.length; i++) {
+                        const floatValue = parseFloat(allTime_rt_datum[i]);
+                        floatList.push(floatValue);
+                    }
+
+                    console.log({{ allTime_rt_data | tojson  }});
                     const allTime_data = {
                         labels: allTime_line_labels,
                         datasets: [{
                             label: "Reaction Time Chart",
                             backgroundColor: '#b30c3b',
                             borderColor: '#b30c3b',
-                            data: {{ allTime_rt_data | tojson}},
+                            data: floatList,
                         }]
                     };
 

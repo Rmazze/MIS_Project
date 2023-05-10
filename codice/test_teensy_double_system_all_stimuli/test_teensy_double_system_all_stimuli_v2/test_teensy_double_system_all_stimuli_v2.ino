@@ -82,7 +82,7 @@ unsigned long rand_time = 0;
 // How long are the stimuli to produce
 unsigned long stimuly_duration = 3000; //decrese this value
 // Time after which we consider that the user was not able to catch the balls
-unsigned long to_much_time_elapsed = 20000; //decrese this value
+unsigned long to_much_time_elapsed = 2000; //decrese this value
 // Saves the timestamp in which the test starts
 unsigned long test_time_ready = 0;
 // Saves the timestamp in which the ball is released
@@ -93,6 +93,10 @@ volatile unsigned long test_time_end_dx = 0;
 // Contain the difference between test_time_end and test_time_start
 unsigned long test_elapsed_time_sx = 0;
 unsigned long test_elapsed_time_dx = 0;
+
+
+unsigned long result_sx = 0;
+unsigned long result_dx = 0;
 
 // Tell if we are executing the test for sx or dx hand
 bool ongoing_test_sx = LOW;
@@ -116,6 +120,7 @@ bool first4 = true;
 bool first5 = true;
 bool first6 = true;
 bool first7 = true;
+bool first8 = true;
 bool firstD = true;
 
 void setup() {
@@ -197,8 +202,14 @@ void loop() {
                     select_stimuli_regex(commandSerial, visual_stimuli, auditory_stimuli, tactile_stimuli);
                     test_ready_state = HIGH;
                     program_execution_state = 1;
-                  }else if(commandSerial[1] == 'P'){
+                  }
+                  if(commandSerial[1] == 'P'){
                     program_execution_state = 6;
+                    Serial.println("SI va nello stato 6: " + commandSerial[0]);
+                  }
+                  if(commandSerial[1] == 'C'){
+                    program_execution_state = 8;
+                    Serial.println("SI va nello stato 8: " + commandSerial[0]);
                   }else{
                     Serial.println("First char: " + commandSerial[0]);    
                   }
@@ -279,9 +290,8 @@ void loop() {
                              break;
                   }
                   for(int x = 0; x < 4; x++) {
-                    Serial.println("DetachDetachDetachDetach");
+                    Serial.println("NOAUD");
                   }
-                  Serial.println("DetachDetachDetachDetach");
                   program_execution_state = 3;
                   test_time_start = millis();
                   led_start_state = HIGH;
@@ -410,17 +420,22 @@ void loop() {
                   Serial.println("State 6");
                   first6 = false;
                }
-               stimulus_dx = HIGH;
-               stimulus_sx = HIGH;
                if(commandSerial[3] == 'V'){
-                digitalWrite(visual_stimulus_led_sx, stimulus_sx);
-                digitalWrite(visual_stimulus_led_dx, stimulus_dx);
-               } else {
-                digitalWrite(tactile_stimulus_actuator_sx, stimulus_sx);
-                digitalWrite(tactile_stimulus_actuator_dx, stimulus_dx);
+                Serial.println("Visivo");
+                digitalWrite(visual_stimulus_led_sx, HIGH);
+                digitalWrite(visual_stimulus_led_dx, HIGH);
+                delay(stimuly_duration);
+                digitalWrite(visual_stimulus_led_sx, LOW);
+                digitalWrite(visual_stimulus_led_dx, LOW);
+               } 
+               else if (commandSerial[3] == 'T'){
+                Serial.println("Tattile");
+                digitalWrite(tactile_stimulus_actuator_sx, HIGH);
+                digitalWrite(tactile_stimulus_actuator_dx, HIGH);
+                delay(stimuly_duration);
+                digitalWrite(tactile_stimulus_actuator_sx, LOW);
+                digitalWrite(tactile_stimulus_actuator_dx, LOW);
                }
-               stimulus_dx = LOW;
-               stimulus_sx = LOW;
                
                program_execution_state = -1;
                break;
@@ -441,6 +456,20 @@ void loop() {
 
                 program_execution_state = 2;
                 break;
+
+// reset for when hands not in position
+      case(8):  if(first8){
+                  Serial.println("State 8");
+                  first8 = false;
+                }
+
+                if (show_results){
+                  delay(300);
+                  Serial.println("RES sx:" + String(result_sx) + "|dx:"+ String(result_dx));
+                  //WRITE_RESTART(0x5FA0004);
+                  show_results = false;
+                  program_execution_state = -1; //better to use this again
+                }
 
       // reset state that reset everything
       default:  if(firstD){
@@ -470,6 +499,8 @@ void loop() {
                 test_time_start = 0;
                 test_time_end_sx = 0;
                 test_time_end_dx = 0;
+                result_sx = test_elapsed_time_sx;
+                result_dx = test_elapsed_time_dx;
                 test_elapsed_time_sx = 0;
                 test_elapsed_time_dx = 0;
                 

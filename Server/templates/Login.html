@@ -14,7 +14,7 @@
             <div class = "whiteBox">
                 <h1 id = "login">Login</h1>
                 <br>
-                <form action="/Cues" method = "POST">
+                <form action="{{url_for('cuesLogin')}}" method = "POST">
                     <input type = "text" id = "txtUsn" placeholder = "Username" name = "Username" />
                     <br><br><br>
                     <input type = "password" id = "txtPsw" placeholder = "Password" name = "Password" />
