@@ -17,7 +17,7 @@ Analyze reflex phenomena through multisensory interactive sustems
 
 - Always specigy the backend lib on the configuration
 - Since we are working async the celery call will be celery -A app.celery worker --loglevel=info --pool threads
-- If you are using this repo on a Pi4 remember to install pandas not through pip but through apt with <sudo apt-get install python-pandas>
+- If you are using this repo on a Pi4 remember to install pandas not through pip but through apt with 'sudo apt-get install python-pandas'
 - on the pi to run the redis server use <sudo systemctl enable /lib/systemd/system/redis-server.service>
 - <python3 app.py --host=0.0.0.0> if it needs to be seen outside localhost
 \\\
@@ -27,3 +27,17 @@ Analyze reflex phenomena through multisensory interactive sustems
 use them to set up the network router there is a priority field use it to set up the order on which the Pi connects to the wifi
 
 MIS@DISI
+
+### Can You run it
+
+In order 
+
+### How To Start
+
+>> Windows
+
+1) access through terminal to the PI (it should be connected to the local network) with SSH
+2) Once inside launch the server with the command 'vncserver'. It should build the address at the same IP with the port 1
+3) Access through 'vnc viewer' to the PI
+
+> PI Launch
