@@ -300,72 +300,66 @@ def command_task(self,command,user):
 
         if time.time() > start_time + 3:
             recv = RecoverTime(serialcom)
+            sx = 0
+            dx = 0
             if 'RES' in recv:
+                pattern = r"RES sx:(\d+)\|dx:(\d+)"
+                match = re.search(pattern, recv)
+                if match:
+                    sx = float(match.group(1))
+                    dx = float(match.group(2))
+                num1 = sx / 1000
+                num2 = dx / 1000
                 print(recv)
-                numbers = re.findall(r'\d+',st)
-                print(numbers)
-                if(len(numbers) > 0):
-                    num1 = '{:,.3f}'.format(float(numbers[0])).rstrip('0').rstrip('.')
-                    num1 = num1.replace(',', '.') 
-                    if float(num1) > 40:
-                        num1 = '0,' + str(num1)
-                        num1 = num1.replace(',', '.') 
-                        num1 = float(num1)
-                    num2 = '{:,.3f}'.format(float(numbers[1])).rstrip('0').rstrip('.')
-                    num2 = num2.replace(',', '.') 
-                    if float(num2) > 40:
-                        num2 = '0,' + str(num2)
-                        num2 = num2.replace(',', '.') 
-                        num2 = float(num2)
-                    pdSignalHAP()
-                    if(float(num1) > float(num2)):
-                        data['catch'] = [1]
-                        data['reactionTime'] = [float(num1)]
-                    else:
-                        data = {'catch': [1], 'reactionTime': [float(num2)]}
-                    if(list(command)[1] == 'V'):
-                        data['Visual'] = [1]
-                    else:
-                        data['Visual'] = [0]
-                    if(list(command)[3] == 'A'):
-                        data['Audio'] = [1]
-                    else:
-                        data['Audio'] = [0]
-                    if(list(command)[5] == 'T'):
-                        data['Tactile'] = [1]
-                    else:
-                        data['Tactile'] = [0]
-                    data['Date'] = [str(datetime.date.today())]
-                    data['us'] = [user]
-                    resultsFillSuccess(data)
-                    return {'current': 100, 'total': 100, 'status': 'Task completed!',
-                    'timer1': num1, 'timer2': num2}
+                pdSignalHAP()
+                if(float(num1) > float(num2)):
+                    data['catch'] = [1]
+                    data['reactionTime'] = [float(num1)]
                 else:
-                    self.update_state(
-                    state = states.FAILURE,
-                    meta={'current': 1, 'total': 8,
-                                    'status': "FAIL"}
-                    )
-                    disconnect(serialcom)
-                    pdSignalSAD()
-                    time.sleep(1)
-                    data = {'catch': [0], 'reactionTime': [0]}
-                    if(list(command)[1] == 'V'):
-                        data['Visual'] = [1]
-                    else:
-                        data['Visual'] = [0]
-                    if(list(command)[3] == 'A'):
-                        data['Audio'] = [1]
-                    else:
-                        data['Audio'] = [0]
-                    if(list(command)[5] == 'T'):
-                        data['Tactile'] = [1]
-                    else:
-                        data['Tactile'] = [0]
-                    data['Date'] = [str(datetime.date.today())]
-                    data['us'] = [user]
-                    resultsFillFailure(data)
-                    raise Ignore()
+                    data = {'catch': [1], 'reactionTime': [float(num2)]}
+                if(list(command)[1] == 'V'):
+                    data['Visual'] = [1]
+                else:
+                    data['Visual'] = [0]
+                if(list(command)[3] == 'A'):
+                    data['Audio'] = [1]
+                else:
+                    data['Audio'] = [0]
+                if(list(command)[5] == 'T'):
+                    data['Tactile'] = [1]
+                else:
+                    data['Tactile'] = [0]
+                data['Date'] = [str(datetime.date.today())]
+                data['us'] = [user]
+                resultsFillSuccess(data)
+                return {'current': 100, 'total': 100, 'status': 'Task completed!',
+                'timer1': num1, 'timer2': num2}
+            else:
+                self.update_state(
+                state = states.FAILURE,
+                meta={'current': 1, 'total': 8,
+                                'status': "FAIL"}
+                )
+                disconnect(serialcom)
+                pdSignalSAD()
+                time.sleep(1)
+                data = {'catch': [0], 'reactionTime': [0]}
+                if(list(command)[1] == 'V'):
+                    data['Visual'] = [1]
+                else:
+                    data['Visual'] = [0]
+                if(list(command)[3] == 'A'):
+                    data['Audio'] = [1]
+                else:
+                    data['Audio'] = [0]
+                if(list(command)[5] == 'T'):
+                    data['Tactile'] = [1]
+                else:
+                    data['Tactile'] = [0]
+                data['Date'] = [str(datetime.date.today())]
+                data['us'] = [user]
+                resultsFillFailure(data)
+                raise Ignore()
 
         #send_datum()
         self.update_state(state='PROGRESS',
