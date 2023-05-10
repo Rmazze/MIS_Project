@@ -310,6 +310,32 @@ def command_task(self,command,user):
                     dx = float(match.group(2))
                 num1 = sx / 1000
                 num2 = dx / 1000
+                if(num1 == 0 and num2 == 0):
+                    self.update_state(
+                    state = states.FAILURE,
+                    meta={'current': 1, 'total': 8,
+                                    'status': "FAIL"}
+                    )
+                    disconnect(serialcom)
+                    pdSignalSAD()
+                    time.sleep(1)
+                    data = {'catch': [0], 'reactionTime': [0]}
+                    if(list(command)[1] == 'V'):
+                        data['Visual'] = [1]
+                    else:
+                        data['Visual'] = [0]
+                    if(list(command)[3] == 'A'):
+                        data['Audio'] = [1]
+                    else:
+                        data['Audio'] = [0]
+                    if(list(command)[5] == 'T'):
+                        data['Tactile'] = [1]
+                    else:
+                        data['Tactile'] = [0]
+                    data['Date'] = [str(datetime.date.today())]
+                    data['us'] = [user]
+                    resultsFillFailure(data)
+                    raise Ignore()
                 print(recv)
                 pdSignalHAP()
                 if(float(num1) > float(num2)):

@@ -26,6 +26,8 @@ Analyze reflex phenomena through multisensory interactive sustems
 \\\
 use them to set up the network router there is a priority field use it to set up the order on which the Pi connects to the wifi
 
+If on celery terminal you see 'First char' in loop detach the teensyboard since we are on a loop bug
+
 MIS@DISI
 
 ### Can You run it

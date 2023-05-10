@@ -81,6 +81,8 @@ bool led_stop_state = HIGH;
 unsigned long rand_time = 0;
 // How long are the stimuli to produce
 unsigned long stimuly_duration = 3000; //decrese this value
+//delay time before detaching the balls
+unsigned long detachment_time= 500;
 // Time after which we consider that the user was not able to catch the balls
 unsigned long to_much_time_elapsed = 2000; //decrese this value
 // Saves the timestamp in which the test starts
@@ -121,6 +123,7 @@ bool first5 = true;
 bool first6 = true;
 bool first7 = true;
 bool first8 = true;
+bool first9 = true;
 bool firstD = true;
 
 void setup() {
@@ -204,12 +207,12 @@ void loop() {
                     program_execution_state = 1;
                   }
                   if(commandSerial[1] == 'P'){
-                    program_execution_state = 6;
-                    Serial.println("SI va nello stato 6: " + commandSerial[0]);
+                    program_execution_state = 7;
+                    Serial.println("SI va nello stato 7: " + commandSerial[0]);
                   }
                   if(commandSerial[1] == 'C'){
-                    program_execution_state = 8;
-                    Serial.println("SI va nello stato 8: " + commandSerial[0]);
+                    program_execution_state = 9;
+                    Serial.println("SI va nello stato 9: " + commandSerial[0]);
                   }else{
                     Serial.println("First char: " + commandSerial[0]);    
                   }
@@ -265,7 +268,7 @@ void loop() {
                   test_ready_state = HIGH;
                   led_start_state = HIGH;
                   led_stop_state = HIGH;
-                  program_execution_state = 7;
+                  program_execution_state = 8;
                   Serial.println("Hands not in position: ");
                 }
 
@@ -273,28 +276,25 @@ void loop() {
                 if ((millis() - test_time_ready) >= rand_time){
                   switch(test_type){
                     case(0): stimulus_sx = HIGH; 
-                             glove_state_sx = LOW;
+                             //glove_state_sx = LOW;
                              break;
                     case(1): stimulus_dx = HIGH; 
-                             glove_state_dx = LOW;
+                             //glove_state_dx = LOW;
                              break;
                     case(2): stimulus_sx = HIGH;
                              stimulus_dx = HIGH;  
-                             glove_state_sx = LOW;
-                             glove_state_dx = LOW;
+                             //glove_state_sx = LOW;
+                             //glove_state_dx = LOW;
                              break;
                     default: stimulus_sx = LOW;
                              stimulus_dx = LOW;  
-                             glove_state_sx = HIGH;
-                             glove_state_dx = HIGH;
+                             //glove_state_sx = HIGH;
+                             //glove_state_dx = HIGH;
                              break;
-                  }
-                  for(int x = 0; x < 4; x++) {
-                    Serial.println("NOAUD");
                   }
                   program_execution_state = 3;
                   test_time_start = millis();
-                  led_start_state = HIGH;
+                  //led_start_state = HIGH;
                 }
 
                 read_reset_button(reset_button_reading, 
@@ -307,23 +307,63 @@ void loop() {
                 reset_from_server(received_buffer_char, program_execution_state);  
                 break;
 
-      // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
-      case(3):  if(first3){
+      case(3): if(first3){
                   Serial.println("State 3");
                   first3 = false;
+                }
+      
+                if ((millis() - test_time_start) >= detachment_time){
+                  switch(test_type){
+                    case(0): //stimulus_sx = HIGH; 
+                             glove_state_sx = LOW;
+                             break;
+                    case(1): //stimulus_dx = HIGH; 
+                             glove_state_dx = LOW;
+                             break;
+                    case(2): //stimulus_sx = HIGH;
+                             //stimulus_dx = HIGH;  
+                             glove_state_sx = LOW;
+                             glove_state_dx = LOW;
+                             break;
+                    default: //stimulus_sx = LOW;
+                             //stimulus_dx = LOW;  
+                             glove_state_sx = HIGH;
+                             glove_state_dx = HIGH;
+                             break;
+                  }
+                  program_execution_state = 4;
+                  //test_time_start = millis();
+                  //led_start_state = HIGH;
+                }
+                read_reset_button(reset_button_reading, 
+                                  reset_button_state, 
+                                  last_reset_button_state, 
+                                  last_debounce_time_reset,
+                                  debounce_delay,
+                                  program_execution_state);
+
+                //if (received_buffer_char[0] == 'R'){ //non ha senso fare lo stesso controllo che viene poi fatto dentro la funzione
+                //reset_from_server(received_buffer_char, program_execution_state); 
+                //} 
+                break;
+      
+      // see if the user chatches all the balls and turn off the stimuli if it chatches or enough tie is last
+      case(4):  if(first4){
+                  Serial.println("State 4");
+                  first4 = false;
                 }
 
                 // turn off stimuli if enought time is last than go to next state
                 if ((millis() - test_time_start) >= stimuly_duration){
-                  //switch(test_type){
-                  //  case(0): stimulus_sx = LOW; break;
-                  //  case(1): stimulus_dx = LOW; break;
-                  //  case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
-                  //  default: stimulus_sx = LOW; stimulus_dx = LOW;
-                  //}
+                //  switch(test_type){
+                //    case(0): stimulus_sx = LOW; break;
+                //    case(1): stimulus_dx = LOW; break;
+                //    case(2): stimulus_sx = LOW; stimulus_dx = LOW; break;
+                //    default: stimulus_sx = LOW; stimulus_dx = LOW;
+                // }
                   stimulus_sx = LOW;
                   stimulus_dx = LOW;
-                  program_execution_state = 4;  
+                  program_execution_state = 5;  
                 }
 
                 // turn off stimulus when user chatches the right ball
@@ -353,17 +393,17 @@ void loop() {
                 break;
 
       // see if the user chatches all the balls, if too much time is elapesed consider as the user didn't chatch the balls
-      case(4):  if(first4){
-                  Serial.println("State 4");
-                  first4 = false;
+      case(5):  if(first5){
+                  Serial.println("State 5");
+                  first5 = false;
                 }
-
+                
                 // when all released balls are cheched go to next state
                 if (ongoing_test_sx == LOW && ongoing_test_dx == LOW){
                   led_start_state = LOW;
                   led_stop_state = HIGH;
                   Serial.println("Produce happy sound");
-                  program_execution_state = 5;
+                  program_execution_state = 6;
                 }
 
                 // too much time is elapsed, consider as the user didn't chanch the balls
@@ -383,9 +423,9 @@ void loop() {
                 break;
 
       // compute results of this execution
-      case(5):  if(first5){
-                  Serial.println("State 5");
-                  first5 = false;
+      case(6):  if(first6){
+                  Serial.println("State 6");
+                  first6 = false;
                 }
 
                 switch(test_type){
@@ -416,9 +456,9 @@ void loop() {
                 break;
 
       //test all different stimuli
-      case(6): if(first6){
-                  Serial.println("State 6");
-                  first6 = false;
+      case(7): if(first7){
+                  Serial.println("State 7");
+                  first7 = false;
                }
                if(commandSerial[3] == 'V'){
                 Serial.println("Visivo");
@@ -441,9 +481,9 @@ void loop() {
                break;
 
       // reset for when hands not in position
-      case(7):  if(first7){
-                  Serial.println("State 7");
-                  first7 = false;
+      case(8):  if(first8){
+                  Serial.println("State 8");
+                  first8 = false;
                 }
                 test_ready_state = LOW;
                 led_start_state = LOW;
@@ -458,9 +498,9 @@ void loop() {
                 break;
 
 // reset for when hands not in position
-      case(8):  if(first8){
-                  Serial.println("State 8");
-                  first8 = false;
+      case(9):  if(first9){
+                  Serial.println("State 9");
+                  first9 = false;
                 }
 
                 if (show_results){
@@ -518,6 +558,8 @@ void loop() {
                 first5 = true;
                 first6 = true;
                 first7 = true;
+                first8 = true;
+                first9 = true;
                 firstD = true;
                 statecom = false;
                 Serial.println("Default state");
