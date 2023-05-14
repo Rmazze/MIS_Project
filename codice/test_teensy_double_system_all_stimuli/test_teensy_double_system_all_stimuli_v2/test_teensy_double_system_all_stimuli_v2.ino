@@ -184,9 +184,7 @@ void loop() {
   int str_len = received_buffer.length() + 1; 
   char received_buffer_char[str_len];
   received_buffer.toCharArray(received_buffer_char, str_len);
-  //Serial.println(str_len); // Print for debugging reasons
-  //Serial.println(received_buffer_char); // Print for debugging reasons
-  if(str_len >= 1){ // 4 is an arbitrary number
+  if(str_len >= 2){ // 4 is an arbitrary number
     //Serial.println(received_buffer_char); // Print for debugging reasons
     parseCom(received_buffer_char);
     
@@ -214,7 +212,8 @@ void loop() {
                     program_execution_state = 9;
                     Serial.println("SI va nello stato 9: " + commandSerial[0]);
                   }else{
-                    Serial.println("First char: " + commandSerial[0]);    
+                    Serial.println("First char: " + commandSerial[0]);   
+                    //statecom = false; 
                   }
 
                 break;
