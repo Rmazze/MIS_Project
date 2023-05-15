@@ -472,7 +472,7 @@ def charts():
 
         # average of catch and reaction time
         allTime_c_data_int = [float(i) for i in allTime_c_data]
-        allTime_rt_data_int = [float(i.replace(",", ".")) for i in allTime_rt_data]
+        allTime_rt_data_int = [float(i) for i in allTime_rt_data]
         c_avg = "{:.2f}".format(sum(allTime_c_data_int) / len(allTime_c_data_int)) + "%"
         rt_avg = "{:.2f}".format(sum(allTime_rt_data_int) / len(allTime_rt_data_int)) + " sec"
 
