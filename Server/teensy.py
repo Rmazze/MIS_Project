@@ -33,24 +33,28 @@ def pdSignal(serialcom, flag):
     while True:
         msg = serialcom.read(serialcom.inWaiting()).decode('ascii')
         #if((len(msg) > 2) and not('AUD' in msg)):
-        if('AUDXX' in msg): 
-            print(msg + " in pure data")
-            if(flag):
-                pdSignalFast()
-            else:
-                pdSignalSlow()
-            break
         if('AUDSX' in msg):
             print(msg + " in pure data")
-            client.send_message("/x_state", 3)
+            if flag:
+                pdSignalFastSX()
+            else:
+                pdSignalSlowSX()
             break
-        if('AUDDX' in msg):
+        elif('AUDDX' in msg):
             print(msg + " in pure data")
-            client.send_message("/x_state", 3)
+            if flag:
+                pdSignalFastDX()
+            else:
+                pdSignalSlowDX()
+            break
+        elif('AUDXX' in msg): 
+            print(msg + " in pure data")
+            pdSignalFastDX()
+            pdSignalSlowSX()
             break
         if('NOTAUD' in msg):
             print(msg + " in pure data")
-            client.send_message("/x_state", 5)
+            client.send_message("/x_state", 10)
             break
     #client.close()
 
