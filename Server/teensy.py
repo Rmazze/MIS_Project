@@ -62,13 +62,22 @@ def pdSignalSAD():
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     client.send_message("/x_state", 1)
 
-def pdSignalFast():
+def pdSignalFastSX():
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     client.send_message("/x_state", 3)
 
-def pdSignalSlow():
+def pdSignalSlowSX():
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     client.send_message("/x_state", 4)
+    #client.close()
+
+def pdSignalFastDX():
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    client.send_message("/x_state", 5)
+
+def pdSignalSlowDX():
+    client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
+    client.send_message("/x_state", 6)
     #client.close()
 
 def connect():
@@ -100,9 +109,13 @@ def ResetMex(serialcom):
         return False
 
 def test_StimuliAudio():
-    pdSignalFast()
+    pdSignalFastDX()
     time.sleep(1)
-    pdSignalSlow()
+    pdSignalFastSX()
+    time.sleep(1)
+    pdSignalSlowDX()
+    time.sleep(1)
+    pdSignalSlowSX()
 
 def test_StimuliVideo(serialcom):
     for x in range(3):
