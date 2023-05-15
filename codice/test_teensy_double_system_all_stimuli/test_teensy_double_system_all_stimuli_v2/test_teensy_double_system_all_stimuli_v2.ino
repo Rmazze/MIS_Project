@@ -82,7 +82,7 @@ unsigned long rand_time = 0;
 // How long are the stimuli to produce
 unsigned long stimuly_duration = 3000; //decrese this value
 //delay time before detaching the balls
-unsigned long detachment_time= 500;
+unsigned long detachment_time= 400;
 // Time after which we consider that the user was not able to catch the balls
 unsigned long to_much_time_elapsed = 2000; //decrese this value
 // Saves the timestamp in which the test starts
