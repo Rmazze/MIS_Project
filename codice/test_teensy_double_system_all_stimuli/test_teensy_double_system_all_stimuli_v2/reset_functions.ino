@@ -15,6 +15,7 @@ void read_reset_button(bool reset_button_reading,
             reset_button_state = reset_button_reading;
             if (reset_button_state == HIGH){
                 program_execution_state = -1;
+                Serial.println("esesesesesese");
             }
         }
     }
@@ -24,6 +25,6 @@ void read_reset_button(bool reset_button_reading,
 void reset_from_server(char receivedChars_reset[], int &program_execution_state){    
     if (receivedChars_reset[1] == 'R'){
         program_execution_state = -1;
-        //Serial.println("resettando");
+        Serial.println("resettando");
     } 
 }

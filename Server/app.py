@@ -77,7 +77,7 @@ def command_task(self,command,user):
     elif('<v,A,T>' in command):
         print("Starting all test")
         side =test_vAT(serialcom)
-
+        
     print(side)
     eject_flag = False
     data = {}
@@ -85,7 +85,7 @@ def command_task(self,command,user):
     start_time = time.time()
 
     while True:
-        ret = serialcom.readline(serialcom.in_waiting).decode('ascii','ignore').strip()
+        ret = serialcom.readline(serialcom.in_waiting).decode('ascii').strip()
         #st = str(ret, 'ascii')
         st = ret
         if(not 'AUD' in st):

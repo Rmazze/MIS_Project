@@ -29,10 +29,11 @@ def connect():
     return ser
 
 def pdSignal(serialcom, flag):
+    print("sto entrando nel wait della teensy")
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     while True:
         try:
-            msg = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
+            msg = serialcom.read(serialcom.in_waiting).decode('ascii').strip()
             #if((len(msg) > 2) and not('AUD' in msg)):
             if('AUDSX' in msg):
                 print(msg + " in pure data")
@@ -48,7 +49,7 @@ def pdSignal(serialcom, flag):
                 else:
                     pdSignalSlowDX()
                 return "dx"
-            elif('AUDXX' in msg): 
+            elif('NOT' in msg): 
                 print(msg + " in pure data")
                 pdSignalFastDX()
                 pdSignalSlowSX()
