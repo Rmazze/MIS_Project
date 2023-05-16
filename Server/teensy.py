@@ -33,7 +33,7 @@ def pdSignal(serialcom, flag):
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     while True:
         try:
-            msg = serialcom.read(serialcom.in_waiting).decode('ascii').strip()
+            msg = serialcom.read(serialcom.in_waiting).decode('ascii','ignore').strip()
             #if((len(msg) > 2) and not('AUD' in msg)):
             if('AUDSX' in msg):
                 print(msg + " in pure data")

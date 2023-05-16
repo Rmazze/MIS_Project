@@ -85,7 +85,7 @@ def command_task(self,command,user):
     start_time = time.time()
 
     while True:
-        ret = serialcom.readline(serialcom.in_waiting).decode('ascii').strip()
+        ret = serialcom.readline(serialcom.in_waiting).decode('ascii','ignore').strip()
         #st = str(ret, 'ascii')
         st = ret
         if(not 'AUD' in st):
