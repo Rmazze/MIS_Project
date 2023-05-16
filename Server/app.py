@@ -85,8 +85,9 @@ def command_task(self,command,user):
     start_time = time.time()
 
     while True:
-        ret = serialcom.readline(serialcom.in_waiting)
-        st = str(ret, 'ascii')
+        ret = serialcom.readline(serialcom.in_waiting).decode('ascii','ignore').strip()
+        #st = str(ret, 'ascii')
+        st = ret
         if(not 'AUD' in st):
             print(st)
         if("eta" in st):
@@ -110,7 +111,10 @@ def command_task(self,command,user):
             else:
                 data['Visual'] = [0]
             if(list(command)[3] == 'A'):
-                data['Audio'] = [1]
+                if('<v,A,t,1>' in command):
+                    data['Audio'] = [2]
+                else:
+                    data['Audio'] = [1]
             else:
                 data['Audio'] = [0]
             if(list(command)[5] == 'T'):
@@ -159,7 +163,10 @@ def command_task(self,command,user):
             else:
                 data['Visual'] = [0]
             if(list(command)[3] == 'A'):
-                data['Audio'] = [1]
+                if('<v,A,t,1>' in command):
+                    data['Audio'] = [2]
+                else:
+                    data['Audio'] = [1]
             else:
                 data['Audio'] = [0]
             if(list(command)[5] == 'T'):
@@ -200,7 +207,10 @@ def command_task(self,command,user):
                     else:
                         data['Visual'] = [0]
                     if(list(command)[3] == 'A'):
-                        data['Audio'] = [1]
+                        if('<v,A,t,1>' in command):
+                            data['Audio'] = [2]
+                        else:
+                            data['Audio'] = [1]
                     else:
                         data['Audio'] = [0]
                     if(list(command)[5] == 'T'):
@@ -223,7 +233,10 @@ def command_task(self,command,user):
                 else:
                     data['Visual'] = [0]
                 if(list(command)[3] == 'A'):
-                    data['Audio'] = [1]
+                    if('<v,A,t,1>' in command):
+                        data['Audio'] = [2]
+                    else:
+                        data['Audio'] = [1]
                 else:
                     data['Audio'] = [0]
                 if(list(command)[5] == 'T'):
@@ -250,7 +263,10 @@ def command_task(self,command,user):
                 else:
                     data['Visual'] = [0]
                 if(list(command)[3] == 'A'):
-                    data['Audio'] = [1]
+                    if('<v,A,t,1>' in command):
+                        data['Audio'] = [2]
+                    else:
+                        data['Audio'] = [1]
                 else:
                     data['Audio'] = [0]
                 if(list(command)[5] == 'T'):

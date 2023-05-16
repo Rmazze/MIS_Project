@@ -31,31 +31,33 @@ def connect():
 def pdSignal(serialcom, flag):
     client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
     while True:
-        msg = serialcom.read(serialcom.inWaiting()).decode('ascii')
-        #if((len(msg) > 2) and not('AUD' in msg)):
-        if('AUDSX' in msg):
-            print(msg + " in pure data")
-            if flag:
-                pdSignalFastSX()
-            else:
-                pdSignalSlowSX()
-            return "sx"
-        elif('AUDDX' in msg):
-            print(msg + " in pure data")
-            if flag:
+        try:
+            msg = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
+            #if((len(msg) > 2) and not('AUD' in msg)):
+            if('AUDSX' in msg):
+                print(msg + " in pure data")
+                if flag:
+                    pdSignalFastSX()
+                else:
+                    pdSignalSlowSX()
+                return "sx"
+            elif('AUDDX' in msg):
+                print(msg + " in pure data")
+                if flag:
+                    pdSignalFastDX()
+                else:
+                    pdSignalSlowDX()
+                return "dx"
+            elif('AUDXX' in msg): 
+                print(msg + " in pure data")
                 pdSignalFastDX()
-            else:
-                pdSignalSlowDX()
-            return "dx"
-        elif('AUDXX' in msg): 
-            print(msg + " in pure data")
-            pdSignalFastDX()
-            pdSignalSlowSX()
-            return "xx"
-        if('NOTAUD' in msg):
-            print(msg + " in pure data")
-            client.send_message("/x_state", 10)
-            return "xx"
+                pdSignalSlowSX()
+                return "xx"
+                print(msg + " in pure data")
+                client.send_message("/x_state", 10)
+                return "xx"
+        except:
+            return "Error with pure data"
     #client.close()
 
 def pdSignalHAP():
@@ -105,8 +107,7 @@ def ResetMex(serialcom):
     while True:
         serialcom.write(str('\"R\"').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if("es" in recv):
             return True
@@ -125,8 +126,7 @@ def test_StimuliVideo(serialcom):
     for x in range(3):
         serialcom.write(str('<P,V>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         #if (not 'AUD' in recv):
         print(recv)
     #print("sono fuori")
@@ -136,8 +136,7 @@ def test_StimuliTactile(serialcom):
     for x in range(3):
         serialcom.write(str('<P,T>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
     #print("sono fuori")
 
@@ -146,8 +145,7 @@ def RecoverTime(serialcom):
     for x in range (10):
         serialcom.write(str('<C>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         if('RES' in recv):
             break
     print(recv)
@@ -158,8 +156,10 @@ def test_Vat(serialcom):
     while True:
         serialcom.write(str('<V,a,t>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
+        #recv = str(recv, 'utf-8')
+        st = recv
+        print(st)
         print(recv)
         if('0' in recv):
             break
@@ -176,8 +176,7 @@ def test_vAtFast(serialcom):
     while True:
         serialcom.write(str('<v,A,t>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -192,8 +191,7 @@ def test_vAtSlow(serialcom):
     while True:
         serialcom.write(str('<v,A,t>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -208,8 +206,7 @@ def test_vAt(serialcom):
     while True:
         serialcom.write(str('<v,A,t>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -225,8 +222,7 @@ def test_vaT(serialcom):
     while True:
         serialcom.write(str('<v,a,T>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -241,8 +237,7 @@ def test_VAt(serialcom):
     while True:
         serialcom.write(str('<V,A,t>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -257,8 +252,7 @@ def test_VaT(serialcom):
     while True:
         serialcom.write(str('<V,a,T>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -274,8 +268,7 @@ def test_vAT(serialcom):
     while True:
         serialcom.write(str('<v,A,T>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -291,8 +284,7 @@ def test_VAT(serialcom):
     while True:
         serialcom.write(str('<V,A,T>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
@@ -307,8 +299,7 @@ def test_vat(serialcom):
     while True:
         serialcom.write(str('<v,a,t>').encode())
         time.sleep(1)
-        recv = serialcom.read(serialcom.inWaiting())
-        recv = str(recv, 'ascii')
+        recv = serialcom.read(serialcom.inWaiting()).decode('ascii','ignore').strip()
         print(recv)
         if('0' in recv):
             break
