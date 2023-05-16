@@ -39,23 +39,23 @@ def pdSignal(serialcom, flag):
                 pdSignalFastSX()
             else:
                 pdSignalSlowSX()
-            break
+            return "sx"
         elif('AUDDX' in msg):
             print(msg + " in pure data")
             if flag:
                 pdSignalFastDX()
             else:
                 pdSignalSlowDX()
-            break
+            return "dx"
         elif('AUDXX' in msg): 
             print(msg + " in pure data")
             pdSignalFastDX()
             pdSignalSlowSX()
-            break
+            return "xx"
         if('NOTAUD' in msg):
             print(msg + " in pure data")
             client.send_message("/x_state", 10)
-            break
+            return "xx"
     #client.close()
 
 def pdSignalHAP():
@@ -169,7 +169,7 @@ def test_Vat(serialcom):
             break
         if('ate' in recv):
             break
-    pdSignal(serialcom,True)
+    return pdSignal(serialcom,True)
 
 def test_vAtFast(serialcom):
     recv = ""
@@ -185,7 +185,7 @@ def test_vAtFast(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom,True)
+    return pdSignal(serialcom,True)
 
 def test_vAtSlow(serialcom):
     recv = ""
@@ -201,7 +201,7 @@ def test_vAtSlow(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom,False)
+    return pdSignal(serialcom,False)
 
 def test_vAt(serialcom):
     recv = ""
@@ -217,7 +217,7 @@ def test_vAt(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom, True)
+    return pdSignal(serialcom, True)
 
 
 def test_vaT(serialcom):
@@ -234,7 +234,7 @@ def test_vaT(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom,True)
+    return pdSignal(serialcom,True)
 
 def test_VAt(serialcom):
     recv = ""
@@ -250,7 +250,7 @@ def test_VAt(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom, True)
+    return pdSignal(serialcom, True)
 
 def test_VaT(serialcom):
     recv = ""
@@ -266,7 +266,7 @@ def test_VaT(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom,True)
+    return pdSignal(serialcom,True)
 
 
 def test_vAT(serialcom):
@@ -283,7 +283,7 @@ def test_vAT(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom, True)
+    return pdSignal(serialcom, True)
 
 
 def test_VAT(serialcom):
@@ -300,7 +300,7 @@ def test_VAT(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom, True)
+    return pdSignal(serialcom, True)
 
 def test_vat(serialcom):
     recv = ""
@@ -316,7 +316,7 @@ def test_vat(serialcom):
             break
         if('2' in recv):
             break
-    pdSignal(serialcom,True)
+    return pdSignal(serialcom,True)
 
 def test_video(serialcom):
     for x in range(6):

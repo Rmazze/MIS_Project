@@ -5,6 +5,10 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
         digitalWrite(visual_stimulus_led_dx, stimulus_dx);
         if (stimulus_sx == HIGH || stimulus_dx == HIGH){
           Serial.println("NOTAUD");
+          if(visual_stimulus_led_sx)
+            Serial.println("sx : "visual_stimulus_led_sx);
+          if(visual_stimulus_led_dx)
+            Serial.println("dx :" visual_stimulus_led_dx);
         }
     }
     if (auditory_stimuli == HIGH){
@@ -27,6 +31,11 @@ void produce_stimuli(bool stimulus_sx, bool stimulus_dx, bool visual_stimuli, bo
         digitalWrite(tactile_stimulus_actuator_dx, stimulus_dx);
         if (stimulus_sx == HIGH || stimulus_dx == HIGH){
           Serial.println("NOTAUD");
+          Serial.println("NOTAUD");
+          if(tactile_stimulus_actuator_sx)
+            Serial.println("sx : "tactile_stimulus_actuator_sx);
+          if(tactile_stimulus_actuator_dx)
+            Serial.println("dx :" tactile_stimulus_actuator_dx);
         }
         //Serial.println("Produce tactile stimuli");
     }  

@@ -48,37 +48,37 @@ def add(x, y):
 @celery.task(bind=True)
 def command_task(self,command,user):
     serialcom = connect()
+    side = ""
     print("la stringa arrivata e " + command)
     if('<V,A,T>' in command):
         print("Starting all test")
-        test_VAT(serialcom)
+        side = test_VAT(serialcom)
     elif('<v,A,t,1>' in command):
         print("Starting all test")
-        test_vAtSlow(serialcom)
+        side =test_vAtSlow(serialcom)
     elif('<v,A,t,2>' in command):
         print("Starting all test")
-        test_vAtFast(serialcom)
+        side =test_vAtFast(serialcom)
     elif('<V,a,t>' in command):
         print("Starting Visual test")
-        test_Vat(serialcom)
+        side =test_Vat(serialcom)
     elif('<v,A,t' in command):
         print("Starting audio test")
-        test_vAt(serialcom)
+        side =test_vAt(serialcom)
     elif('<v,a,T>' in command):
         print("Starting tactile test")
-        test_vaT(serialcom)
+        side =test_vaT(serialcom)
     elif('<V,A,t>' in command):
         print("Starting Visual/audio test")
-        test_VAt(serialcom)
+        side =test_VAt(serialcom)
     elif('<V,a,T>' in command):
         print("Starting Visual/tactile test")
-        test_VaT(serialcom)
+        side =test_VaT(serialcom)
     elif('<v,A,T>' in command):
         print("Starting all test")
-        test_vAT(serialcom)
-    elif('<v,a,t>' in command):
-        test_vat(serialcom)
+        side =test_vAT(serialcom)
 
+    print(side)
     eject_flag = False
     data = {}
 
