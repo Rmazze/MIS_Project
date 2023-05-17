@@ -359,14 +359,10 @@
                     rect(width/3*2, height-50, width/3, 50);
                     textFont(Ftimer, 20);
                     fill(123, 125, 125);
-                    if(text_timesx > text_timedx){
-                        time = "Total time: " + str(text_timesx);
-                        text(time, (width/3*2)+20, height-20);
-                        winFinished = true;
+                    if((parseFloat(text_timedx)) >= (parseFloat(text_timesx))){
+                        time = "Total time: " + text_timedx;
                     }else{
-                        time = "Total time: " + str(text_timedx);
-                        text(time, (width/3*2)+20, height-20);
-                        winFinished = true;
+                        time = "Total time: " + text_timesx;
                     }
                     time = "Total time: " + str(t/1000);
                     text(time, (width/3*2)+20, height-20);
