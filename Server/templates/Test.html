@@ -40,15 +40,24 @@
             let text_timesx = "";     // timer for the left hand
             let text_timedx = "";     // timer for the right hand
             let done_test = []
-            let list_test = ['<V,a,t>','<v,A,t>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>']
+            let list_test = ['<V,a,t>','<v,A,t,1>','<v,A,t,2>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>']
             //let ws = new WebSocket('http://127.0.0.1:9001'); //websocket to call directly puredata
             
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
             function start_long_task() {     
                     // send ajax POST request to start background job
                 if (list_test.length === 0){
                     console.log("Finish test");
                     alert("Congratulations u have finished the test");
                 }else{
+                    shuffleArray(list_test)
                     value = list_test[0];
                     $.ajax({
                         type: 'POST',
