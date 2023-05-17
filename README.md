@@ -43,3 +43,10 @@ In order
 3) Access through 'vnc viewer' to the PI
 
 > PI Launch
+
+- go to path $:> MIS_project>Server
+- launch python3 app.py --host=0.0.0.0
+- launch celery -A app.celery worker --loglevel=info --pool threads
+- launch pd (not with &)
+- check audio in test audio e media
+- launch Main_osc
