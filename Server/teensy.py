@@ -51,8 +51,6 @@ def pdSignal(serialcom, flag):
                 return "dx"
             elif('NOT' in msg): 
                 print(msg + " in pure data")
-                pdSignalFastDX()
-                pdSignalSlowSX()
                 return "xx"
                 print(msg + " in pure data")
                 client.send_message("/x_state", 10)
