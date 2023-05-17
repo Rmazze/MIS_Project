@@ -115,12 +115,14 @@
                         readVal = 3
                     }
                     if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
-                        if(data['state'] == 'SUCCESS'){
-                            stri = data['status']
-                            text_timesx = data['timer1']
-                            text_timedx = data['timer2']
-                            readVal = 1
-                            list_test.shift();
+                        if(data['timer1'] < 0.01 || data['timer2'] < 0.01){
+                            if(data['state'] == 'SUCCESS'){
+                                stri = data['status']
+                                text_timesx = data['timer1']
+                                text_timedx = data['timer2']
+                                readVal = 1
+                                list_test.shift();
+                            }
                         }
                         if ('result' in data) {
                             // show result
