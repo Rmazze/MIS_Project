@@ -220,7 +220,7 @@ void loop() {
 
       // wait the user to be ready
       case(1):  if(first1){
-                  Serial.println("State 1");
+                  Serial.println("State 1 " + tactile_stimuli);
                   first1 = false;
                 }
 
@@ -230,14 +230,17 @@ void loop() {
                   test_time_ready = millis();
                   randomSeed(millis());
                   rand_time = random(5000, 10000);
-                  test_type = random(0, 2);
-                  //Serial.println("Test type: " + String(test_type));
-                  switch(test_type){
-                    case(0): ongoing_test_sx = HIGH; break;
-                    case(1): ongoing_test_dx = HIGH; break;
-                    //case(2): ongoing_test_sx = HIGH; ongoing_test_dx = HIGH; break;
-                    default: ongoing_test_sx = LOW; ongoing_test_dx = LOW;
+                  if (tactile_stimuli == HIGH){
+                    test_type = 1;
+                  }else{
+                    test_type = random(0, 2);
                   }
+                  switch(test_type){
+                      case(0): ongoing_test_sx = HIGH; break;
+                      case(1): ongoing_test_dx = HIGH; break;
+                      //case(2): ongoing_test_sx = HIGH; ongoing_test_dx = HIGH; break;
+                      default: ongoing_test_sx = LOW; ongoing_test_dx = LOW;
+                    }
                   // test is starteded
                   test_ready_state = LOW;
                   led_start_state = LOW;
