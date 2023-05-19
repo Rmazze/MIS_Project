@@ -6,7 +6,7 @@
         <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
 
         <!-- p5.js code for timer and animations -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>
+       <script src="{{url_for('static', filename='p5.min.js')}}"></script>
 
         <script>
             /*
@@ -177,6 +177,7 @@
                 });
                 document.getElementById('NextBtn').addEventListener("click", function() {
                     list_test.shift();
+                    start_long_task()
                 });
             }
             /*
@@ -520,7 +521,7 @@
 
                 <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />
                 <input type = "submit"  id = "StopBtn" value = "Stop" class = "btn" />
-                <input type = "submit"  id = "NextBtn" value = "Next" class = "btn" />
+                <input type = "submit"  id = "NextBtn" value = "User Fail" class = "btn" />
 
                 <button type = "submit" onclick = "window.location.href = '/Questionnaire';">
                     <img src = "static/Arrow.png" alt = "NEXT" border = "0" />

@@ -80,7 +80,7 @@ bool led_stop_state = HIGH;
 // Random time to wait before releasing the ball
 unsigned long rand_time = 0;
 // How long are the stimuli to produce
-unsigned long stimuly_duration = 3000; //decrese this value
+unsigned long stimuly_duration = 1500; //decrese this value
 //delay time before detaching the balls
 unsigned long detachment_time= 400;
 // Time after which we consider that the user was not able to catch the balls
