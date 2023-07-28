@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    </head>
+    <body>
+        <center>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Cues" href = "{{ url_for('cuesLogin') }}">Cues</a>
+                        <a title = "Test" href = "{{ url_for('test') }}">Test</a>
+                        <a title = "Trial" href = "{{ url_for('trial') }}">Trial</a>
+                        <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+            <div id = "whiteB">
+                <h1 id = "title">Charts</h1>
+                
+                <!--average reaction time and percentage of catch -->
+                <h1 id = "sent1">All time average results: </h1>
+                <div class="chartBox1">
+                    <div class="circle1"> {{rt_avg}} </div>
+                    <div class="circle2"> {{c_avg}} </div>
+                    <br><br><br>
+                    <div class="avg"> <span style="float: left; padding-left: 360px ;"> average reaction time </span> <span style="float : right;  padding-right: 330px"> average percentage of catch </span> </div>
+                </div>
+
+                <!-- charts -->
+                <h1 id = "sent1">All time charts: </h1>
+
+                <!-- line chart: reaction time -->
+                <div class="chartBox">
+                    <canvas id="allTimeLineChart"></canvas>
+                </div>
+        
+                <!-- bar chart: catch -->
+                <div class="chartBox">
+                    <canvas id="allTimeBarChart"></canvas>
+                </div>
+
+                <!-- charts script -->
+                <script>
+
+                    // reaction time chart
+                    const allTime_line_labels =  {{ allTime_chart_label | tojson }};
+                    const allTime_rt_datum =  {{ allTime_rt_data | tojson }};
+                    const floatList = [];
+
+                    for (let i = 0; i < allTime_rt_datum.length; i++) {
+                        const floatValue = parseFloat(allTime_rt_datum[i]);
+                        floatList.push(floatValue);
+                    }
+
+                    console.log({{ allTime_rt_data | tojson  }});
+                    const allTime_data = {
+                        labels: allTime_line_labels,
+                        datasets: [{
+                            label: "Reaction Time Chart",
+                            backgroundColor: '#b30c3b',
+                            borderColor: '#b30c3b',
+                            data: floatList,
+                        }]
+                    };
+
+                    const allTime_line_config = {
+                        type: 'line',
+                        data: allTime_data,
+                        options: { maintainAspectRatio: false }
+                    };
+
+                    const allTimeLineChart = new Chart(
+                        document.getElementById('allTimeLineChart'),
+                        allTime_line_config
+                    );
+
+
+                    // catch chart
+                    const allTime_bar_labels =  {{ allTime_chart_label | tojson }};
+            
+                    const allTime_bar_data = {
+                        labels: allTime_bar_labels,
+                        datasets: [{
+                            label: "Catch Chart",
+                            backgroundColor: '#b30c3b',
+                            borderColor: '#b30c3b',
+                            data: {{ allTime_c_data | tojson}},
+                        }]
+                    };
+            
+                    const allTime_bar_config = {
+                        type: 'bar',
+                        data: allTime_bar_data,
+                        options: { maintainAspectRatio: false,}
+                    };
+
+            
+                    const mybarChart = new Chart(
+                        document.getElementById('allTimeBarChart'),
+                        allTime_bar_config
+                    );
+
+                
+            
+                </script>
+            </div>
+
+
+
+        </center>
+    </body>
+</html>
+

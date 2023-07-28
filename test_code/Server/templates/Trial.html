@@ -1,0 +1,511 @@
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+        <script src="{{url_for('static', filename='jquery.min.js')}}"></script>
+        <!-- p5.js code for timer and animations -->
+        <script src="{{url_for('static', filename='p5.min.js')}}"></script>
+
+        <script>
+            /*
+            Variables declaration and object instatiation.
+            */
+            let status = 0;    // integer status of the program
+            let readVal = 3;    // integer value received from the communication
+
+            let timer;    // variable that will contain an object of type Timer
+            let p = 0;    // contain the time at which the timer is paused
+            let running;    // keeps whether the Timer object is running or not
+
+            let happyDur = 2880;    // duration of the happy melody in ms
+            let winStart = 0;    // float value that contains the instant of time at which the win animation has started
+            let winStarted = false;    // boolean that describe whether the win animation has started or not
+            let winFinished = false;    // bolean that describe whether the win animation has finishe or not
+
+            let sadDur = 3800;    // duration of the sad melody in ms
+            let lossStart = 0;    // float value that contains the instant of time at which the loss animation has started
+            let lossStarted = false;    // boolean that describe whether the loss animation has started or not
+            let lossFinished = false;    // bolean that describe whether the loss animation has finishe or not
+            let init = false;    // boolean that describe whether the loss animation has been initialized or not
+            let xpos1 = 0;    // position of the circle1 in the x axis
+            let ypos1 = 0;    // position of the circle1 in the y axis
+            let speed1 = 10;    // speed of the circle1 in the y axis
+            let xpos2 = 0;    // position of the circle2 in the x axis
+            let ypos2 = 0;    // position of the circle2 in the y axis
+            let speed2 = 10;    // speed of the circle2 in the y axis
+            let command;
+            let text_timesx = "";     // timer for the left hand
+            let text_timedx = "";     // timer for the right hand
+            let done_test = [];
+            let list_test = ['<v,A,t>','<V,a,t>','<v,A,t>','<v,a,T>','<V,A,t>','<V,a,T>','<v,A,T>','<V,A,T>']
+            
+            function command_task() {     
+                var e = document.getElementById("trialSel");
+                var value = e.options[e.selectedIndex].value;
+                console.log("ciao")
+                if(value === 'random'){
+                    inte = Math.floor(Math.random() * list_test.length);
+                    value = list_test[inte]
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/trial',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ 'value': value }),
+                    success: function(data, status, request) {
+                        status_url = request.getResponseHeader('Location');
+                        update_progress(status_url);
+                        console.log("changed readval on success");
+                    },
+                    error: function(request, status, error) {
+                    },
+                    complete: function (data) {
+                        //readVal = 1
+
+                        log("changed readval on complete");
+                    }
+                });
+            }
+            
+            function update_progress(status_url) {
+                // send GET request to status URL
+                $.getJSON(status_url, function(data) {
+                    // update UI
+                    console.log("sono dentro e lo stato e " + data['state'])
+                    if(data['state'] == 'PROGRESS'){
+                        console.log(data['current']);
+                        readVal = 0
+                    }
+                    if(data['state'] == 'PENDING'){
+                        console.log("Clear");
+                        readVal = 3
+                    }
+                    if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+                        if(data['state'] == 'SUCCESS'){
+                            stri = data['status']
+                            //var dic_str = stri.replace(/'/g, "\"");
+                            //var dic = JSON.parse(stri);
+                            //la call alla presa riuscita funziona
+                            //console.log('Resulting value: ' + dic['timer1']);
+                            //console.log('Resulting value: ' + dic['timer2']);
+                            text_timesx = data['timer1']
+                            text_timedx = data['timer2']
+                            console.log('Resulting value: ' + text_timesx);
+                            console.log('Resulting value: ' + text_timedx);
+                            readVal = 1
+                        }
+                        if ('result' in data) {
+                            // show result
+                            console.log('Result: ' + data['result']);
+                            readVal = 1
+                        }
+                        if ('error' in data) {
+                            // show result
+                            console.log('Result: ' + data['error']);
+                            readVal = 2
+                        }
+                        else {
+                            // something unexpected happened
+                            console.log('Result: ' + data['state']);
+                        }
+                    }else{
+                        setTimeout(function() {
+                            update_progress(status_url);
+                        }, 200);
+                    }
+                })
+                .fail(function() { 
+                    console.log("errore pesante");
+                    readVal = 2;
+                });
+            }
+
+            /*
+            Preload function used to handle asynchronous loading of external files in a blocking way.
+            */
+            function preload() {
+                // Loading of the needed fonts
+                Ftimer = loadFont("/static/Comic_Sans_MS.ttf");
+                Fwin = loadFont("/static/KGSummerSunshineShadow.ttf");
+                Floss = loadFont("/static/Phosphate-Inline.ttf");
+            }
+
+
+            /*
+            Setup function runned once at every execution of the code.
+            */
+            function setup(){
+                var canva = createCanvas(700, 300);    // set the screen size and variable width = 700 pixels and height = 300 pixels
+                canva.parent("animation");    // link the animation to the div in HTML
+                background("#FFFFFF");    // set the background color
+                noStroke();    // remove the border of shapes
+                timer = new Timer();    // create the Timer object
+                timer.display();
+                document.getElementById('StartBtn').addEventListener("click", function() {
+                    command_task();
+                });
+            }
+            
+
+            /*
+            Draw function runned repeatedly.
+            */
+            function draw() {
+                // Fake communication set up
+                // TO DO: add real communicatio
+
+                // Handling of the states of the program. The program has four states:
+                // 0: initial state of the progam. Here a communication is waited
+                //    and once it comes the program is diverted in a different state according with the received signal.
+                // 1: the timer is started.
+                // 2: the win animation is executed.
+                // 3: the loss animation is executed.
+                switch(status) {
+                    case 0: if (readVal == 0) {
+                                status = 1;
+                            }
+                            else if (readVal == 1) {
+                                status = 2;
+                            }
+                            else if (readVal == 2) {
+                                status = 3;
+                            }
+                            else if (readVal == 3) {
+                                background("#FFFFFF"); 
+                                timer.startTime = 0;
+                                timer.display();
+                            }
+                            break;
+
+                    case 1: timer.display();
+                            if (timer.runStat() == false) {
+                                timer.start();
+                            }
+
+                            if (readVal == 1) {
+                                status = 2;
+                            }
+                            else if (readVal == 2) {
+                                status = 3;
+                            }
+                            break;
+                    
+                    case 2: if (winStarted == false) {
+                                p = timer.pause();
+                                background("#FFFFFF");
+                                winStart = millis();
+                                winStarted = true;
+                                HappyConfetti(winStart, p);
+                            }
+                            else if (winFinished == false) {
+                                HappyConfetti(winStart, p);
+                            }
+                            else {
+                                status = 0;
+                                winStarted = false;
+                                winFinished = false;
+                                readVal = 4;    // TO DO: remove after inserting true communication
+                            }
+                            break;
+
+                    case 3: if (lossStarted == false) {
+                                p = timer.pause();
+                                background("#FFFFFF");
+                                lossStart = millis();
+                                lossStarted = true;
+                                SadRain(lossStart);
+                            }
+                            else if (lossFinished == false) {
+                                SadRain(lossStart);
+                            }
+                            else {
+                                status = 0;
+                                lossStarted = false;
+                                lossFinished = false;
+                                init = false;
+                                readVal = 4;    // TO DO: remove after inserting true communication
+                            }
+                            break;
+                }
+            }
+
+
+            /*
+            Class Timer.
+            It allows to create a timer object and use it.
+            */
+            class Timer {
+                /*
+                Constructor.
+                */
+                constructor() {
+                    this.running = false; // keeps wether the Timer object is running or not
+                    this.runnedTime = 0; // hold the total time runned so far
+                    this.startTime = 0; // time in ms at which the timer has started
+                    this.time = ""; // string to output the time on the screen
+                }
+                
+                /*
+                Method that returns wheter the timer is running or not
+                */
+                runStat() {
+                    return this.running;
+                }
+
+                /*
+                Method that starts the timer.
+                */
+                start() {
+                    this.running = true;
+                    this.startTime = millis(); // milliseconds since the applet has started
+                }
+                
+                /*
+                Method that pauses the timer.
+                */
+                pause() {
+                    if (this.running) {
+                        this.runnedTime = millis() - this.startTime;
+                        this.running = false;
+                        return this.runnedTime;
+                    }
+                    else {
+                        return 0.0;
+                    }
+                }
+                
+                /*
+                Method that returns the time passed since the starting of the timer.
+                If the Timer object have been paused it returns the time at which it has been stopped.
+                */
+                currentTime() {
+                    if (this.running == true) {
+                        // The time passed since the starting of the timer is computed as the subraction
+                        // between the milliseconds since the applet has started (millis())
+                        // and the milliseconds since the Timer has started.
+                        return ((millis() - this.startTime)/1000.0); 
+                    }
+                    else {
+                        return (this.runnedTime/1000.0);
+                    }
+                }
+                
+                /*
+                Method that display the current value of the Timer.
+                */
+                display() {
+                    textFont(Ftimer, 50); // specify the font to use
+                    fill(123, 125, 125); // specify the font color
+                    
+                    // Print 0.0000 at the beginning until the timer is not started
+                    if (this.startTime == 0) {
+                        this.time = str(this.startTime)+".00";
+                        text(this.time, width/2-60, height/2+10);
+                    }
+                    else {
+                        background("#FFFFFF");
+                        this.time = str(this.currentTime());
+                        text(this.time, width/2-60, height/2+10);
+                    }
+                }
+            }
+
+
+            /*
+            Function HappyConfetti.
+            It allows to create the animation for when the user is able to catch the balls.
+
+            :param start: float start time of the animation
+            :param t: float time at which the user catched the balls
+
+            :var colors: list of colors for the the confetti
+            :var n: integer that will contain the color of one confetti
+            :var size: integer that will contain the diameter of one confetti
+            :var time: string for the display of the total time of the timer
+            */
+            function HappyConfetti(start, t) {
+                let colors = ["#CFFF00", "#00CFFF", "#FF00CF", "#FFFF00", "#FF5C4D"];
+                let n = 0;
+                let size = 0;
+                let time;
+                
+                // Drawing of confetti for the entire duration of the melody
+                if ((millis() - start) < happyDur) {
+                    // Opaque background creation
+                    fill(255, 255, 255, 10);    // set the color used to fill shapes. Here the opacity is set to 10
+                    rect(0, 0, width, height);    // draw a rectangle of the same size of the window
+                    
+                    // Confetti creation
+                    n = int(random(0, colors.length));    // choose the color of a confetti
+                    fill(colors[n]);
+                    size = int(random(20, 50));    // choose the size of a confetti
+                    ellipse(random(width), random(height), size, size);    // draw a confetti
+                }
+                else {
+                    // Drawing of the congratulation text
+                    
+                    // Opaque background creation
+                    fill(255, 255, 255, 200);    // set the color used to fill shapes. Here the opacity is set to 200
+                    rect(0, 0, width, height);    // draw a rectangle of the same size of the window
+                    
+                    // Print the text
+                    textFont(Fwin, 70);
+                    fill("#1DE239");
+                    text("Good Job!", width/2-300, height/2+10);
+                    
+                    // Print of the total time
+                    fill("#FFFFFF");
+                    rectMode(CORNER);
+                    rect(width/3*2, height-50, width/3, 50);
+                    textFont(Ftimer, 20);
+                    fill(123, 125, 125);
+                    if((parseFloat(text_timedx)) >= (parseFloat(text_timesx))){
+                        time = "Total time: " + text_timedx;
+                    }else{
+                        time = "Total time: " + text_timesx;
+                    }
+                    //time = "Total time: " + str(t/1000);
+                    text(time, (width/3*2)+20, height-20);
+                    winFinished = true;
+                }
+            }
+
+
+            /*
+            Function SadRain.
+            It allows to create the animation for when the user is not able to catch the balls.
+
+            :param start: float start time of the animation
+
+            :var colors: list of colors for the the circles
+            */
+            function SadRain(start) {
+                let colors = ["#6AABD2", "#385E72", "#646FDE", "#6896E8", "#68D9E8", "#64DECB"];
+                
+                // Initialization of the animation
+                if (init == false) {
+                    xpos1 = random(-width/2+100, width/2-100);    // randomly initialize the position of the circle1 in the x axis
+                
+                    // Initialize the position of the circle2 in the x axis according to circle1's position
+                    if (xpos1 > 0) {
+                        xpos2 = xpos1 + 200;
+                    }
+                    else {
+                        xpos2 = xpos1 - 200;
+                    }
+                    
+                    n1 = int(random(0, colors.length));    // initialize the color of circle1
+                    n2 = int(random(0, colors.length));    // initialize the color of circle2
+                    
+                    init = true;
+                }
+                
+                else {
+                    if ((millis() - start) < sadDur) {
+                    // Background creation
+                    fill("#FFFFFF");
+                    rect(0, 0, width, height);
+                    
+                    
+                    // Instantiate circle1
+                    fill(colors[n1]);    // define the circle1's color
+                    ypos1 = ypos1 + speed1;    // initialize the position in the y axis according to the speed
+                    ellipse(xpos1, ypos1, 20, 20);    // create the circle
+                    
+                    // Control the position in the y axis of circle1. Once the bottom is reached restart the circle from the top of the screen
+                    if (ypos1 > height){
+                        xpos1 = random(-width/2+200, width/2-200);     // randomly initialize the position of the circle1 in the x axis
+                        //speed1 = random(5, 10);    // randomly choose the speed
+                        speed1 = 10;
+                        ypos1 = 0;    // reset the position of circle1 in the y axis
+                        n1 = int(random(0, colors.length));    // set the color of circle1
+                    }
+                    
+                    
+                    // Instantiate circle2
+                    fill(colors[n2]);    // define the circle2's color
+                    ypos2 += speed2;    // initialize the position in the y axis according to the speed
+                    ellipse(xpos2, ypos2, 20, 20);    // create the circle
+                    
+                    // Control the position in the y axis of circle2. Once the bottom is reached restart the circle from the top of the screen
+                    if (ypos2 > height){
+                        // Initialize the position of the circle2 in the x axis according to circle1's position
+                        if (xpos1 > 0) {
+                            xpos2 = xpos1 + 300;
+                        }
+                        else {
+                            xpos2 = xpos1 - 300;
+                        }
+                        
+                        //speed2 = random(5, 10);    // randomly choose the speed
+                        speed2 = 8;
+                        ypos2 = 0;    // reset the position of circle2 in the y axis
+                        n2 = int(random(0, colors.length));    // set the color of circle2
+                    }
+                    }
+                    else {
+                        // Drawing of the "Try again" text
+                        
+                        // Opaque background creation
+                        fill(255, 255, 255, 90);
+                        rect(0, 0, width, height);
+                        
+                        // Print the text
+                        textFont(Floss, 100);
+                        fill("#EC264B");
+                        text("Try again", width/2-230, height/2+25);
+                        lossFinished = true;
+                    }
+                }
+            }
+
+            
+        </script>
+    </head>
+    <body>
+        <center>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Cues" href = "{{ url_for('cuesLogin') }}">Cues</a>
+                        <a title = "Test" href = "{{ url_for('test') }}">Test</a>
+                        <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
+                        <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+            <div class = "whiteBoxBig">
+                <h1 id = "title">Training Tool for Reaction Time</h1>
+                <h1 id = "sent">Single Trial Session</h1>
+
+                <div id = "animation">
+                </div>
+
+                <label for = "trialSel">Choose a trial:</label>
+                <select name = "trialSel" id = "trialSel">
+                    <option value = "random">Random</option>
+                    <option value = "<V,a,t>">Visual</option>
+                    <option value = "<v,A,t,1>">Auditory 1</option>
+                    <option value = "<v,A,t,2>">Auditory 2</option>
+                    <option value = "<v,a,T>">Haptic</option>
+                    <option value = "<V,A,t>">Visual and Auditory</option>
+                    <option value = "<v,A,T>">Auditory and Haptic</option>
+                    <option value = "<V,a,T>">Visual and Haptic</option>
+                    <option value = "<V,A,T>">All</option>
+                </select>
+                <br><br>
+                <input type = "submit" id = "StartBtn" value = "Start" class = "btn" />
+
+                <button type = "submit" onclick = "window.location.href = '/Test';">
+                    <img src = "static/Arrow.png" alt = "NEXT" border = "0" />
+                </button>
+            </div> 
+        </center>
+    </body>
+</html>

@@ -1,0 +1,198 @@
+[FIDOCAD]
+RV 40 55 280 120 0
+TY 120 80 7 7 0 0 0 * Teensy3.6
+MC 50 125 1 0 ey_libraries.pasres0
+FCJ
+TY 60 135 4 3 0 0 0 * 
+TY 35 130 4 3 0 0 0 * 330Ω
+MC 50 140 1 0 ey_libraries.didled0
+FCJ
+TY 45 160 4 3 0 0 0 * led1
+TY 60 145 4 3 0 0 0 * 
+MC 50 150 0 0 040
+MC 65 125 1 0 ey_libraries.pasres0
+FCJ
+TY 75 135 4 3 0 0 0 * 
+TY 50 130 4 3 0 0 0 * 330Ω
+MC 65 140 1 0 ey_libraries.didled0
+FCJ
+TY 60 160 4 3 0 0 0 * led2
+TY 75 145 4 3 0 0 0 * 
+MC 65 150 0 0 040
+MC 80 140 1 0 ey_libraries.didled0
+FCJ
+TY 75 160 4 3 0 0 0 * led3
+TY 90 145 4 3 0 0 0 * 
+MC 80 125 1 0 ey_libraries.pasres0
+FCJ
+TY 80 140 4 3 0 0 0 * 
+TY 65 130 4 3 0 0 0 * 330Ω
+MC 80 150 0 0 040
+MC 100 140 1 0 ey_libraries.didled0
+FCJ
+TY 95 160 4 3 0 0 0 * led4
+TY 110 145 4 3 0 0 0 * 
+MC 100 150 0 0 040
+MC 115 140 1 0 ey_libraries.didled0
+FCJ
+TY 110 160 4 3 0 0 0 * led5
+TY 115 150 4 3 0 0 0 * 
+MC 115 150 0 0 040
+MC 135 140 1 0 ey_libraries.didled0
+FCJ
+TY 130 160 4 3 0 0 0 * led6
+TY 130 150 4 3 0 0 0 * 
+MC 135 150 0 0 040
+MC 150 140 1 0 ey_libraries.didled0
+FCJ
+TY 145 160 4 3 0 0 0 * led7
+TY 160 145 4 3 0 0 0 * 
+MC 150 150 0 0 040
+MC 100 125 1 0 ey_libraries.pasres0
+FCJ
+TY 85 145 4 3 0 0 0 * 
+TY 85 130 4 3 0 0 0 * 330Ω
+MC 115 125 1 0 ey_libraries.pasres0
+FCJ
+TY 90 150 4 3 0 0 0 * 
+TY 100 130 4 3 0 0 0 * 330Ω
+MC 135 125 1 0 ey_libraries.pasres0
+FCJ
+TY 110 150 4 3 0 0 0 * 
+TY 120 130 4 3 0 0 0 * 100Ω
+MC 150 125 1 0 ey_libraries.pasres0
+FCJ
+TY 125 150 4 3 0 0 0 * 
+TY 135 130 4 3 0 0 0 * 100Ω
+MC 175 120 0 0 540
+FCJ
+TY 165 160 4 3 0 0 0 * t\_a\_1
+TY 185 130 4 3 0 0 0 * 
+MC 200 120 0 0 540
+FCJ
+TY 190 160 4 3 0 0 0 * t\_a\_2
+TY 210 130 4 3 0 0 0 * 
+MC 175 150 0 0 040
+MC 200 150 0 0 040
+MC 230 130 0 0 elettrotecnica.dcre
+FCJ
+TY 220 160 4 3 0 0 0 * e\_m\_1
+TY 240 135 4 3 0 0 0 * 
+MC 245 130 0 0 elettrotecnica.dcre
+FCJ
+TY 240 160 4 3 0 0 0 * e\_m\_2
+TY 255 135 4 3 0 0 0 * 
+MC 230 150 0 0 040
+MC 245 150 0 0 040
+LI 230 145 230 150 0
+LI 230 130 230 120 0
+LI 245 130 245 120 0
+LI 245 145 245 150 0
+MC 50 30 0 0 elettrotecnica.cnacp
+FCJ
+TY 40 30 4 3 0 0 0 * p1
+TY 60 40 4 3 0 0 0 * 
+MC 50 30 3 0 010
+MC 55 45 0 0 ey_libraries.pasres0
+FCJ
+TY 65 50 4 3 0 0 0 * 
+TY 55 35 4 3 0 0 0 * 10kΩ
+MC 65 45 0 0 040
+LI 50 45 50 55 0
+MC 85 30 0 0 elettrotecnica.cna
+FCJ
+TY 75 30 4 3 0 0 0 * g1
+TY 90 40 4 3 0 0 0 * 
+MC 85 30 3 0 010
+LI 85 45 85 55 0
+MC 90 45 0 0 ey_libraries.pasres0
+FCJ
+TY 50 60 4 3 0 0 0 * 
+TY 90 35 4 3 0 0 0 * 10kΩ
+MC 100 45 0 0 040
+MC 115 30 0 0 elettrotecnica.cna
+FCJ
+TY 105 30 4 3 0 0 0 * g2
+TY 100 45 4 3 0 0 0 * 
+MC 115 30 3 0 010
+MC 120 45 0 0 ey_libraries.pasres0
+FCJ
+TY 80 60 4 3 0 0 0 * 
+TY 120 35 4 3 0 0 0 * 10kΩ
+MC 130 45 0 0 040
+LI 115 45 115 55 0
+MC 175 30 0 0 ey_libraries.vic3ic0
+FCJ
+TY 170 20 4 3 0 0 0 * h1
+TY 185 35 4 3 0 0 0 * 
+MC 150 30 3 0 010
+MC 195 45 0 0 040
+MC 150 30 1 0 170
+FCJ
+TY 160 40 4 3 0 0 0 * 
+TY 130 30 4 3 0 0 0 * 100nF
+MC 150 45 0 0 040
+MC 165 45 0 0 ey_libraries.pasres0
+FCJ
+TY 125 55 4 3 0 0 0 * 
+TY 160 35 4 3 0 0 0 * 10kΩ
+LI 160 30 150 30 0
+LI 160 45 155 45 0
+LI 155 45 155 30 0
+SA 155 30 0
+SA 115 45 0
+SA 85 45 0
+SA 50 45 0
+LI 175 40 175 45 0
+LI 150 40 150 45 0
+MC 175 45 0 0 170
+FCJ
+TY 185 35 4 3 0 0 0 * 
+TY 175 35 4 3 0 0 0 * 4.7nF
+LI 190 30 195 30 0
+LI 195 30 195 45 0
+LI 195 45 185 45 0
+LI 175 45 175 55 0
+SA 175 45 0
+SA 195 45 0
+MC 245 30 0 0 ey_libraries.vic3ic0
+FCJ
+TY 240 20 4 3 0 0 0 * h2
+TY 255 35 4 3 0 0 0 * 
+MC 220 30 3 0 010
+MC 265 45 0 0 040
+MC 220 30 1 0 170
+FCJ
+TY 230 40 4 3 0 0 0 * 
+TY 200 30 4 3 0 0 0 * 100nF
+MC 220 45 0 0 040
+MC 235 45 0 0 ey_libraries.pasres0
+FCJ
+TY 195 55 4 3 0 0 0 * 
+TY 230 35 4 3 0 0 0 * 10kΩ
+LI 230 30 220 30 0
+LI 230 45 225 45 0
+LI 225 45 225 30 0
+SA 225 30 0
+LI 245 40 245 45 0
+LI 220 40 220 45 0
+MC 245 45 0 0 170
+FCJ
+TY 255 35 4 3 0 0 0 * 
+TY 245 35 4 3 0 0 0 * 4.7nF
+LI 260 30 265 30 0
+LI 265 30 265 45 0
+LI 265 45 255 45 0
+LI 245 45 245 55 0
+SA 245 45 0
+SA 265 45 0
+MC 25 80 0 0 ey_libraries.refpnt3
+FCJ
+TY 5 70 4 3 0 0 0 * SERIAL\_IN
+TY 35 85 4 3 0 0 0 * 
+MC 30 85 2 0 ey_libraries.refpnt2
+FCJ
+TY 5 90 4 3 0 0 0 * SERIAL\_OUT
+TY 20 80 4 3 0 0 0 * 
+LI 30 80 40 80 0
+LI 30 85 40 85 0

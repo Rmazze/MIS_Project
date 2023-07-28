@@ -15,7 +15,7 @@ Analyze reflex phenomena through multisensory interactive sustems
 
 ### Development tips
 
-- Always specigy the backend lib on the configuration
+- Always specify the backend lib on the configuration
 - Since we are working async the celery call will be celery -A app.celery worker --loglevel=info --pool threads
 - If you are using this repo on a Pi4 remember to install pandas not through pip but through apt with 'sudo apt-get install python-pandas'
 - on the pi to run the redis server use <sudo systemctl enable /lib/systemd/system/redis-server.service>

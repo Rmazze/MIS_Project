@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+        <script src="{{url_for('static', filename='jquery.min.js')}}"></script>
+        <script>
+        function audio_cue() {     
+                    // send ajax POST request to start background job
+                $.ajax({
+                    type: 'POST',
+                    url: '/audio',
+                    success: function(data, status, request) {
+                        //status_url = request.getResponseHeader('Location');
+                        console.log("changed readval on success");
+                    },
+                    error: function(request, status, error) {
+                    },
+                    complete: function (data) {
+                        //readVal = 1
+                        console.log("changed readval on complete");
+                    }
+                });
+            } 
+        
+            function video_cue() {     
+                    // send ajax POST request to start background job
+                $.ajax({
+                    type: 'POST',
+                    url: '/video',
+                    success: function(data, status, request) {
+                        console.log("changed readval on success");
+                    },
+                    error: function(request, status, error) {
+                    },
+                    complete: function (data) {
+                        //readVal = 1
+
+                        console.log("changed readval on complete");
+                    }
+                });
+            } 
+
+            function haptic_cue() {     
+                    // send ajax POST request to start background job
+                    $.ajax({
+                    type: 'POST',
+                    url: '/haptic',
+                    success: function(data, status, request) {
+                        console.log("changed readval on success");
+                    },
+                    error: function(request, status, error) {
+                    },
+                    complete: function (data) {
+                        //readVal = 1
+
+                        console.log("changed readval on complete");
+                    }
+                });
+            } 
+        </script>
+    </head>
+    <body>
+        <center>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Test" href = "{{ url_for('test') }}">Test</a>
+                        <a title = "Trial" href = "{{ url_for('trial') }}">Trial</a>
+                        <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
+                        <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+            <div class = "whiteBoxBig">
+                <h1 id = "title">Training Tool for Reaction Time</h1>
+                <h1 id = "sent">Cues session</h1>
+
+                <br>
+                <input type = "submit" id = "Audio" value = "Audio" class = "btnCue" />
+                <br><br><br>
+                <input type = "submit"  id = "Visual" value = "Visual" class = "btnCue" />
+                <br><br><br>
+                <input type = "submit"  id = "Haptic" value = "Haptic" class = "btnCue" />
+                
+                <button type = "submit" onclick = "window.location.href = '/Trial';">
+                    <img src = "/static/Arrow.png" alt = "NEXT" border = "0" />
+                </button>
+            </div> 
+            <script>
+                document.getElementById('Audio').addEventListener("click", function() {
+                    audio_cue();
+                });  
+                document.getElementById('Visual').addEventListener("click", function() {
+                    video_cue();
+                });  
+                document.getElementById('Haptic').addEventListener("click", function() {
+                    haptic_cue();
+                });  
+            </script>
+        </center>
+    </body>
+</html>

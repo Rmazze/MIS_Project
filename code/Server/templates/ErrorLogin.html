@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+    </head>
+    <body>
+        <center>
+            <div class = "whiteBox">
+                <h1 id = "login">Login</h1>
+                <br>
+                <form action="/Cues" method = "POST">
+                    <input type = "{{ msg_type }}" id = "{{ msg_type }}" value = "{{ msg }}" readonly/>
+                    <br><br><br>
+                    <input type = "text" id = "txtUsn" placeholder = "Username" name = "Username" />
+                    <br><br><br>
+                    <input type = "password" id = "txtPsw" placeholder = "Password" name = "Password" />
+                    <br><br><br>
+                    <input type = "submit" id = "btnSmt" value = "submit" />
+                    <br><br><br>
+                    <a href = "/SignUp" title = "Sign up">Create a new account</a>
+                </form>
+            </div>
+        </center>
+    </body>
+</html>

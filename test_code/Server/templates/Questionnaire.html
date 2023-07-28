@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+        <script src = "https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <center>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Cues" href = "{{ url_for('cuesLogin') }}">Cues</a>
+                        <a title = "Test" href = "{{ url_for('test') }}">Test</a>
+                        <a title = "Trial" href = "{{ url_for('trial') }}">Trial</a>
+                        <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+    
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfy9vzmP-scXbue-v8g8G26fwXEV3rUmRnhqMv53aj4JNMOEA/viewform?embedded=true" width="800" height="2000" frameborder="0" marginheight="0" marginwidth="0">Caricamento…</iframe>
+
+        </center>
+    </body>
+</html>

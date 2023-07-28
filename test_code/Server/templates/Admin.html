@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "icon" type = "image/png" href = "/static/Favicon.png"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+    </head>
+    <body>
+        <center>
+            <!-- Hidden menu that shows on hovering -->
+            <header>
+                <div class = "hoverMenu">
+                    <img src = "/static/Menu.png" class = "sandwich">
+                    <div class = "hoverMenu-content">
+                        <a title = "Charts" href = "{{ url_for('charts') }}">Charts</a>
+                        <a title = "Questionnaire" href = "{{ url_for('questionnaire') }}">Questionnaire</a>
+                        <a title = "Log out" href = "/">Log Out</a>
+                    </ul>
+                </div>
+            </header>
+
+            <div class = "whiteBoxBig">
+                <h1 id = "title">Training Tool for Reaction Time</h1>
+                <h1 id = "sent">Hello {{usr}}, It's nice to have you here! </h1>
+
+                <br><br><br>
+
+                <form action = "/Trial" method = "POST">
+                    <input type = "submit" id = "newTrial" value = "Start new Trial" /> 
+                </form>
+
+
+                <!-- TODO add processing! -->
+                <!-- TODO add comandi per noi! -->
+            </div> 
+        </center>
+    </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TTR - Training Tool Reaction</title>
+        <link rel = "shortcut icon" type = "image/png" href="{{ url_for('static', filename='Favicon.png') }}"/>
+        <link href = "/static/MainStyle.css" rel = "stylesheet" type = "text/css">
+        <script language = "JavaScript1.2">
+        <!-- 
+        -->
+        </script>
+    </head>
+    <body>
+        <center>
+            <div class = "whiteBox">
+                <h1 id = "login">Login</h1>
+                <br>
+                <form action="{{url_for('cuesLogin')}}" method = "POST">
+                    <input type = "text" id = "txtUsn" placeholder = "Username" name = "Username" />
+                    <br><br><br>
+                    <input type = "password" id = "txtPsw" placeholder = "Password" name = "Password" />
+                    <br><br><br>
+                    <input type = "submit" id = "btnSmt" value = "submit" />
+                    <br><br><br>
+                    <a href = "/SignUp" title = "Sign up">Create a new account</a>
+                </form>
+            </div>
+        </center>
+    </body>
+</html>
